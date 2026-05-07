@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -rn \"+91-X\\\\|91XXXXXXXXXX\\\\|9 AM – 9 PM\\\\|10 AM – 6 PM\\\\|tel:\\\\${\" /Users/apple/Desktop/Shop/app /Users/apple/Desktop/Shop/components/public /Users/apple/Desktop/Shop/lib /Users/apple/Desktop/Shop/supabase)"
+    ]
+  }
+}
