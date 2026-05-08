@@ -14,6 +14,7 @@ import {
   Beaker,
   PlaySquare,
   Star,
+  LayoutTemplate,
   Megaphone,
   Settings,
   LogOut,
@@ -35,6 +36,7 @@ const NAV = [
   { href: '/admin/tests', label: 'Tests', icon: Beaker },
   { href: '/admin/videos', label: 'Videos', icon: PlaySquare },
   { href: '/admin/reviews', label: 'Reviews', icon: Star },
+  { href: '/admin/promo-banners', label: 'Promo Banners', icon: LayoutTemplate },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
   { href: '/admin/announcements', label: 'Announcements', icon: Megaphone },
 ];

@@ -18,6 +18,7 @@ import { IMG, resolveDoctorPhoto } from '@/lib/images';
 import { WhatsAppGlyph } from '@/components/public/whatsapp-glyph';
 import { VideoTestimonials } from '@/components/public/video-testimonials';
 import { CustomerReviews } from '@/components/public/customer-reviews';
+import { PromoBanners } from '@/components/public/promo-banners';
 import type { Doctor, MedicalTest } from '@/lib/types';
 
 const OFFERS = [
@@ -211,6 +212,9 @@ export default async function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* SECTION 2.5 — PROMO BANNERS (hidden when no active banners) ── */}
+      <PromoBanners />
 
       {/* SECTION 3 — DOCTORS ──────────────────────────────────────── */}
       {docs.length > 0 && (

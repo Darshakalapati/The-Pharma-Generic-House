@@ -149,3 +149,21 @@ export interface Review {
   display_order: number;
   created_at: string;
 }
+
+export type BannerType = 'image' | 'text';
+export type BannerBackgroundStyle = 'plum' | 'teal' | 'cream';
+
+export interface PromoBanner {
+  id: string;
+  title: string;
+  banner_type: BannerType;
+  image_url: string | null;
+  headline: string | null;
+  subheading: string | null;
+  button_label: string | null;
+  button_link: string | null;
+  background_style: BannerBackgroundStyle;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+}

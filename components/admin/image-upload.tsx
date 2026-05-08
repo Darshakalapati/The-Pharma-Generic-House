@@ -11,10 +11,26 @@ interface Props {
   value: string | null;
   onChange: (url: string | null) => void;
   folder: string;
+  /** Storage bucket to upload into. Defaults to `public-images`. */
+  bucket?: string;
+  /** Path layout inside the bucket. `nested` puts the file at `{folder}/{name}`;
+   *  `flat` uploads at `{name}` and ignores `folder` (useful for buckets that
+   *  are dedicated to a single asset type, e.g. `promo-banners`). */
+  pathLayout?: 'nested' | 'flat';
+  /** Override preview tile aspect — defaults to a 128px square. */
+  previewClassName?: string;
   className?: string;
 }
 
-export function ImageUpload({ value, onChange, folder, className }: Props) {
+export function ImageUpload({
+  value,
+  onChange,
+  folder,
+  bucket = 'public-images',
+  pathLayout = 'nested',
+  previewClassName,
+  className,
+}: Props) {
   const [uploading, setUploading] = React.useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
@@ -31,13 +47,14 @@ export function ImageUpload({ value, onChange, folder, className }: Props) {
     try {
       const supabase = createClient();
       const ext = file.name.split('.').pop() ?? 'jpg';
-      const path = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-      const { error } = await supabase.storage.from('public-images').upload(path, file, {
+      const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+      const path = pathLayout === 'flat' ? fileName : `${folder}/${fileName}`;
+      const { error } = await supabase.storage.from(bucket).upload(path, file, {
         cacheControl: '3600',
         upsert: false,
       });
       if (error) throw error;
-      const { data: pub } = supabase.storage.from('public-images').getPublicUrl(path);
+      const { data: pub } = supabase.storage.from(bucket).getPublicUrl(path);
       onChange(pub.publicUrl);
       toast.success('Image uploaded.');
     } catch (e: any) {
@@ -52,7 +69,12 @@ export function ImageUpload({ value, onChange, folder, className }: Props) {
   return (
     <div className={cn('space-y-3', className)}>
       <div className="flex items-start gap-4">
-        <div className="h-32 w-32 shrink-0 rounded-xl border border-brand-line bg-brand-cream-warm overflow-hidden">
+        <div
+          className={cn(
+            'shrink-0 rounded-xl border border-brand-line bg-brand-cream-warm overflow-hidden',
+            previewClassName ?? 'h-32 w-32'
+          )}
+        >
           {value ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={value} alt="Preview" className="h-full w-full object-cover" />
