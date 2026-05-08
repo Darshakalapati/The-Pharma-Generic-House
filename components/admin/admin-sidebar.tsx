@@ -13,6 +13,7 @@ import {
   Stethoscope,
   Beaker,
   PlaySquare,
+  Star,
   Megaphone,
   Settings,
   LogOut,
@@ -33,6 +34,7 @@ const NAV = [
   { href: '/admin/doctors', label: 'Doctors', icon: Stethoscope },
   { href: '/admin/tests', label: 'Tests', icon: Beaker },
   { href: '/admin/videos', label: 'Videos', icon: PlaySquare },
+  { href: '/admin/reviews', label: 'Reviews', icon: Star },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
   { href: '/admin/announcements', label: 'Announcements', icon: Megaphone },
 ];

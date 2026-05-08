@@ -137,3 +137,15 @@ export interface Video {
   is_active: boolean;
   created_at: string;
 }
+
+export interface Review {
+  id: string;
+  customer_name: string;
+  stars: number;
+  review_text: string;
+  review_date_label: string;
+  source: string;
+  is_active: boolean;
+  display_order: number;
+  created_at: string;
+}

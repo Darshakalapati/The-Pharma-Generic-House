@@ -38,6 +38,12 @@ export const TEST_DAY = 'Sunday';
 
 export const SHOP_EMAIL = 'hello@pharmagenerichouse.com';
 
+// Public Google Maps URL for the shop's review listing. Used by the home
+// page reviews section ("Read all reviews on Google →") and the admin
+// /admin/reviews helper tip box.
+export const GOOGLE_REVIEWS_URL =
+  'https://www.google.com/maps/place/The+Pharma+Generic+House/@16.5092295,80.6214302,17z/data=!4m8!3m7!1s0x3a35fb7d1ed11387:0xde552d6c0e675e4!8m2!3d16.5092295!4d80.6240051!9m1!1b1!16s%2Fg%2F11f61dkj4y?entry=ttu';
+
 export const PRODUCT_CATEGORIES = [
   { value: 'general', label: 'General Medicine' },
   { value: 'pharma', label: 'Pharma' },
