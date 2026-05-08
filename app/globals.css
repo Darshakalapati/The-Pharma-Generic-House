@@ -21,6 +21,9 @@
     --line: #EAE2D6;
     --sand: #F0E8DA;
 
+    /* Set by the announcement banner client component (0 when no banner). */
+    --banner-height: 0px;
+
     /* shadcn (admin) */
     --background: 36 50% 97%;
     --foreground: 300 8% 11%;

@@ -16,6 +16,7 @@ import { whatsappLink, formatINR, formatTime12, telLink } from '@/lib/utils';
 import { DOCTOR_SPECIALTIES } from '@/lib/constants';
 import { IMG, resolveDoctorPhoto } from '@/lib/images';
 import { WhatsAppGlyph } from '@/components/public/whatsapp-glyph';
+import { VideoTestimonials } from '@/components/public/video-testimonials';
 import type { Doctor, MedicalTest } from '@/lib/types';
 
 const OFFERS = [
@@ -297,6 +298,9 @@ export default async function HomePage() {
           </div>
         </section>
       )}
+
+      {/* SECTION 3.5 — VIDEO TESTIMONIALS (hidden when no active videos) ── */}
+      <VideoTestimonials />
 
       {/* SECTION 4 — SUNDAY DIAGNOSTICS ──────────────────────────── */}
       <section className="mt-24 sm:mt-32 bg-sand border-y border-line">

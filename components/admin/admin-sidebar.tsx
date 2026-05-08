@@ -12,13 +12,14 @@ import {
   Pill,
   Stethoscope,
   Beaker,
+  PlaySquare,
+  Megaphone,
   Settings,
   LogOut,
   Menu,
   X,
 } from 'lucide-react';
 import { Logo } from '@/components/public/logo';
-import { Button } from '@/components/ui/button';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
 
@@ -31,7 +32,9 @@ const NAV = [
   { href: '/admin/products', label: 'Products', icon: Pill, group: 'Manage' },
   { href: '/admin/doctors', label: 'Doctors', icon: Stethoscope },
   { href: '/admin/tests', label: 'Tests', icon: Beaker },
+  { href: '/admin/videos', label: 'Videos', icon: PlaySquare },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
+  { href: '/admin/announcements', label: 'Announcements', icon: Megaphone },
 ];
 
 export function AdminSidebar({ counts }: { counts: { [k: string]: number } }) {

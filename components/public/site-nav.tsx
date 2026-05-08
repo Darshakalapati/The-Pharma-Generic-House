@@ -50,8 +50,9 @@ export function SiteNav({ shopPhone = SHOP_PHONE, shopWhatsApp = SHOP_WHATSAPP }
   return (
     <>
       <header
+        style={{ top: 'var(--banner-height, 0px)' }}
         className={cn(
-          'sticky top-0 z-30 bg-bg-elevated transition-shadow duration-300',
+          'sticky z-30 bg-bg-elevated transition-shadow duration-300',
           scrolled
             ? 'border-b border-line shadow-[0_1px_0_rgba(31,26,31,0.04)]'
             : 'border-b border-transparent'

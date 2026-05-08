@@ -72,6 +72,44 @@ export function telLink(phone: string) {
   return `tel:${phone.replace(/[\s-]/g, '')}`;
 }
 
+/** Pull the YouTube video ID from any common YouTube URL form. */
+export function extractYouTubeId(url: string): string | null {
+  if (!url) return null;
+  const patterns = [
+    /youtube\.com\/watch\?v=([^&?#]+)/,
+    /youtu\.be\/([^&?#/]+)/,
+    /youtube\.com\/shorts\/([^&?#/]+)/,
+    /youtube\.com\/embed\/([^&?#/]+)/,
+    /youtube\.com\/v\/([^&?#/]+)/,
+  ];
+  for (const p of patterns) {
+    const m = url.match(p);
+    if (m) return m[1];
+  }
+  return null;
+}
+
+export function youtubeThumbnailUrl(videoId: string): string {
+  return `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+}
+
+export function youtubeEmbedUrl(videoId: string): string {
+  return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+}
+
+/** Pull the Instagram post/reel ID from a URL. */
+export function extractInstagramId(url: string): string | null {
+  if (!url) return null;
+  const m = url.match(/instagram\.com\/(?:p|reel|tv)\/([^/?#]+)/);
+  return m ? m[1] : null;
+}
+
+export function instagramEmbedUrl(url: string): string {
+  const id = extractInstagramId(url);
+  if (!id) return url;
+  return `https://www.instagram.com/p/${id}/embed/captioned`;
+}
+
 export function dayOfWeek(date: Date): string {
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   return days[date.getDay()];

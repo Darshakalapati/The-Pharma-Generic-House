@@ -108,3 +108,32 @@ export interface ShopSettings {
   shop_address: string;
   shop_hours: string;
 }
+
+export type AnnouncementColor = 'plum' | 'teal';
+
+export interface Announcement {
+  id: string;
+  text: string;
+  link_label: string | null;
+  link_url: string | null;
+  background_color: AnnouncementColor;
+  is_active: boolean;
+  updated_at: string;
+}
+
+export type VideoType = 'testimonial' | 'review' | 'announcement';
+export type VideoSource = 'upload' | 'youtube' | 'instagram';
+
+export interface Video {
+  id: string;
+  title: string;
+  customer_name: string | null;
+  video_type: VideoType;
+  video_url: string;
+  video_source: VideoSource;
+  thumbnail_url: string | null;
+  description: string | null;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+}
