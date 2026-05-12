@@ -45,14 +45,16 @@ export function EnquiryCartProvider({ children }: { children: React.ReactNode })
     }
   }, [items, hydrated]);
 
+  /**
+   * Idempotent "add once" — inserts the item with quantity 1 if it isn't
+   * already in the cart, no-op if it is. This is the entry point used by
+   * the product card's "Add to enquiry" button so that clicking it twice
+   * never increments past 1. Quantity changes happen via `setQty` in the
+   * cart slide-over panel only.
+   */
   const add: EnquiryCartContextValue['add'] = React.useCallback((item) => {
     setItems((prev) => {
-      const existing = prev.find((p) => p.product_id === item.product_id);
-      if (existing) {
-        return prev.map((p) =>
-          p.product_id === item.product_id ? { ...p, quantity: p.quantity + 1 } : p
-        );
-      }
+      if (prev.some((p) => p.product_id === item.product_id)) return prev;
       return [...prev, { ...item, quantity: 1 }];
     });
   }, []);
