@@ -80,11 +80,7 @@ export default async function ContactPage() {
             </span>
             <p className="eyebrow mt-5">Come to the shop</p>
             <p className="mt-2 font-serif font-medium text-[1.0625rem] tracking-[-0.005em] leading-snug">
-              MG Road, Near Raghavaiah Park Rd
-              <br />
-              opp. Golden Pavallion, Governor Peta
-              <br />
-              Vijayawada, Andhra Pradesh 520002
+              {settings.shop_address}
             </p>
             <span className="mt-4 inline-flex items-center gap-1 text-[0.875rem] font-medium text-plum">
               Get directions
