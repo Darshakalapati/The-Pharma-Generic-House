@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Search, Plus, Check, X } from 'lucide-react';
+import { Search, Plus, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PRODUCT_CATEGORIES } from '@/lib/constants';
 import { useEnquiryCart } from './enquiry-cart-context';
@@ -21,7 +21,7 @@ export function ProductGrid({
 }) {
   const [category, setCategory] = React.useState<string>(initialCategory);
   const [query, setQuery] = React.useState('');
-  const { items, add, remove } = useEnquiryCart();
+  const { items, add } = useEnquiryCart();
 
   const filtered = products.filter((p) => {
     if (category !== 'all' && p.category !== category) return false;
@@ -95,7 +95,6 @@ export function ProductGrid({
               product={p}
               added={inCart(p.id)}
               onAdd={() => add({ product_id: p.id, product_name: p.name })}
-              onRemove={() => remove(p.id)}
             />
           ))}
         </div>
@@ -108,41 +107,20 @@ function ProductCard({
   product,
   added,
   onAdd,
-  onRemove,
 }: {
   product: Product;
   added: boolean;
   onAdd: () => void;
-  onRemove: () => void;
 }) {
   const cat = PRODUCT_CATEGORIES.find((c) => c.value === product.category);
-  const [hovered, setHovered] = React.useState(false);
 
-  // Double-click guard: rapid clicks within 200ms register as a single
-  // action, so spam-clicking "Add to enquiry" can never add twice before
-  // the first state update lands. After 200ms the lock releases; from
-  // there the button toggles (add → remove → add ...).
-  const lockRef = React.useRef(false);
-  const unlockTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
-  React.useEffect(() => {
-    return () => {
-      if (unlockTimerRef.current) clearTimeout(unlockTimerRef.current);
-    };
-  }, []);
-
-  const handleClick = () => {
-    if (lockRef.current) return;
-    lockRef.current = true;
-    if (added) onRemove();
-    else onAdd();
-    unlockTimerRef.current = setTimeout(() => {
-      lockRef.current = false;
-    }, 200);
-  };
-
-  // While in the "Added" state, hovering swaps the affordance to "Remove ×"
-  // so the toggle is visually clear. Touch devices simply tap to toggle.
-  const showRemoveAffordance = added && hovered;
+  // Disable the button when:
+  //  - the product is out of stock, or
+  //  - the product is already in the cart (one-shot add; removal happens
+  //    from inside the slide-over cart panel).
+  // `disabled` on a <button> prevents the browser from firing onClick at all,
+  // so rapid clicks can never re-trigger `add` after the first one lands.
+  const isDisabled = !product.in_stock || added;
 
   return (
     <article className="card-soft overflow-hidden flex flex-col">
@@ -180,34 +158,27 @@ function ProductCard({
         )}
         <button
           type="button"
-          onClick={handleClick}
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
-          disabled={!product.in_stock}
-          aria-pressed={added}
+          onClick={onAdd}
+          disabled={isDisabled}
+          aria-disabled={isDisabled}
           aria-label={
             added
-              ? `Remove ${product.name} from enquiry`
+              ? `${product.name} is in your enquiry`
               : `Add ${product.name} to enquiry`
           }
           className={cn(
             'mt-4 inline-flex items-center gap-1.5 self-start rounded-md px-2.5 py-1.5 -ml-2.5 text-[0.875rem] font-medium transition-colors',
-            'disabled:opacity-50 disabled:cursor-not-allowed',
             added
-              ? 'text-plum bg-plum-tint'
-              : 'text-plum hover:bg-plum-tint'
+              // "Added" — confirmed positive state, intentionally non-clickable.
+              ? 'text-teal-deep bg-teal-tint cursor-not-allowed'
+              // Default — clickable plum link with tint hover, dimmed if out of stock.
+              : 'text-plum hover:bg-plum-tint disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent'
           )}
         >
           {added ? (
-            showRemoveAffordance ? (
-              <>
-                <X className="h-3.5 w-3.5" /> Remove
-              </>
-            ) : (
-              <>
-                <Check className="h-3.5 w-3.5" /> Added
-              </>
-            )
+            <>
+              <Check className="h-3.5 w-3.5" /> Added
+            </>
           ) : (
             <>
               <Plus className="h-3.5 w-3.5" /> Add to Enquiry
