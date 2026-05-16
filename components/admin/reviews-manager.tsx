@@ -9,6 +9,7 @@ import {
   ChevronDown,
   Star,
   ExternalLink,
+  ArrowDownWideNarrow,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
@@ -34,7 +35,9 @@ export function ReviewsManager({ reviews }: { reviews: Review[] }) {
   const [editing, setEditing] = React.useState<Review | null>(null);
   const [formOpen, setFormOpen] = React.useState(false);
   const [confirmDel, setConfirmDel] = React.useState<Review | null>(null);
+  const [confirmSort, setConfirmSort] = React.useState(false);
   const [working, setWorking] = React.useState<string | null>(null);
+  const [bulkWorking, setBulkWorking] = React.useState(false);
 
   const sorted = React.useMemo(
     () =>
@@ -103,6 +106,34 @@ export function ReviewsManager({ reviews }: { reviews: Review[] }) {
     }
   };
 
+  /**
+   * Bulk reorder: assign display_order 1..N to all reviews so that higher
+   * star ratings come first; ties broken by created_at desc (newest first).
+   */
+  const sortByRating = async () => {
+    const next = [...reviews].sort((a, b) => {
+      if (a.stars !== b.stars) return b.stars - a.stars;
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
+    setBulkWorking(true);
+    try {
+      const supabase = createClient();
+      const updates = next.map((r, i) =>
+        supabase.from('reviews').update({ display_order: i + 1 }).eq('id', r.id)
+      );
+      const results = await Promise.all(updates);
+      const failed = results.find((res) => res.error);
+      if (failed?.error) throw failed.error;
+      toast.success('Reviews reordered by rating.');
+      setConfirmSort(false);
+      router.refresh();
+    } catch {
+      toast.error('Could not reorder.');
+    } finally {
+      setBulkWorking(false);
+    }
+  };
+
   const doDelete = async () => {
     if (!confirmDel) return;
     setWorking(confirmDel.id);
@@ -152,7 +183,14 @@ export function ReviewsManager({ reviews }: { reviews: Review[] }) {
         </div>
       </div>
 
-      <div className="flex justify-end mb-5">
+      <div className="flex flex-wrap justify-end gap-2 mb-5">
+        <Button
+          variant="outline"
+          onClick={() => setConfirmSort(true)}
+          disabled={reviews.length < 2 || bulkWorking}
+        >
+          <ArrowDownWideNarrow className="h-4 w-4" /> Sort by rating
+        </Button>
         <Button onClick={startCreate}>
           <Plus className="h-4 w-4" /> Add review
         </Button>
@@ -259,6 +297,29 @@ export function ReviewsManager({ reviews }: { reviews: Review[] }) {
       )}
 
       <ReviewForm review={editing} open={formOpen} onOpenChange={setFormOpen} />
+
+      <Dialog open={confirmSort} onOpenChange={(v) => !bulkWorking && setConfirmSort(v)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reorder by rating?</DialogTitle>
+            <DialogDescription>
+              This will reorder all reviews by star rating, highest first. Continue?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setConfirmSort(false)}
+              disabled={bulkWorking}
+            >
+              Cancel
+            </Button>
+            <Button onClick={sortByRating} disabled={bulkWorking}>
+              {bulkWorking ? 'Reordering...' : 'Reorder'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={!!confirmDel} onOpenChange={(v) => !v && setConfirmDel(null)}>
         <DialogContent>

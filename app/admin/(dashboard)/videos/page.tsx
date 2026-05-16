@@ -17,7 +17,7 @@ export default async function AdminVideosPage() {
     <div>
       <PageHeader
         title="Videos"
-        description="Manage testimonials and customer videos shown on the home page."
+        description="Manage videos shown on the home page. Add product showcases, service demos, customer experiences, or shop updates."
       />
       <VideosManager videos={(data as Video[] | null) ?? []} />
     </div>

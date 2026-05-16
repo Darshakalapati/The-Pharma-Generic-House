@@ -182,7 +182,7 @@ export function VideosManager({ videos }: { videos: Video[] }) {
                       {v.customer_name ?? '—'}
                     </p>
                     <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-                      <Badge variant="muted">{v.video_type}</Badge>
+                      <Badge variant="muted">{videoTypeLabel(v.video_type)}</Badge>
                       <SourceBadge source={v.video_source} />
                       <span className="text-[0.7rem] text-brand-muted">
                         Order: {v.display_order}
@@ -268,6 +268,13 @@ function SourceBadge({ source }: { source: Video['video_source'] }) {
       <Film className="h-3 w-3" /> Upload
     </Badge>
   );
+}
+
+function videoTypeLabel(t: Video['video_type']): string {
+  if (t === 'testimonial') return 'Customer story';
+  if (t === 'review') return 'Product / service showcase';
+  if (t === 'announcement') return 'Shop announcement';
+  return t;
 }
 
 function resolveThumbnail(v: Video): string | null {

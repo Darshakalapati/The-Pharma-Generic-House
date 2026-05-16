@@ -49,9 +49,9 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 const VIDEO_TYPES: { value: VideoType; label: string }[] = [
-  { value: 'testimonial', label: 'Testimonial' },
-  { value: 'review', label: 'Review' },
-  { value: 'announcement', label: 'Announcement' },
+  { value: 'testimonial', label: 'Customer story' },
+  { value: 'review', label: 'Product / service showcase' },
+  { value: 'announcement', label: 'Shop announcement' },
 ];
 
 const VIDEO_SOURCES: { value: VideoSource; label: string }[] = [
@@ -155,7 +155,8 @@ export function VideoForm({
         <DialogHeader>
           <DialogTitle>{video ? 'Edit video' : 'Add video'}</DialogTitle>
           <DialogDescription>
-            Add a customer testimonial, a review, or an announcement video.
+            Add a video for the home page — a customer story, a product or
+            service showcase, or a shop announcement.
           </DialogDescription>
         </DialogHeader>
 

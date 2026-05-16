@@ -19,10 +19,10 @@ export async function VideoTestimonials() {
   return (
     <section className="container-public mt-20 sm:mt-28">
       <div className="max-w-2xl">
-        <span className="eyebrow">From our customers</span>
-        <h2 className="h-section mt-4">What people say about us.</h2>
+        <span className="eyebrow">Videos</span>
+        <h2 className="h-section mt-4">Inside our shop.</h2>
         <p className="mt-4 text-[1.0625rem] text-ink-muted leading-[1.7]">
-          Real experiences from families who trust us with their health.
+          Short videos from the pharmacy — products, services, and updates.
         </p>
       </div>
 
