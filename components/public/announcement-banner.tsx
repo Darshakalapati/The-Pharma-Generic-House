@@ -121,13 +121,13 @@ export function AnnouncementBanner({ announcement }: { announcement: Announcemen
     }
     setClosing(true);
     // Match the duration of the collapse animation below.
-    window.setTimeout(() => setHidden(true), 240);
+    window.setTimeout(() => setHidden(true), 400);
   };
 
   return (
     <div
       className={cn(
-        'sticky top-0 z-[60] w-full overflow-hidden transition-[max-height,opacity] duration-200 ease-smooth',
+        'sticky top-0 z-[60] w-full overflow-hidden transition-[max-height,opacity] duration-400 ease-out',
         closing ? 'max-h-0 opacity-0' : 'max-h-32 opacity-100'
       )}
     >

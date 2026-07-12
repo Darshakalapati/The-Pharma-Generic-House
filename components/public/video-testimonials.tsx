@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import type { Video } from '@/lib/types';
 import { VideoCarousel } from './video-carousel';
+import { ScrollReveal, ScrollRevealItem } from '@/components/public/motion/scroll-reveal';
 
 export async function VideoTestimonials() {
   const supabase = createClient();
@@ -17,18 +18,18 @@ export async function VideoTestimonials() {
   if (videos.length === 0) return null;
 
   return (
-    <section className="container-public mt-20 sm:mt-28">
-      <div className="max-w-2xl">
+    <ScrollReveal as="section" className="container-public mt-20 sm:mt-28">
+      <ScrollRevealItem as="div" className="max-w-2xl">
         <span className="eyebrow">Videos</span>
         <h2 className="h-section mt-4">Inside our shop.</h2>
         <p className="mt-4 text-[1.0625rem] text-ink-muted leading-[1.7]">
           Short videos from the pharmacy — products, services, and updates.
         </p>
-      </div>
+      </ScrollRevealItem>
 
-      <div className="mt-10">
+      <ScrollRevealItem as="div" className="mt-10">
         <VideoCarousel videos={videos} />
-      </div>
-    </section>
+      </ScrollRevealItem>
+    </ScrollReveal>
   );
 }

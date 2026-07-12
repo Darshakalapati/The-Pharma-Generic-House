@@ -75,7 +75,7 @@ export function PromoBannerCarousel({ banners }: { banners: PromoBanner[] }) {
             className="flex"
             style={{
               transform: `translateX(-${index * 100}%)`,
-              transition: `transform ${TRANSITION_MS}ms cubic-bezier(0.2, 0, 0, 1)`,
+              transition: `transform ${TRANSITION_MS}ms cubic-bezier(0, 0, 0.2, 1)`,
             }}
           >
             {banners.map((b) => (

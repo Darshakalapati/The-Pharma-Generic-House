@@ -135,7 +135,7 @@ export function EnquiryCartPanel({ whatsappNumber, reservationEnabled }: Props) 
         aria-hidden={!open}
         aria-label="Your enquiry"
         className={cn(
-          'fixed right-0 top-0 z-50 h-[100dvh] w-full sm:max-w-[420px] bg-bg-elevated border-l border-line shadow-elevated flex flex-col transition-transform duration-300 ease-smooth',
+          'fixed right-0 top-0 z-50 h-[100dvh] w-full sm:max-w-[420px] bg-bg-elevated border-l border-line shadow-elevated flex flex-col transition-transform duration-350 ease-out',
           open ? 'translate-x-0' : 'translate-x-full'
         )}
       >

@@ -126,6 +126,11 @@ const config: Config = {
       },
       transitionTimingFunction: {
         smooth: 'cubic-bezier(0.2, 0, 0, 1)',
+        'ease-out-soft': 'cubic-bezier(0, 0, 0.2, 1)',
+      },
+      transitionDuration: {
+        400: '400ms',
+        350: '350ms',
       },
     },
   },

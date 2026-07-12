@@ -2,6 +2,7 @@ import { SiteNav } from '@/components/public/site-nav';
 import { SiteFooter } from '@/components/public/site-footer';
 import { WhatsAppFloat } from '@/components/public/whatsapp-float';
 import { AnnouncementBanner } from '@/components/public/announcement-banner';
+import { PublicMain } from '@/components/public/motion/public-main';
 import { getShopSettings } from '@/lib/settings';
 import { createClient } from '@/lib/supabase/server';
 import type { Announcement } from '@/lib/types';
@@ -33,7 +34,7 @@ export default async function PublicLayout({ children }: { children: React.React
     <div className="bg-bg text-ink">
       <AnnouncementBanner announcement={announcement} />
       <SiteNav shopPhone={settings.shop_phone} shopWhatsApp={settings.shop_whatsapp} />
-      <main className="min-h-[60vh]">{children}</main>
+      <PublicMain>{children}</PublicMain>
       <SiteFooter settings={settings} />
       <WhatsAppFloat phone={settings.shop_whatsapp} />
     </div>

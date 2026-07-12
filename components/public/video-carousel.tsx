@@ -4,6 +4,7 @@ import * as React from 'react';
 import { ChevronLeft, ChevronRight, Play } from 'lucide-react';
 import { cn, extractYouTubeId, youtubeThumbnailUrl } from '@/lib/utils';
 import { VideoPlayerModal } from './video-player-modal';
+import { StaggerGrid, StaggerGridItem } from '@/components/public/motion/scroll-reveal';
 import type { Video } from '@/lib/types';
 
 const STATIC_GRID_THRESHOLD = 4;
@@ -47,18 +48,21 @@ export function VideoCarousel({ videos }: { videos: Video[] }) {
   if (useStaticGrid) {
     return (
       <>
-        <div
+        <StaggerGrid
           className={cn(
             'grid gap-5',
             videos.length === 1 && 'grid-cols-1 sm:max-w-sm',
             videos.length === 2 && 'grid-cols-1 sm:grid-cols-2 sm:max-w-2xl',
             videos.length === 3 && 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
           )}
+          stagger={0.08}
         >
           {videos.map((v) => (
-            <VideoCard key={v.id} video={v} onPlay={() => setActive(v)} />
+            <StaggerGridItem key={v.id}>
+              <VideoCard video={v} onPlay={() => setActive(v)} />
+            </StaggerGridItem>
           ))}
-        </div>
+        </StaggerGrid>
         <VideoPlayerModal video={active} onClose={() => setActive(null)} />
       </>
     );
@@ -96,20 +100,21 @@ export function VideoCarousel({ videos }: { videos: Video[] }) {
         <ChevronRight className="h-4 w-4" />
       </button>
 
-      <div
+      <StaggerGrid
         ref={scrollerRef}
         className="flex gap-5 overflow-x-auto pb-2 scroll-smooth snap-x snap-mandatory -mx-1 px-1"
         style={{ scrollbarWidth: 'none' }}
+        stagger={0.08}
       >
         {videos.map((v) => (
-          <div
+          <StaggerGridItem
             key={v.id}
             className="snap-start shrink-0 w-[78vw] xs:w-[260px] sm:w-[280px] lg:w-[300px] last:pr-1"
           >
             <VideoCard video={v} onPlay={() => setActive(v)} />
-          </div>
+          </StaggerGridItem>
         ))}
-      </div>
+      </StaggerGrid>
 
       <VideoPlayerModal video={active} onClose={() => setActive(null)} />
     </div>

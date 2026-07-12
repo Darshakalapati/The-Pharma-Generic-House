@@ -146,7 +146,7 @@
     background: var(--plum);
     transform: scaleX(0);
     transform-origin: left center;
-    transition: transform 220ms cubic-bezier(0.2, 0, 0, 1);
+    transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
   }
   .link-underline:hover::after,
   .link-underline:focus-visible::after,
@@ -172,8 +172,8 @@
     transition: background 200ms ease, box-shadow 200ms ease, transform 200ms ease;
   }
   .btn-plum:hover {
-    background: var(--plum-deep);
-    border-color: var(--plum-deep);
+    background: color-mix(in srgb, var(--plum) 90%, #000);
+    border-color: color-mix(in srgb, var(--plum) 90%, #000);
     box-shadow: 0 8px 20px rgba(107, 44, 95, 0.22);
     transform: translateY(-1px);
   }
@@ -259,12 +259,22 @@
     border: 1px solid var(--line);
     border-radius: 1rem;
     box-shadow: 0 1px 2px rgba(31, 26, 31, 0.03);
-    transition: box-shadow 240ms ease, transform 240ms ease, border-color 240ms ease;
+    transition: box-shadow 200ms ease-out, transform 200ms ease-out, border-color 200ms ease-out;
   }
   .card-soft:hover {
     box-shadow: 0 4px 12px rgba(31, 26, 31, 0.06), 0 12px 32px rgba(31, 26, 31, 0.05);
     transform: translateY(-2px);
     border-color: rgba(107, 44, 95, 0.18);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card-soft:hover {
+      transform: none;
+    }
+    .btn-plum:hover,
+    .btn-teal:hover {
+      transform: none;
+    }
   }
 
   /* Form inputs — bordered, friendly, plum focus */

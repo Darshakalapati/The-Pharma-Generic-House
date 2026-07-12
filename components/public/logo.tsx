@@ -1,4 +1,7 @@
+'use client';
+
 import Link from 'next/link';
+import { motion, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 interface LogoProps {
@@ -10,7 +13,15 @@ interface LogoProps {
  * A small teal cross dot above the G ties to the logo's medical cross mark.
  */
 export function Logo({ className }: LogoProps) {
+  const reduced = useReducedMotion();
+
   return (
+    <motion.div
+      initial={reduced ? false : { opacity: 0, scale: 0.96 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5, ease: [0, 0, 0.2, 1] }}
+      className="inline-flex"
+    >
     <Link
       href="/"
       aria-label="The Pharma Generic House — home"
@@ -30,6 +41,7 @@ export function Logo({ className }: LogoProps) {
         eneric House
       </span>
     </Link>
+    </motion.div>
   );
 }
 

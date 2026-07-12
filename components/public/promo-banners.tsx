@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { PromoBannerCarousel } from './promo-banner-carousel';
+import { ScrollReveal, ScrollRevealItem } from '@/components/public/motion/scroll-reveal';
 import type { PromoBanner } from '@/lib/types';
 
 export async function PromoBanners() {
@@ -17,8 +18,10 @@ export async function PromoBanners() {
   if (banners.length === 0) return null;
 
   return (
-    <section className="mt-20 sm:mt-28">
-      <PromoBannerCarousel banners={banners} />
-    </section>
+    <ScrollReveal as="section" className="mt-20 sm:mt-28">
+      <ScrollRevealItem>
+        <PromoBannerCarousel banners={banners} />
+      </ScrollRevealItem>
+    </ScrollReveal>
   );
 }
