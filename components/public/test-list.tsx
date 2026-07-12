@@ -4,6 +4,7 @@ import * as React from 'react';
 import { FlaskConical, ArrowRight } from 'lucide-react';
 import { TestBookingDialog } from './test-booking-dialog';
 import { formatINR } from '@/lib/utils';
+import { StaggerGrid, StaggerGridItem } from '@/components/public/motion/scroll-reveal';
 import type { MedicalTest } from '@/lib/types';
 
 export function TestList({ tests }: { tests: MedicalTest[] }) {
@@ -19,9 +20,10 @@ export function TestList({ tests }: { tests: MedicalTest[] }) {
 
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+      <StaggerGrid inherit className="grid grid-cols-1 lg:grid-cols-2 gap-5" stagger={0.08}>
         {tests.map((t) => (
-          <article key={t.id} className="card-soft p-7 flex flex-col">
+          <StaggerGridItem key={t.id} className="h-full">
+          <article className="card-soft p-7 flex flex-col h-full">
             <div className="flex items-start gap-4">
               <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-teal-tint text-teal-deep shrink-0">
                 <FlaskConical className="h-5 w-5" />
@@ -55,8 +57,9 @@ export function TestList({ tests }: { tests: MedicalTest[] }) {
               </button>
             </div>
           </article>
+          </StaggerGridItem>
         ))}
-      </div>
+      </StaggerGrid>
 
       <TestBookingDialog
         test={active}

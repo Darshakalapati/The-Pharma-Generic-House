@@ -1,6 +1,10 @@
 import { createClient } from '@/lib/supabase/server';
 import { getShopSettings } from '@/lib/settings';
 import { DoctorList } from '@/components/public/doctor-list';
+import {
+  ScrollReveal,
+  ScrollRevealItem,
+} from '@/components/public/motion/scroll-reveal';
 import type { Doctor } from '@/lib/types';
 
 export const metadata = {
@@ -23,19 +27,21 @@ export default async function DoctorsPage() {
 
   return (
     <>
-      <section className="container-public pt-12 sm:pt-16 pb-8">
-        <div className="max-w-2xl">
+      <ScrollReveal as="section" className="container-public pt-12 sm:pt-16 pb-8">
+        <ScrollRevealItem as="div" className="max-w-2xl">
           <span className="eyebrow">Consultations</span>
           <h1 className="h-hero mt-4 text-balance">Our resident doctors.</h1>
           <p className="mt-5 text-[1.0625rem] text-ink-muted leading-[1.7]">
             Book an appointment online or request a slot. We&apos;ll confirm by WhatsApp.
           </p>
-        </div>
-      </section>
+        </ScrollRevealItem>
+      </ScrollReveal>
 
-      <section className="container-public mt-6 sm:mt-10 pb-24">
-        <DoctorList doctors={doctors} whatsappNumber={settings.shop_whatsapp} />
-      </section>
+      <ScrollReveal as="section" className="container-public mt-6 sm:mt-10 pb-24">
+        <ScrollRevealItem>
+          <DoctorList doctors={doctors} whatsappNumber={settings.shop_whatsapp} />
+        </ScrollRevealItem>
+      </ScrollReveal>
     </>
   );
 }

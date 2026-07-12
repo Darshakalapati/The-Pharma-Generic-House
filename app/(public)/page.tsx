@@ -155,18 +155,18 @@ export default async function HomePage() {
           <h2 className="h-section mt-4">Four ways we help you stay well.</h2>
         </ScrollRevealItem>
 
-        <StaggerGrid inherit className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" stagger={0.06}>
+        <StaggerGrid inherit className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch" stagger={0.06}>
           {OFFERS.map((o) => (
-            <StaggerGridItem key={o.title}>
-            <Link href={o.href} className="card-soft p-7 block group">
+            <StaggerGridItem key={o.title} className="h-full">
+            <Link href={o.href} className="card-soft p-7 flex flex-col h-full group">
               <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-plum-tint text-plum">
                 <o.icon className="h-5 w-5" />
               </span>
               <h3 className="h-card mt-5">{o.title}</h3>
-              <p className="mt-2 text-[0.95rem] text-ink-muted leading-[1.6]">
+              <p className="mt-2 text-[0.95rem] text-ink-muted leading-[1.6] flex-1">
                 {o.body}
               </p>
-              <span className="mt-5 inline-flex items-center gap-1 text-[0.875rem] font-medium text-plum">
+              <span className="mt-auto pt-5 inline-flex items-center gap-1 text-[0.875rem] font-medium text-plum">
                 Learn more
                 <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
               </span>

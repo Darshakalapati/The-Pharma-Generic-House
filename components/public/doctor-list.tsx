@@ -7,6 +7,7 @@ import { AppointmentDialog } from './appointment-dialog';
 import { DOCTOR_SPECIALTIES } from '@/lib/constants';
 import { resolveDoctorPhoto } from '@/lib/images';
 import { formatINR, formatTime12 } from '@/lib/utils';
+import { StaggerGrid, StaggerGridItem } from '@/components/public/motion/scroll-reveal';
 import type { Doctor } from '@/lib/types';
 
 export function DoctorList({
@@ -28,11 +29,13 @@ export function DoctorList({
 
   return (
     <>
-      <div className="space-y-6 sm:space-y-7">
+      <StaggerGrid inherit className="space-y-6 sm:space-y-7" stagger={0.08}>
         {doctors.map((d) => (
-          <DoctorCard key={d.id} doctor={d} onBook={() => setActive(d)} />
+          <StaggerGridItem key={d.id}>
+            <DoctorCard doctor={d} onBook={() => setActive(d)} />
+          </StaggerGridItem>
         ))}
-      </div>
+      </StaggerGrid>
 
       {active && (
         <AppointmentDialog

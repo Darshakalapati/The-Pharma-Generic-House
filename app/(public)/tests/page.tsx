@@ -3,6 +3,11 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { TestList } from '@/components/public/test-list';
+import { DiagnosticsBackground3D } from '@/components/public/diagnostics-background-3d';
+import {
+  ScrollReveal,
+  ScrollRevealItem,
+} from '@/components/public/motion/scroll-reveal';
 import { IMG } from '@/lib/images';
 import type { MedicalTest } from '@/lib/types';
 
@@ -24,20 +29,22 @@ export default async function TestsPage() {
 
   return (
     <>
+      <DiagnosticsBackground3D />
+      <div className="relative z-10">
       {/* Hero */}
-      <section className="container-public pt-12 sm:pt-16 pb-8">
-        <div className="max-w-2xl">
+      <ScrollReveal as="section" className="container-public pt-12 sm:pt-16 pb-8">
+        <ScrollRevealItem as="div" className="max-w-2xl">
           <span className="eyebrow eyebrow--teal">Diagnostics · Associated with ThyroCare</span>
           <h1 className="h-hero mt-4 text-balance">
             Lab tests at the shop or your home.
           </h1>
-        </div>
-      </section>
+        </ScrollRevealItem>
+      </ScrollReveal>
 
       {/* Sunday is Test Day callout + lab photo */}
-      <section className="container-public mt-6">
+      <ScrollReveal as="section" className="container-public mt-6">
         <div className="grid lg:grid-cols-2 gap-6 items-stretch">
-          <div className="rounded-2xl bg-sand border border-line p-7 sm:p-8 flex flex-col">
+          <ScrollRevealItem as="div" className="rounded-2xl bg-sand border border-line p-7 sm:p-8 flex flex-col">
             <span className="eyebrow eyebrow--teal">Sunday is Test Day</span>
             <h2 className="font-serif font-medium text-[clamp(1.5rem,3vw,2rem)] mt-3 tracking-[-0.015em] leading-tight">
               Walk-in collection from 9 AM to 1 PM.
@@ -54,9 +61,9 @@ export default async function TestsPage() {
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>
-          </div>
+          </ScrollRevealItem>
 
-          <div className="relative aspect-[4/3] lg:aspect-auto rounded-2xl overflow-hidden border border-line shadow-soft">
+          <ScrollRevealItem as="div" className="relative aspect-[4/3] lg:aspect-auto rounded-2xl overflow-hidden border border-line shadow-soft">
             <Image
               src={IMG.diagnostics.bloodTest}
               alt="Lab samples being processed"
@@ -64,28 +71,28 @@ export default async function TestsPage() {
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
             />
-          </div>
+          </ScrollRevealItem>
         </div>
-      </section>
+      </ScrollReveal>
 
       {/* Tests grid */}
-      <section id="tests" className="container-public mt-20 sm:mt-24 scroll-mt-24">
-        <div className="max-w-2xl">
+      <ScrollReveal as="section" id="tests" className="container-public mt-20 sm:mt-24 scroll-mt-24">
+        <ScrollRevealItem as="div" className="max-w-2xl">
           <span className="eyebrow">Available Tests</span>
           <h2 className="h-section mt-4">All tests offered.</h2>
           <p className="mt-4 text-[1.0625rem] text-ink-muted leading-[1.7]">
             Tap any test to book your slot. We&apos;ll confirm by WhatsApp.
           </p>
-        </div>
+        </ScrollRevealItem>
 
-        <div className="mt-10">
+        <ScrollRevealItem as="div" className="mt-10">
           <TestList tests={tests} />
-        </div>
-      </section>
+        </ScrollRevealItem>
+      </ScrollReveal>
 
       {/* ThyroCare associate note */}
-      <section className="container-public mt-20 sm:mt-24 pb-24">
-        <div className="rounded-2xl bg-bg-elevated border border-line p-7 sm:p-9 max-w-3xl">
+      <ScrollReveal as="section" className="container-public mt-20 sm:mt-24 pb-24">
+        <ScrollRevealItem as="div" className="rounded-2xl bg-bg-elevated border border-line p-7 sm:p-9 max-w-3xl">
           <span className="eyebrow eyebrow--teal">Associated with</span>
           <h2 className="font-serif font-medium text-[clamp(1.5rem,3vw,2rem)] mt-3 tracking-[-0.015em]">
             ThyroCare
@@ -96,8 +103,9 @@ export default async function TestsPage() {
             hours. If a specific test isn&apos;t listed, just ask — we can almost always
             arrange it.
           </p>
-        </div>
-      </section>
+        </ScrollRevealItem>
+      </ScrollReveal>
+      </div>
     </>
   );
 }

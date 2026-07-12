@@ -1,6 +1,6 @@
 'use client';
 
-import { motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 
 const EASE_OUT: [number, number, number, number] = [0, 0, 0.2, 1];
@@ -14,14 +14,17 @@ export function PublicMain({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <motion.main
-      key={pathname}
-      className="min-h-[60vh]"
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: EASE_OUT }}
-    >
-      {children}
-    </motion.main>
+    <AnimatePresence mode="wait">
+      <motion.main
+        key={pathname}
+        className="min-h-[60vh]"
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 4 }}
+        transition={{ duration: 0.4, ease: EASE_OUT }}
+      >
+        {children}
+      </motion.main>
+    </AnimatePresence>
   );
 }

@@ -5,6 +5,7 @@ import { Search, Plus, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PRODUCT_CATEGORIES } from '@/lib/constants';
 import { useEnquiryCart } from './enquiry-cart-context';
+import { StaggerGrid, StaggerGridItem } from '@/components/public/motion/scroll-reveal';
 import type { Product } from '@/lib/types';
 
 const FILTERS = [
@@ -88,16 +89,17 @@ export function ProductGrid({
           <p>No products match. Try another category, or message us on WhatsApp.</p>
         </div>
       ) : (
-        <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+        <StaggerGrid inherit className="mt-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5" stagger={0.06}>
           {filtered.map((p) => (
+            <StaggerGridItem key={p.id} className="h-full">
             <ProductCard
-              key={p.id}
               product={p}
               added={inCart(p.id)}
               onAdd={() => add({ product_id: p.id, product_name: p.name })}
             />
+            </StaggerGridItem>
           ))}
-        </div>
+        </StaggerGrid>
       )}
     </div>
   );
@@ -123,7 +125,7 @@ function ProductCard({
   const isDisabled = !product.in_stock || added;
 
   return (
-    <article className="card-soft overflow-hidden flex flex-col">
+    <article className="card-soft overflow-hidden flex flex-col h-full">
       <div className="relative aspect-square bg-sand overflow-hidden">
         {product.image_url ? (
           // Use plain img to allow any external host (picsum, supabase-stored uploads, unsplash)
