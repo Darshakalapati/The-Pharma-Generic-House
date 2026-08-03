@@ -155,7 +155,7 @@ export default async function HomePage() {
           <h2 className="h-section mt-4">Four ways we help you stay well.</h2>
         </ScrollRevealItem>
 
-        <StaggerGrid inherit className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch" stagger={0.06}>
+        <StaggerGrid inherit className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch" stagger={0.06}>
           {OFFERS.map((o) => (
             <StaggerGridItem key={o.title} className="h-full">
             <Link href={o.href} className="card-soft p-7 flex flex-col h-full group">

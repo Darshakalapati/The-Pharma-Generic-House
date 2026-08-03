@@ -31,6 +31,15 @@ export const metadata: Metadata = {
     description: SHOP_TAGLINE,
     type: 'website',
   },
+  icons: {
+    icon: [
+      { url: '/icon.png', type: 'image/png' },
+      { url: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: '/apple-icon.png',
+    shortcut: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

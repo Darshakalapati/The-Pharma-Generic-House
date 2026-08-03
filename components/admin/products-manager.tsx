@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Plus, Edit, Trash2, ImageOff } from 'lucide-react';
+import { Plus, Edit, Trash2, ImageOff, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -16,6 +16,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { ProductForm } from './product-form';
+import { BulkUploadProducts } from './bulk-upload-products';
 import { createClient } from '@/lib/supabase/client';
 import { PRODUCT_CATEGORIES } from '@/lib/constants';
 import type { Product } from '@/lib/types';
@@ -26,6 +27,7 @@ export function ProductsManager({ products }: { products: Product[] }) {
   const [formOpen, setFormOpen] = React.useState(false);
   const [confirmDel, setConfirmDel] = React.useState<Product | null>(null);
   const [working, setWorking] = React.useState<string | null>(null);
+  const [bulkOpen, setBulkOpen] = React.useState(false);
 
   const startCreate = () => {
     setEditing(null);
@@ -73,7 +75,10 @@ export function ProductsManager({ products }: { products: Product[] }) {
 
   return (
     <>
-      <div className="flex justify-end mb-5">
+      <div className="flex flex-wrap justify-end gap-2 mb-5">
+        <Button variant="outline" onClick={() => setBulkOpen(true)}>
+          <Upload className="h-4 w-4" /> Bulk Upload
+        </Button>
         <Button onClick={startCreate}>
           <Plus className="h-4 w-4" /> Add product
         </Button>
@@ -136,6 +141,8 @@ export function ProductsManager({ products }: { products: Product[] }) {
       )}
 
       <ProductForm product={editing} open={formOpen} onOpenChange={setFormOpen} />
+
+      <BulkUploadProducts products={products} open={bulkOpen} onOpenChange={setBulkOpen} />
 
       <Dialog open={!!confirmDel} onOpenChange={(v) => !v && setConfirmDel(null)}>
         <DialogContent>

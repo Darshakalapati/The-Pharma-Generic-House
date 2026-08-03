@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Phone, MessageCircle, MapPin, Clock } from 'lucide-react';
 import { FooterWordmark } from './logo';
 import { SHOP_EMAIL } from '@/lib/constants';
@@ -23,7 +24,16 @@ export function SiteFooter({ settings }: { settings: ShopSettings }) {
     <footer className="mt-24 bg-ink text-bg">
       <div className="container-public pt-16 pb-10">
         <div>
-          <FooterWordmark className="text-bg" />
+          <div className="flex items-center gap-4">
+            <Image
+              src="/logo.png"
+              alt="The Pharma Generic House"
+              width={512}
+              height={512}
+              className="h-12 w-auto sm:h-14 shrink-0"
+            />
+            <FooterWordmark className="text-bg" />
+          </div>
           <p className="mt-3 text-[0.95rem] text-bg/70 max-w-md">
             Your trusted neighbourhood pharmacy. Vijayawada.
           </p>

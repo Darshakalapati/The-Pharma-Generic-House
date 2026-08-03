@@ -1,11 +1,17 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
+import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { ScrollReveal, ScrollRevealItem } from '@/components/public/motion/scroll-reveal';
-import { HeroCapsuleVisual } from '@/components/public/hero-capsule-visual';
+
+const HERO_PHOTO =
+  'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=1200&q=85&auto=format&fit=crop';
 
 export function HomeHero() {
+  const reduced = useReducedMotion();
+
   return (
     <ScrollReveal as="section" className="container-public pt-12 sm:pt-16 pb-10 sm:pb-16">
       <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
@@ -32,9 +38,22 @@ export function HomeHero() {
           </ScrollRevealItem>
         </div>
 
-        <ScrollRevealItem as="div" className="relative">
-          <div className="relative rounded-2xl overflow-hidden">
-            <HeroCapsuleVisual />
+        <motion.div
+          className="relative"
+          initial={reduced ? false : { opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.8, ease: [0, 0, 0.2, 1] }}
+        >
+          <div className="relative aspect-[4/5] lg:aspect-[3/4] rounded-2xl overflow-hidden border border-line shadow-card">
+            <Image
+              src={HERO_PHOTO}
+              alt="Inside The Pharma Generic House pharmacy"
+              width={1200}
+              height={1400}
+              priority
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="h-full w-full object-cover object-center"
+            />
           </div>
           {/* Tiny floating accent — small teal cross */}
           <div
@@ -43,7 +62,7 @@ export function HomeHero() {
           >
             <span className="block h-2 w-2 rounded-full bg-teal" />
           </div>
-        </ScrollRevealItem>
+        </motion.div>
       </div>
     </ScrollReveal>
   );
