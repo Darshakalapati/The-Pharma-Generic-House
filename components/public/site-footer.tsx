@@ -31,6 +31,14 @@ const COL_SERVICES = [
  */
 const WORDMARK_SIZE = 'clamp(1.75rem, 6vw, 8rem)';
 
+/**
+ * Shell for the four footer columns. Declared once and applied to all four so
+ * the border, radius, padding and panel tint cannot drift apart. `h-full` makes
+ * each box fill its grid row, so every box in a row ends on the same line
+ * regardless of how much content it holds.
+ */
+const COLUMN_BOX = 'h-full rounded-xl border border-bg/[0.12] bg-white/[0.03] p-7';
+
 export function SiteFooter({ settings }: { settings: ShopSettings }) {
   return (
     <footer className="relative bg-ink text-bg">
@@ -51,9 +59,9 @@ export function SiteFooter({ settings }: { settings: ShopSettings }) {
           </p>
         </div>
 
-        <div className="mt-14 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+        <div className="mt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
           {/* Shop column */}
-          <div>
+          <div className={COLUMN_BOX}>
             <h3 className="eyebrow eyebrow--teal text-[0.7rem]">Shop</h3>
             <ul className="mt-5 space-y-3 text-[0.9375rem] text-bg/70">
               <li className="flex items-start gap-2.5">
@@ -85,7 +93,7 @@ export function SiteFooter({ settings }: { settings: ShopSettings }) {
           </div>
 
           {/* Browse */}
-          <div>
+          <div className={COLUMN_BOX}>
             <h3 className="eyebrow eyebrow--teal text-[0.7rem]">Browse</h3>
             <ul className="mt-5 space-y-2.5 text-[0.9375rem] text-bg/70">
               {COL_BROWSE.map((l) => (
@@ -99,7 +107,7 @@ export function SiteFooter({ settings }: { settings: ShopSettings }) {
           </div>
 
           {/* Services */}
-          <div>
+          <div className={COLUMN_BOX}>
             <h3 className="eyebrow eyebrow--teal text-[0.7rem]">Services</h3>
             <ul className="mt-5 space-y-2.5 text-[0.9375rem] text-bg/70">
               {COL_SERVICES.map((l) => (
@@ -113,7 +121,7 @@ export function SiteFooter({ settings }: { settings: ShopSettings }) {
           </div>
 
           {/* Get in touch */}
-          <div>
+          <div className={COLUMN_BOX}>
             <h3 className="eyebrow eyebrow--teal text-[0.7rem]">Get in touch</h3>
             <ul className="mt-5 space-y-2.5 text-[0.9375rem] text-bg/70">
               <li>
