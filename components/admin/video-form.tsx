@@ -26,6 +26,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { VideoUpload } from './video-upload';
+import { ImageUpload } from './image-upload';
+import { ASPECT } from '@/lib/image-crop';
 import { createClient } from '@/lib/supabase/client';
 import {
   cn,
@@ -291,7 +293,21 @@ export function VideoForm({
           {/* Thumbnail — manual override only meaningful for uploads. */}
           {source === 'upload' && (
             <div>
-              <Label htmlFor="v-thumb">Thumbnail URL (optional)</Label>
+              <Label>Thumbnail (optional)</Label>
+              <div className="mt-1.5">
+                <ImageUpload
+                  value={thumbnailUrl || null}
+                  onChange={(url) =>
+                    setValue('thumbnail_url', url ?? '', { shouldValidate: true })
+                  }
+                  folder="video-thumbnails"
+                  aspectRatio={ASPECT.videoThumbnail}
+                  previewClassName="w-44"
+                />
+              </div>
+              <Label htmlFor="v-thumb" className="mt-3 block">
+                …or paste a thumbnail URL
+              </Label>
               <Input
                 id="v-thumb"
                 placeholder="https://..."

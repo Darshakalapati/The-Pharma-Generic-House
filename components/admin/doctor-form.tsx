@@ -27,6 +27,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ImageUpload } from './image-upload';
+import { ASPECT } from '@/lib/image-crop';
 import { DOCTOR_SPECIALTIES, WEEKDAYS } from '@/lib/constants';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
@@ -135,7 +136,12 @@ export function DoctorForm({
           <div>
             <Label>Photo</Label>
             <div className="mt-1.5">
-              <ImageUpload value={photoUrl} onChange={setPhotoUrl} folder="doctors" />
+              <ImageUpload
+                value={photoUrl}
+                onChange={setPhotoUrl}
+                folder="doctors"
+                aspectRatio={ASPECT.doctorPhoto}
+              />
             </div>
           </div>
 

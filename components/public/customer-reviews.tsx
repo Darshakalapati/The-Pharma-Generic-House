@@ -27,7 +27,7 @@ export async function CustomerReviews() {
         <span className="eyebrow">From Google</span>
         <h2 className="h-section mt-4">What our customers say.</h2>
         <p className="mt-4 text-[1.0625rem] text-ink-muted leading-[1.7]">
-          Verified reviews from families who trust us with their health.
+          Verified reviews from people who trust us with their health.
         </p>
       </ScrollRevealItem>
 

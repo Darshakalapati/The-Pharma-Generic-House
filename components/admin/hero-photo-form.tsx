@@ -18,6 +18,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { ImageUpload } from './image-upload';
+import { ASPECT } from '@/lib/image-crop';
 import { createClient } from '@/lib/supabase/client';
 import type { HeroPhoto } from '@/lib/types';
 
@@ -116,7 +117,8 @@ export function HeroPhotoForm({
                 bucket="hero-photos"
                 pathLayout="flat"
                 maxSizeMb={10}
-                previewClassName="aspect-[4/3] w-44"
+                aspectRatio={ASPECT.heroPhoto}
+                previewClassName="w-36"
               />
             </div>
             <p className="mt-1 text-xs text-brand-muted">

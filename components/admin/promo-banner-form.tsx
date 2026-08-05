@@ -19,6 +19,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { ImageUpload } from './image-upload';
+import { ASPECT } from '@/lib/image-crop';
 import { PromoBannerCard } from '@/components/public/promo-banner-card';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
@@ -245,7 +246,8 @@ export function PromoBannerForm({
                   folder="banners"
                   bucket="promo-banners"
                   pathLayout="flat"
-                  previewClassName="aspect-[16/9] w-40"
+                  aspectRatio={ASPECT.promoBanner}
+                  previewClassName="w-48"
                 />
               </div>
               <p className="mt-1 text-xs text-brand-muted">

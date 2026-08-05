@@ -9,7 +9,7 @@ const STATS = [
   { value: 125, suffix: '+', label: 'customers every day' },
   { value: 50, suffix: '+', label: 'prescriptions filled daily' },
   { value: 30000, suffix: '+', label: 'prescriptions since 2018' },
-  { value: 7, suffix: '+', label: 'years serving Vijayawada families' },
+  { value: 7, suffix: '+', label: 'years serving Vijayawada' },
 ];
 
 const DURATION_MS = 1600;

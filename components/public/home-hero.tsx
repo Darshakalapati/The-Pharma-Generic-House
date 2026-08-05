@@ -35,14 +35,14 @@ export function HomeHero({ photos = [] }: { photos?: KenBurnsSlide[] }) {
       <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
         <div>
           <ScrollRevealItem as="span" className="eyebrow block">
-            Vijayawada · Established Family Pharmacy
+            Vijayawada · Trusted Neighbourhood Pharmacy
           </ScrollRevealItem>
           <ScrollRevealItem as="h1" className="h-hero mt-5 text-balance">
             Medicines, doctors, and lab tests — under one trusted roof.
           </ScrollRevealItem>
           <ScrollRevealItem as="p" className="mt-6 text-[1.0625rem] text-ink-muted leading-[1.7] max-w-[55ch]">
             From everyday medicines to Ayurvedic care, doctor consultations, and Sunday
-            lab tests — The Pharma Generic House has served Vijayawada families for
+            lab tests — The Pharma Generic House has served Vijayawada for
             over a decade.
           </ScrollRevealItem>
           <ScrollRevealItem as="div" className="mt-8 flex flex-wrap items-center gap-4 sm:gap-6">

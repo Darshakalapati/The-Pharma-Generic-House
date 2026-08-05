@@ -19,6 +19,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { ImageUpload } from './image-upload';
+import { ASPECT } from '@/lib/image-crop';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
 import type { FamilyMember } from '@/lib/types';
@@ -170,7 +171,8 @@ export function FamilyForm({
                 folder="family"
                 bucket="family-photos"
                 pathLayout="flat"
-                previewClassName="aspect-[4/5] w-32"
+                aspectRatio={ASPECT.familyPhoto}
+                previewClassName="w-32"
               />
             </div>
             <p className="mt-1 text-xs text-brand-muted">

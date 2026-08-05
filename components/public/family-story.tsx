@@ -17,8 +17,8 @@ const PORTRAIT_ZOOM = 1.05;
  */
 const FALLBACK: Pick<FamilyMember, 'name' | 'role' | 'bio' | 'quote_text' | 'quote_attribution'> = {
   name: 'Uma Shankar Alapati',
-  role: 'Founder & Pharmacist',
-  bio: 'Uma Shankar Alapati brings over 27 years of medical experience and more than a decade of running The Pharma Generic House. He grew up in his father’s pharmacy, learning about medicines before he could read prescriptions. That inherited knowledge — combined with decades of relationships with local doctors and medical professionals — is what customers walk in for. He doesn’t just fill prescriptions. He listens, advises, and cares.',
+  role: 'Founder',
+  bio: 'Uma Shankar Alapati brings over 27 years of medical experience to The Pharma Generic House. He built the pharmacy to translate that experience into something Vijayawada families could rely on — trusted medicines, personal advice, and honest care. Every prescription he fills carries decades of medical understanding behind it. That is why customers come back, and why they bring their neighbours.',
   quote_text: 'We don’t sell medicines. We sell healing.',
   quote_attribution: 'Uma Shankar Alapati',
 };
@@ -47,10 +47,10 @@ export function FamilyStory({ member }: { member: FamilyMember | null }) {
 
       <ScrollRevealItem as="div" className="max-w-3xl">
         <span className="eyebrow">Our story</span>
-        <h2 className="h-section mt-4 text-balance">Three generations of pharmacy.</h2>
+        <h2 className="h-section mt-4 text-balance">The person behind the shop</h2>
         <p className="mt-6 font-serif italic font-normal text-[1.5rem] leading-[1.4] text-ink-muted text-pretty">
-          From a small pharmacy started by his father to a shop of his own — Uma
-          Shankar Alapati has spent his life around medicine.
+          Uma Shankar Alapati brings decades of medical experience to Vijayawada —
+          one prescription, one honest conversation at a time.
         </p>
       </ScrollRevealItem>
 
@@ -76,12 +76,12 @@ export function FamilyStory({ member }: { member: FamilyMember | null }) {
           )}
         </ScrollRevealItem>
 
-        {/* Bio, pull-quote, closing line */}
+        {/* Bio and pull-quote — the pull-quote closes the section */}
         <ScrollRevealItem as="div" className="lg:col-start-7 lg:col-span-6">
           <p className="text-[1.0625rem] text-ink leading-[1.7] max-w-[55ch]">{bio}</p>
 
           {quote && (
-            <figure className="my-10 py-8 border-y border-line max-w-[40ch]">
+            <figure className="mt-10 py-8 border-y border-line max-w-[40ch]">
               <blockquote className="font-serif italic font-light text-[clamp(1.75rem,4vw,2.5rem)] leading-[1.3] text-plum text-balance">
                 &ldquo;{quote}&rdquo;
               </blockquote>
@@ -90,10 +90,6 @@ export function FamilyStory({ member }: { member: FamilyMember | null }) {
               </figcaption>
             </figure>
           )}
-
-          <p className="mt-10 text-[1.0625rem] text-ink leading-[1.7] max-w-[55ch]">
-            The third generation is joining the family. More coming soon.
-          </p>
         </ScrollRevealItem>
       </div>
     </ScrollReveal>

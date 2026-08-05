@@ -167,7 +167,7 @@ export default async function HomePage() {
       <ScrollReveal as="section" className="bg-sand border-y border-line">
         <ScrollRevealItem as="div" className="container-public py-3.5 overflow-x-auto">
           <p className="flex items-center gap-3 sm:gap-5 whitespace-nowrap text-[0.875rem] text-ink-muted">
-            <span>Family-run since 2010</span>
+            <span>Pharmacy built on trust since 2018</span>
             <span aria-hidden className="text-ink-faint">·</span>
             <span>ThyroCare associate</span>
             <span aria-hidden className="text-ink-faint">·</span>
@@ -216,7 +216,7 @@ export default async function HomePage() {
       {/* SECTION 2.6 — BY THE NUMBERS ─────────────────────────────── */}
       <HomeStats />
 
-      {/* SECTION 2.7 — OUR STORY / MEET THE FAMILY ────────────────── */}
+      {/* SECTION 2.7 — OUR STORY / THE PERSON BEHIND THE SHOP ─────── */}
       <FamilyStory member={featuredMember} />
 
       {/* SECTION 3 — DOCTORS ──────────────────────────────────────── */}
@@ -431,10 +431,10 @@ export default async function HomePage() {
           <div>
             <ScrollRevealItem as="span" className="eyebrow block">About us</ScrollRevealItem>
             <ScrollRevealItem as="h2" className="h-section mt-4 text-balance">
-              A neighbourhood pharmacy, run by family.
+              A neighbourhood pharmacy, built on trust.
             </ScrollRevealItem>
             <ScrollRevealItem as="p" className="mt-5 text-[1.0625rem] text-ink-muted leading-[1.75]">
-              We&apos;re a family-run pharmacy in Vijayawada, serving the same community
+              We&apos;re a trusted pharmacy in Vijayawada, serving the same community
               for more than a decade. Our shelves carry general and prescription
               medicines, classical Ayurvedic preparations, and trusted personal care
               brands — chosen with care.

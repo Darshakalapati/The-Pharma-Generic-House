@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     template: `%s · ${SHOP_NAME}`,
   },
   description:
-    'Family-owned pharmacy in Vijayawada. Medicines, ayurvedic remedies, cosmetics, doctor consultations and lab tests — with WhatsApp support.',
+    'Trusted pharmacy in Vijayawada. Medicines, ayurvedic remedies, cosmetics, doctor consultations and lab tests — with WhatsApp support.',
   metadataBase: new URL('https://pharmagenerichouse.com'),
   openGraph: {
     title: SHOP_NAME,

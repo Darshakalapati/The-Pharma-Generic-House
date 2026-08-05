@@ -26,6 +26,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { ImageUpload } from './image-upload';
+import { ASPECT } from '@/lib/image-crop';
 import { PRODUCT_CATEGORIES } from '@/lib/constants';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
@@ -127,7 +128,12 @@ export function ProductForm({
           <div>
             <Label>Image</Label>
             <div className="mt-1.5">
-              <ImageUpload value={imageUrl} onChange={setImageUrl} folder="products" />
+              <ImageUpload
+                value={imageUrl}
+                onChange={setImageUrl}
+                folder="products"
+                aspectRatio={ASPECT.productPhoto}
+              />
             </div>
           </div>
 

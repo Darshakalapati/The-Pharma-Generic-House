@@ -6,7 +6,7 @@ import { IMG } from '@/lib/images';
 export const metadata = {
   title: 'About',
   description:
-    'A family pharmacy in Vijayawada, with you for the long term. Trusted medicines, honest advice, and quality healthcare.',
+    'A trusted pharmacy in Vijayawada, with you for the long term. Trusted medicines, honest advice, and quality healthcare.',
 };
 
 const VALUES = [
@@ -18,7 +18,7 @@ const VALUES = [
   {
     icon: HeartHandshake,
     title: 'Care',
-    body: 'Personal advice from people who know your family. Not a chain. Not a website.',
+    body: 'Personal advice from people who know you by name. Not a chain. Not a website.',
   },
   {
     icon: MapPin,
@@ -35,7 +35,7 @@ export default function AboutPage() {
         <div className="max-w-3xl">
           <span className="eyebrow">Our story</span>
           <h1 className="h-hero mt-4 text-balance">
-            A family pharmacy, with you for the long term.
+            A trusted pharmacy, with you for the long term.
           </h1>
         </div>
       </section>
@@ -46,13 +46,13 @@ export default function AboutPage() {
           <p className="text-[1.0625rem] leading-[1.8] text-ink">
             The Pharma Generic House began as a small neighbourhood medical store in
             Vijayawada with one simple goal — to make trusted medicines, honest advice,
-            and quality healthcare accessible to every family that walks in.
+            and quality healthcare accessible to everyone who walks in.
           </p>
           <p className="mt-5 text-[1.0625rem] leading-[1.8] text-ink-muted">
-            Today, the shop is run by a father and son. They know most of their
-            customers by name, remember which children need the cherry-flavoured cough
-            syrup, and won&apos;t hesitate to suggest a generic when it works just as
-            well as the brand.
+            Today, the shop is run by people who know most of their customers by
+            name, remember which children need the cherry-flavoured cough syrup, and
+            won&apos;t hesitate to suggest a generic when it works just as well as the
+            brand.
           </p>
           <p className="mt-5 text-[1.0625rem] leading-[1.8] text-ink-muted">
             Our shelves carry general medicines for everyday needs, prescription pharma
@@ -69,7 +69,7 @@ export default function AboutPage() {
             other days too.
           </p>
           <p className="mt-5 text-[1.0625rem] leading-[1.8] text-ink-muted">
-            We&apos;re here for the long term — same shop, same family, same shelves
+            We&apos;re here for the long term — same shop, same people, same shelves
             you can rely on.
           </p>
         </div>
