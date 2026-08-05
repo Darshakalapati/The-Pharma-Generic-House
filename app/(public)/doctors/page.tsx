@@ -37,7 +37,7 @@ export default async function DoctorsPage() {
         </ScrollRevealItem>
       </ScrollReveal>
 
-      <ScrollReveal as="section" className="container-public mt-6 sm:mt-10 pb-24">
+      <ScrollReveal as="section" className="container-public mt-6 sm:mt-10 pb-16">
         <ScrollRevealItem>
           <DoctorList doctors={doctors} whatsappNumber={settings.shop_whatsapp} />
         </ScrollRevealItem>

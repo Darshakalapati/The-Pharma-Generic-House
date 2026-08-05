@@ -111,7 +111,7 @@ export default function AboutPage() {
       </section>
 
       {/* Closing CTA */}
-      <section className="container-public mt-20 sm:mt-24 pb-24">
+      <section className="container-public mt-20 sm:mt-24 pb-16">
         <div className="max-w-narrow mx-auto text-center">
           <h2 className="h-section">Come visit, or send us a message.</h2>
           <p className="mt-4 text-[1.0625rem] text-ink-muted leading-[1.7]">

@@ -95,7 +95,7 @@ export default async function TestsPage() {
       </ScrollReveal>
 
       {/* ThyroCare associate note */}
-      <ScrollReveal as="section" className="container-public mt-20 sm:mt-24 pb-24">
+      <ScrollReveal as="section" className="container-public mt-20 sm:mt-24 pb-16">
         <ScrollRevealItem as="div" className="rounded-2xl bg-bg-elevated border border-line p-7 sm:p-9 max-w-3xl">
           <span className="eyebrow eyebrow--teal">Associated with</span>
           <h2 className="font-serif font-medium text-[clamp(1.5rem,3vw,2rem)] mt-3 tracking-[-0.015em]">

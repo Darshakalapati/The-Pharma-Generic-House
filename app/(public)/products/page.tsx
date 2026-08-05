@@ -44,7 +44,7 @@ export default async function ProductsPage({
         </ScrollRevealItem>
       </ScrollReveal>
 
-      <ScrollReveal as="section" className="container-public mt-6 sm:mt-10 pb-24">
+      <ScrollReveal as="section" className="container-public mt-6 sm:mt-10 pb-16">
         <ScrollRevealItem>
           <ProductGrid products={products} initialCategory={initialCategory} />
         </ScrollRevealItem>

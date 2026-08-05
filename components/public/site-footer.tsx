@@ -19,9 +19,20 @@ const COL_SERVICES = [
   { label: 'About us', href: '/about' },
 ];
 
+/**
+ * Giant cropped wordmark at the foot of the page.
+ *
+ * `WORDMARK_BAND` is the visible sliver — roughly 60% of the type size, so the
+ * letters are sheared off just below their waist. It is used twice: once as a
+ * spacer that reserves the room in normal flow, and once as the height of the
+ * absolutely-positioned clip window that sits in it. Keep the two in step.
+ */
+const WORDMARK_BAND = 'clamp(2.5rem, 5vw, 6rem)';
+const WORDMARK_SIZE = 'clamp(4rem, 8.2vw, 9.5rem)';
+
 export function SiteFooter({ settings }: { settings: ShopSettings }) {
   return (
-    <footer className="mt-24 bg-ink text-bg">
+    <footer className="relative overflow-hidden bg-ink text-bg">
       <div className="container-public pt-16 pb-10">
         <div>
           <div className="flex items-center gap-4">
@@ -133,9 +144,9 @@ export function SiteFooter({ settings }: { settings: ShopSettings }) {
           </div>
         </div>
 
-        <div className="mt-14 pt-6 border-t border-bg/15 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between text-[0.8rem] text-bg/55">
-          <span>© 2026 The Pharma Generic House. All rights reserved.</span>
-          <div className="flex gap-6">
+        <div className="mt-14 pt-7 border-t border-bg/15 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[0.8rem] text-bg/55">
+            <span>© 2026 The Pharma Generic House</span>
             <Link href="/contact" className="hover:text-bg transition-colors">
               Privacy
             </Link>
@@ -143,7 +154,37 @@ export function SiteFooter({ settings }: { settings: ShopSettings }) {
               Terms
             </Link>
           </div>
+          <p className="font-serif italic font-normal text-[0.9375rem] text-teal-soft">
+            Medicines, doctors, tests — under one roof.
+          </p>
         </div>
+      </div>
+
+      {/* Reserves the flow space the cropped wordmark occupies below. */}
+      <div aria-hidden style={{ height: WORDMARK_BAND }} />
+
+      {/* Giant wordmark — decorative, cropped by the footer's bottom edge. */}
+      <div
+        aria-hidden
+        className="pointer-events-none select-none absolute inset-x-0 bottom-0 flex items-end justify-center overflow-hidden"
+        style={{ height: WORDMARK_BAND }}
+      >
+        <span
+          className="font-serif whitespace-nowrap"
+          style={{
+            fontSize: WORDMARK_SIZE,
+            fontWeight: 400,
+            letterSpacing: '-0.03em',
+            lineHeight: 1,
+            color: 'var(--bg)',
+            opacity: 0.1,
+            // Pushes ~35% of the glyph box past the footer edge, leaving the
+            // top ~60% of the letters showing.
+            transform: 'translateY(35%)',
+          }}
+        >
+          The Pharma Generic House
+        </span>
       </div>
     </footer>
   );

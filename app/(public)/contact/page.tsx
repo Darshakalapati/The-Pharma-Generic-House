@@ -153,7 +153,7 @@ export default async function ContactPage() {
       </section>
 
       {/* Map */}
-      <section className="container-public mt-20 sm:mt-24 pb-20">
+      <section className="container-public mt-20 sm:mt-24 pb-16">
         <div className="rounded-2xl overflow-hidden border border-line">
           <iframe
             title="Map showing The Pharma Generic House location"
