@@ -46,14 +46,14 @@ const COLUMN_BOX = 'h-full rounded-xl p-7';
 export function SiteFooter({ settings }: { settings: ShopSettings }) {
   return (
     <footer className="relative bg-ink text-bg">
-      <div className="container-public pt-16 pb-10">
+      <div className="container-public pt-16 pb-0">
         <div>
           <div className="flex items-center gap-4">
             <Image
               src="/logo.png"
               alt="The Pharma Generic House"
-              width={512}
-              height={512}
+              width={491}
+              height={498}
               className="h-12 w-auto sm:h-14 shrink-0"
             />
             <FooterWordmark className="text-bg" />
@@ -157,7 +157,7 @@ export function SiteFooter({ settings }: { settings: ShopSettings }) {
           </TiltCard>
         </div>
 
-        <div className="mt-14 pt-7 border-t border-bg/15 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="mt-14 pt-4 border-t border-bg/15 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[0.8rem] text-bg/55">
             <span>© 2026 The Pharma Generic House</span>
             <Link href="/contact" className="hover:text-bg transition-colors">
@@ -177,7 +177,7 @@ export function SiteFooter({ settings }: { settings: ShopSettings }) {
           below the copyright row, so it sizes to the height of the type. */}
       <div
         aria-hidden
-        className="pointer-events-none select-none flex justify-center pt-6 pb-5"
+        className="pointer-events-none select-none flex justify-center pt-3 pb-5"
       >
         <span
           className="font-serif whitespace-nowrap text-center"

@@ -35,8 +35,8 @@ export function Logo({ className, tagline = false }: LogoProps) {
         <Image
           src="/logo.png"
           alt="The Pharma Generic House"
-          width={512}
-          height={512}
+          width={491}
+          height={498}
           priority
           className="h-8 w-auto sm:h-10"
         />
