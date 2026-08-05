@@ -36,7 +36,7 @@ export const SHOP_CITY = 'Vijayawada';
 
 export const TEST_DAY = 'Sunday';
 
-export const SHOP_EMAIL = 'hello@pharmagenerichouse.com';
+export const SHOP_EMAIL = 'usalapati@yahoo.com';
 
 // Public Google Maps URL for the shop's review listing. Used by the home
 // page reviews section ("Read all reviews on Google →") and the admin
