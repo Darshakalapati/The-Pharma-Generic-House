@@ -20,21 +20,16 @@ const COL_SERVICES = [
 ];
 
 /**
- * Giant cropped wordmark at the foot of the page.
+ * Giant wordmark at the foot of the page — shown whole, nothing cropped.
  *
- * The size is purely proportional to the viewport — deliberately with no lower
- * bound. "The Pharma Generic House" is 24 characters, so any rem floor makes it
- * wider than a phone screen and the ends get sliced off. At 6.5vw the string
- * fits inside the viewport with a margin to spare even on the widest plausible
- * metrics for Fraunces, at every breakpoint.
- *
- * `WORDMARK_BAND` is the visible sliver — ~69% of the type size, so the letters
- * are sheared off below their waist. It is used twice: once as a spacer that
- * reserves the room in normal flow, and once as the height of the absolutely
- * positioned clip window that sits in it. Keep the two in step.
+ * "The Pharma Generic House" is 24 characters on a single nowrap line, so the
+ * size has to stay viewport-proportional or the ends run off the screen. 6vw
+ * keeps the phrase inside the viewport with a margin either side even on the
+ * widest plausible metrics for Fraunces. The 1.25rem floor only engages below
+ * ~333px, well under the narrowest phone in the test matrix — a larger floor
+ * (2rem) overflows a 375px screen.
  */
-const WORDMARK_BAND = 'min(4.5vw, 6.3rem)';
-const WORDMARK_SIZE = 'min(6.5vw, 9rem)';
+const WORDMARK_SIZE = 'clamp(1.25rem, 6vw, 8rem)';
 
 export function SiteFooter({ settings }: { settings: ShopSettings }) {
   return (
@@ -166,14 +161,11 @@ export function SiteFooter({ settings }: { settings: ShopSettings }) {
         </div>
       </div>
 
-      {/* Reserves the flow space the cropped wordmark occupies below. */}
-      <div aria-hidden style={{ height: WORDMARK_BAND }} />
-
-      {/* Giant wordmark — decorative, cropped by the footer's bottom edge. */}
+      {/* Giant wordmark — decorative watermark, shown in full. In normal flow
+          below the copyright row, so it sizes to the height of the type. */}
       <div
         aria-hidden
-        className="pointer-events-none select-none absolute inset-x-0 bottom-0 flex items-end justify-center overflow-hidden"
-        style={{ height: WORDMARK_BAND }}
+        className="pointer-events-none select-none flex justify-center pt-6 pb-4"
       >
         <span
           className="font-serif whitespace-nowrap text-center"
@@ -184,9 +176,6 @@ export function SiteFooter({ settings }: { settings: ShopSettings }) {
             lineHeight: 1,
             color: 'var(--bg)',
             opacity: 0.16,
-            // Pushes ~30% of the glyph box past the footer edge, leaving the
-            // top ~69% of the letters showing.
-            transform: 'translateY(30%)',
           }}
         >
           The Pharma Generic House
