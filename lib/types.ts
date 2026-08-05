@@ -150,6 +150,31 @@ export interface Review {
   created_at: string;
 }
 
+/** A photograph in the home page hero rotation. */
+export interface HeroPhoto {
+  id: string;
+  image_url: string;
+  alt_text: string | null;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+}
+
+/** A person featured in the "Our story" section on the home page. */
+export interface FamilyMember {
+  id: string;
+  name: string;
+  role: string;
+  bio: string;
+  photo_url: string | null;
+  quote_text: string | null;
+  quote_attribution: string | null;
+  display_order: number;
+  is_active: boolean;
+  is_featured_quote: boolean;
+  created_at: string;
+}
+
 export type BannerType = 'image' | 'text';
 export type BannerBackgroundStyle = 'plum' | 'teal' | 'cream';
 

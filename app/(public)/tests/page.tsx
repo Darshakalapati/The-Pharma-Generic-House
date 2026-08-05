@@ -4,6 +4,7 @@ import { ArrowRight } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { TestList } from '@/components/public/test-list';
 import { DiagnosticsBackground3D } from '@/components/public/diagnostics-background-3d';
+import { DiagnosticsHowItWorks } from '@/components/public/diagnostics-how-it-works';
 import {
   ScrollReveal,
   ScrollRevealItem,
@@ -74,6 +75,9 @@ export default async function TestsPage() {
           </ScrollRevealItem>
         </div>
       </ScrollReveal>
+
+      {/* How it works — three steps, between the Sunday callout and the grid */}
+      <DiagnosticsHowItWorks />
 
       {/* Tests grid */}
       <ScrollReveal as="section" id="tests" className="container-public mt-20 sm:mt-24 scroll-mt-24">

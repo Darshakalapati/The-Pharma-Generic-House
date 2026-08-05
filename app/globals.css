@@ -355,3 +355,58 @@
     filter: saturate(1) brightness(1);
   }
 }
+
+/* ── Paper grain ────────────────────────────────────────────────────────────
+   Applied by app/(public)/layout.tsx only, so the admin panel stays clean.
+   A fixed, non-interactive overlay at z-index 0: it tints the page surface but
+   sits below every positioned chrome element — nav (z-30), mobile menu and
+   WhatsApp float (z-40), dialogs (z-50), announcement banner (z-60). */
+.site-grain::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+
+/* ── Ken Burns ──────────────────────────────────────────────────────────────
+   Used by the home page hero (20s zoom, 12s crossfade between photos) and by
+   the family portrait (30s). Driven by CSS rather than framer-motion so the
+   transform stays on the compositor for the whole of a very long animation.
+   Durations come in per-layer as custom properties. */
+@keyframes kb-zoom {
+  from { transform: scale(1); }
+  to   { transform: scale(var(--kb-scale, 1.08)); }
+}
+
+@keyframes kb-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.kb-layer {
+  position: absolute;
+  inset: 0;
+  transform-origin: center;
+  will-change: transform, opacity;
+  animation: kb-zoom var(--kb-duration, 20s) cubic-bezier(0.33, 0, 0.67, 1) forwards;
+}
+
+/* Every layer after the first crossfades in over the one below it. */
+.kb-layer[data-enter='true'] {
+  animation:
+    kb-zoom var(--kb-duration, 20s) cubic-bezier(0.33, 0, 0.67, 1) forwards,
+    kb-fade-in var(--kb-fade, 1400ms) cubic-bezier(0, 0, 0.2, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kb-layer,
+  .kb-layer[data-enter='true'] {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}

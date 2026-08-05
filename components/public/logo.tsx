@@ -7,6 +7,9 @@ import { cn } from '@/lib/utils';
 
 interface LogoProps {
   className?: string;
+  /** Show the "Vijayawada · Est. 2018" line under the wordmark. Public nav
+   *  only — the admin sidebar renders the lockup without it. */
+  tagline?: boolean;
 }
 
 /**
@@ -14,7 +17,7 @@ interface LogoProps {
  * Fraunces. The wordmark is hidden on mobile so the mark alone carries the
  * brand in the narrow nav.
  */
-export function Logo({ className }: LogoProps) {
+export function Logo({ className, tagline = false }: LogoProps) {
   const reduced = useReducedMotion();
 
   return (
@@ -37,8 +40,15 @@ export function Logo({ className }: LogoProps) {
           priority
           className="h-8 w-auto sm:h-10"
         />
-        <span className="hidden sm:inline font-serif text-[1.0625rem] font-medium tracking-[-0.015em] text-ink">
-          The Pharma Generic House
+        <span className="hidden sm:flex flex-col">
+          <span className="font-serif text-[1.0625rem] font-medium tracking-[-0.015em] leading-[1.2] text-ink">
+            The Pharma Generic House
+          </span>
+          {tagline && (
+            <span className="mt-0.5 text-[0.6875rem] font-medium uppercase tracking-[0.14em] leading-[1.1] text-ink-muted">
+              Vijayawada · Est. 2018
+            </span>
+          )}
         </span>
       </Link>
     </motion.div>

@@ -31,7 +31,9 @@ export default async function PublicLayout({ children }: { children: React.React
   ]);
 
   return (
-    <div className="bg-bg text-ink">
+    // `site-grain` lays a fixed paper-grain overlay over the public site only —
+    // the admin panel uses its own root and stays clean.
+    <div className="site-grain bg-bg text-ink">
       <AnnouncementBanner announcement={announcement} />
       <SiteNav shopPhone={settings.shop_phone} shopWhatsApp={settings.shop_whatsapp} />
       <PublicMain>{children}</PublicMain>

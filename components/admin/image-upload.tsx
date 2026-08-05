@@ -19,6 +19,9 @@ interface Props {
   pathLayout?: 'nested' | 'flat';
   /** Override preview tile aspect — defaults to a 128px square. */
   previewClassName?: string;
+  /** Client-side size ceiling in MB. Keep in step with the bucket's
+   *  `file_size_limit`, or the upload fails server-side instead. */
+  maxSizeMb?: number;
   className?: string;
 }
 
@@ -29,6 +32,7 @@ export function ImageUpload({
   bucket = 'public-images',
   pathLayout = 'nested',
   previewClassName,
+  maxSizeMb = 5,
   className,
 }: Props) {
   const [uploading, setUploading] = React.useState(false);
@@ -39,8 +43,8 @@ export function ImageUpload({
       toast.error('Please pick an image file.');
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error('Image must be under 5 MB.');
+    if (file.size > maxSizeMb * 1024 * 1024) {
+      toast.error(`Image must be under ${maxSizeMb} MB.`);
       return;
     }
     setUploading(true);
@@ -117,7 +121,7 @@ export function ImageUpload({
               <X className="h-4 w-4" /> Remove
             </Button>
           )}
-          <p className="text-xs text-brand-muted">JPG/PNG, up to 5 MB.</p>
+          <p className="text-xs text-brand-muted">JPG/PNG/WebP, up to {maxSizeMb} MB.</p>
         </div>
       </div>
     </div>

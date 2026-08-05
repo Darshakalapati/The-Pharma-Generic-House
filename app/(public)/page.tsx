@@ -20,13 +20,16 @@ import { VideoTestimonials } from '@/components/public/video-testimonials';
 import { CustomerReviews } from '@/components/public/customer-reviews';
 import { PromoBanners } from '@/components/public/promo-banners';
 import { HomeHero } from '@/components/public/home-hero';
+import { HomeStats } from '@/components/public/home-stats';
+import { FamilyStory } from '@/components/public/family-story';
+import { MortarPestleAccent } from '@/components/public/botanical-accents';
 import {
   ScrollReveal,
   ScrollRevealItem,
   StaggerGrid,
   StaggerGridItem,
 } from '@/components/public/motion/scroll-reveal';
-import type { Doctor, MedicalTest } from '@/lib/types';
+import type { Doctor, FamilyMember, HeroPhoto, MedicalTest } from '@/lib/types';
 
 const OFFERS = [
   {
@@ -98,7 +101,17 @@ export default async function HomePage() {
   const supabase = createClient();
   const settings = await getShopSettings();
 
-  const [{ data: doctors }, { data: tests }, { count: totalTestsCount }] = await Promise.all([
+  // hero_photos and family_members arrive with migrations 0009 / 0010. Until
+  // those are applied the queries just return an error and `data` is null, and
+  // both sections fall back to their built-in content — so the page renders
+  // correctly either way.
+  const [
+    { data: doctors },
+    { data: tests },
+    { count: totalTestsCount },
+    { data: heroPhotos },
+    { data: familyMembers },
+  ] = await Promise.all([
     supabase
       .from('doctors')
       .select('*')
@@ -114,9 +127,28 @@ export default async function HomePage() {
       .from('tests')
       .select('*', { count: 'exact', head: true })
       .eq('is_active', true),
+    supabase
+      .from('hero_photos')
+      .select('*')
+      .eq('is_active', true)
+      .order('display_order', { ascending: true })
+      .order('created_at', { ascending: true }),
+    supabase
+      .from('family_members')
+      .select('*')
+      .eq('is_active', true)
+      .order('display_order', { ascending: true })
+      .order('created_at', { ascending: true })
+      .limit(1),
   ]);
 
   const docs: Doctor[] = doctors ?? [];
+  const heroSlides = ((heroPhotos as HeroPhoto[] | null) ?? []).map((p) => ({
+    id: p.id,
+    image_url: p.image_url,
+    alt_text: p.alt_text,
+  }));
+  const featuredMember = ((familyMembers as FamilyMember[] | null) ?? [])[0] ?? null;
   // Render featured tests in the curated order (Supabase .in() is unordered).
   const featuredOrder = new Map(FEATURED_TEST_NAMES.map((n, i) => [n, i]));
   const testList: MedicalTest[] = ((tests as MedicalTest[]) ?? [])
@@ -129,7 +161,7 @@ export default async function HomePage() {
   return (
     <>
       {/* SECTION 1 — HERO ─────────────────────────────────────────── */}
-      <HomeHero />
+      <HomeHero photos={heroSlides} />
 
       {/* Trust bar */}
       <ScrollReveal as="section" className="bg-sand border-y border-line">
@@ -149,7 +181,9 @@ export default async function HomePage() {
       </ScrollReveal>
 
       {/* SECTION 2 — WHAT WE OFFER ────────────────────────────────── */}
-      <ScrollReveal as="section" className="container-public mt-20 sm:mt-28">
+      <ScrollReveal as="section" className="container-public relative mt-20 sm:mt-28">
+        <MortarPestleAccent className="left-0 -bottom-10" />
+
         <ScrollRevealItem as="div" className="max-w-2xl">
           <span className="eyebrow">What we offer</span>
           <h2 className="h-section mt-4">Four ways we help you stay well.</h2>
@@ -178,6 +212,12 @@ export default async function HomePage() {
 
       {/* SECTION 2.5 — PROMO BANNERS (hidden when no active banners) ── */}
       <PromoBanners />
+
+      {/* SECTION 2.6 — BY THE NUMBERS ─────────────────────────────── */}
+      <HomeStats />
+
+      {/* SECTION 2.7 — OUR STORY / MEET THE FAMILY ────────────────── */}
+      <FamilyStory member={featuredMember} />
 
       {/* SECTION 3 — DOCTORS ──────────────────────────────────────── */}
       {docs.length > 0 && (

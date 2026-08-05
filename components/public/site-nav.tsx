@@ -59,7 +59,7 @@ export function SiteNav({ shopPhone = SHOP_PHONE, shopWhatsApp = SHOP_WHATSAPP }
         )}
       >
         <div className="container-public flex h-[72px] items-center justify-between">
-          <Logo />
+          <Logo tagline />
 
           <nav className="hidden md:flex items-center gap-8">
             {NAV.map((item) => (
@@ -109,7 +109,7 @@ export function SiteNav({ shopPhone = SHOP_PHONE, shopWhatsApp = SHOP_WHATSAPP }
         style={{ paddingTop: 'env(safe-area-inset-top, 0)' }}
       >
         <div className="container-public flex h-[72px] items-center justify-between border-b border-line">
-          <Logo />
+          <Logo tagline />
           <button
             aria-label="Close menu"
             onClick={() => setOpen(false)}

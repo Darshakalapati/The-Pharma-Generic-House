@@ -6,7 +6,10 @@ import { SHOP_NAME, SHOP_TAGLINE } from '@/lib/constants';
 
 const fraunces = Fraunces({
   subsets: ['latin'],
-  weight: ['400', '500', '600'],
+  // 300 and the italic style are used by the "Our story" pull-quote and the
+  // italic captions; without them the browser would synthesise both.
+  weight: ['300', '400', '500', '600'],
+  style: ['normal', 'italic'],
   variable: '--font-fraunces',
   display: 'swap',
 });
