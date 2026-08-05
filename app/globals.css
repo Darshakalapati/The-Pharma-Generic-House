@@ -410,3 +410,36 @@
     transform: none;
   }
 }
+
+/* ── Stats marquee ──────────────────────────────────────────────────────────
+   The track holds two identical copies of the stat run, so translating it to
+   -50% lands exactly on the start of the second copy and the loop is seamless.
+   Overflow is clipped here, so the over-wide track can never scroll the page. */
+.marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}
+
+.marquee-track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  will-change: transform;
+  animation: marquee-slide 30s linear infinite;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-slide {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}

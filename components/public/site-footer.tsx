@@ -22,13 +22,19 @@ const COL_SERVICES = [
 /**
  * Giant cropped wordmark at the foot of the page.
  *
- * `WORDMARK_BAND` is the visible sliver — roughly 60% of the type size, so the
- * letters are sheared off just below their waist. It is used twice: once as a
- * spacer that reserves the room in normal flow, and once as the height of the
- * absolutely-positioned clip window that sits in it. Keep the two in step.
+ * The size is purely proportional to the viewport — deliberately with no lower
+ * bound. "The Pharma Generic House" is 24 characters, so any rem floor makes it
+ * wider than a phone screen and the ends get sliced off. At 6.5vw the string
+ * fits inside the viewport with a margin to spare even on the widest plausible
+ * metrics for Fraunces, at every breakpoint.
+ *
+ * `WORDMARK_BAND` is the visible sliver — ~69% of the type size, so the letters
+ * are sheared off below their waist. It is used twice: once as a spacer that
+ * reserves the room in normal flow, and once as the height of the absolutely
+ * positioned clip window that sits in it. Keep the two in step.
  */
-const WORDMARK_BAND = 'clamp(2.5rem, 5vw, 6rem)';
-const WORDMARK_SIZE = 'clamp(4rem, 8.2vw, 9.5rem)';
+const WORDMARK_BAND = 'min(4.5vw, 6.3rem)';
+const WORDMARK_SIZE = 'min(6.5vw, 9rem)';
 
 export function SiteFooter({ settings }: { settings: ShopSettings }) {
   return (
@@ -170,17 +176,17 @@ export function SiteFooter({ settings }: { settings: ShopSettings }) {
         style={{ height: WORDMARK_BAND }}
       >
         <span
-          className="font-serif whitespace-nowrap"
+          className="font-serif whitespace-nowrap text-center"
           style={{
             fontSize: WORDMARK_SIZE,
             fontWeight: 400,
             letterSpacing: '-0.03em',
             lineHeight: 1,
             color: 'var(--bg)',
-            opacity: 0.1,
-            // Pushes ~35% of the glyph box past the footer edge, leaving the
-            // top ~60% of the letters showing.
-            transform: 'translateY(35%)',
+            opacity: 0.16,
+            // Pushes ~30% of the glyph box past the footer edge, leaving the
+            // top ~69% of the letters showing.
+            transform: 'translateY(30%)',
           }}
         >
           The Pharma Generic House
