@@ -23,17 +23,17 @@ const COL_SERVICES = [
  * Giant wordmark at the foot of the page — shown whole, nothing cropped.
  *
  * "The Pharma Generic House" is 24 characters on a single nowrap line, so the
- * size has to stay viewport-proportional or the ends run off the screen. 6vw
- * keeps the phrase inside the viewport with a margin either side even on the
- * widest plausible metrics for Fraunces. The 1.25rem floor only engages below
- * ~333px, well under the narrowest phone in the test matrix — a larger floor
- * (2rem) overflows a 375px screen.
+ * size stays viewport-proportional or the ends run off the screen.
+ *
+ * `line-height: 1.1` matters: Fraunces' ascent + descent exceed 1em, so a 1em
+ * line box lets the glyphs spill past it — which the footer used to clip. The
+ * extra 0.1 plus the block's padding keeps every letter inside its own box.
  */
-const WORDMARK_SIZE = 'clamp(1.25rem, 6vw, 8rem)';
+const WORDMARK_SIZE = 'clamp(1.75rem, 6vw, 8rem)';
 
 export function SiteFooter({ settings }: { settings: ShopSettings }) {
   return (
-    <footer className="relative overflow-hidden bg-ink text-bg">
+    <footer className="relative bg-ink text-bg">
       <div className="container-public pt-16 pb-10">
         <div>
           <div className="flex items-center gap-4">
@@ -165,15 +165,15 @@ export function SiteFooter({ settings }: { settings: ShopSettings }) {
           below the copyright row, so it sizes to the height of the type. */}
       <div
         aria-hidden
-        className="pointer-events-none select-none flex justify-center pt-6 pb-4"
+        className="pointer-events-none select-none flex justify-center pt-6 pb-5"
       >
         <span
           className="font-serif whitespace-nowrap text-center"
           style={{
             fontSize: WORDMARK_SIZE,
             fontWeight: 400,
-            letterSpacing: '-0.03em',
-            lineHeight: 1,
+            letterSpacing: '-0.02em',
+            lineHeight: 1.1,
             color: 'var(--bg)',
             opacity: 0.16,
           }}
