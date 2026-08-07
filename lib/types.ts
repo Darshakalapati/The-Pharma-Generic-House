@@ -113,12 +113,15 @@ export type AnnouncementColor = 'plum' | 'teal';
 
 export interface Announcement {
   id: string;
+  /** Internal label for the admin list — never shown to customers. */
+  title: string;
   text: string;
   link_label: string | null;
   link_url: string | null;
   background_color: AnnouncementColor;
   is_active: boolean;
   updated_at: string;
+  created_at: string;
 }
 
 export type VideoType = 'testimonial' | 'review' | 'announcement';

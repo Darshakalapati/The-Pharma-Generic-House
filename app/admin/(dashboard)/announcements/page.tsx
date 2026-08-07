@@ -1,26 +1,23 @@
 import { PageHeader } from '@/components/admin/page-header';
-import { AnnouncementForm } from '@/components/admin/announcement-form';
+import { AnnouncementsManager } from '@/components/admin/announcements-manager';
 import { createClient } from '@/lib/supabase/server';
 import type { Announcement } from '@/lib/types';
 
-export const metadata = { title: 'Announcement banner' };
+export const metadata = { title: 'Announcements' };
 
 export default async function AdminAnnouncementsPage() {
   const supabase = createClient();
-  const { data } = await supabase
-    .from('announcements')
-    .select('*')
-    .order('updated_at', { ascending: false })
-    .limit(1)
-    .maybeSingle();
+  // Unordered on purpose — the manager sorts newest-first client-side, so the
+  // page still renders if migration 0012 (created_at) has not been applied.
+  const { data } = await supabase.from('announcements').select('*');
 
   return (
-    <div className="max-w-3xl">
+    <div>
       <PageHeader
-        title="Announcement Banner"
-        description="The bar at the top of every page on your website."
+        title="Announcements"
+        description="Save announcements and switch which one shows on the website. Only one can be live at a time."
       />
-      <AnnouncementForm announcement={(data as Announcement | null) ?? null} />
+      <AnnouncementsManager announcements={(data as Announcement[] | null) ?? []} />
     </div>
   );
 }
