@@ -169,7 +169,7 @@ function ProductCard({
               : `Add ${product.name} to enquiry`
           }
           className={cn(
-            'mt-4 inline-flex items-center gap-1.5 self-start rounded-md px-2.5 py-1.5 -ml-2.5 text-[0.875rem] font-medium transition-colors',
+            'mt-4 inline-flex items-center gap-1.5 self-start rounded-md px-2.5 min-h-[44px] md:min-h-0 py-1.5 -ml-2.5 text-[0.875rem] font-medium transition-colors',
             added
               // "Added" — confirmed positive state, intentionally non-clickable.
               ? 'text-teal-deep bg-teal-tint cursor-not-allowed'

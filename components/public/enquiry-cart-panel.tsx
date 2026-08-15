@@ -110,7 +110,7 @@ export function EnquiryCartPanel({ whatsappNumber, reservationEnabled }: Props) 
         <button
           onClick={() => setOpen(true)}
           aria-label="Open enquiry"
-          className="fixed bottom-5 right-[calc(72px+env(safe-area-inset-right,0))] sm:right-[calc(80px+env(safe-area-inset-right,0))] z-40 inline-flex items-center gap-2 rounded-full bg-plum text-white px-5 py-3 text-[0.9375rem] font-medium shadow-elevated hover:bg-plum-deep transition-colors"
+          className="fixed bottom-[calc(72px+env(safe-area-inset-bottom,0px))] right-5 md:bottom-5 md:right-[calc(80px+env(safe-area-inset-right,0))] z-40 inline-flex items-center gap-2 rounded-full bg-plum text-white px-5 py-3 text-[0.9375rem] font-medium shadow-elevated hover:bg-plum-deep transition-colors"
         >
           <ShoppingBag className="h-4 w-4" />
           <span>Enquiry</span>
@@ -183,7 +183,7 @@ export function EnquiryCartPanel({ whatsappNumber, reservationEnabled }: Props) 
                       <button
                         aria-label="Decrease"
                         onClick={() => setQty(it.product_id, it.quantity - 1)}
-                        className="grid h-9 w-9 place-items-center text-ink-muted hover:bg-sand hover:text-ink transition-colors"
+                        className="grid h-11 w-11 md:h-9 md:w-9 place-items-center text-ink-muted hover:bg-sand hover:text-ink transition-colors"
                       >
                         <Minus className="h-3.5 w-3.5" />
                       </button>
@@ -202,7 +202,7 @@ export function EnquiryCartPanel({ whatsappNumber, reservationEnabled }: Props) 
                   <button
                     aria-label="Remove"
                     onClick={() => remove(it.product_id)}
-                    className="grid h-9 w-9 place-items-center text-ink-faint hover:text-plum hover:bg-plum-tint rounded-md transition-colors"
+                    className="grid h-11 w-11 md:h-9 md:w-9 place-items-center text-ink-faint hover:text-plum hover:bg-plum-tint rounded-md transition-colors"
                   >
                     <X className="h-4 w-4" />
                   </button>

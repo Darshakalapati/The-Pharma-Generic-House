@@ -45,7 +45,8 @@ const COLUMN_BOX = 'h-full rounded-xl p-7';
 
 export function SiteFooter({ settings }: { settings: ShopSettings }) {
   return (
-    <footer className="relative bg-ink text-bg">
+    // pb clears the fixed mobile action bar so footer content is never hidden behind it.
+    <footer className="relative bg-ink text-bg pb-[72px] md:pb-0">
       <div className="container-public pt-16 pb-0">
         <div>
           <div className="flex items-center gap-4">

@@ -69,17 +69,20 @@ export function PromoBannerCarousel({ banners }: { banners: PromoBanner[] }) {
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
       >
-        {/* Track */}
-        <div className="overflow-hidden rounded-2xl">
+        {/* Track. On phones each slide is 88% wide so the next one peeks in
+            from the right and the carousel reads as swipeable; from md up it
+            goes back to one full-width slide at a time. `--slide-step` keeps
+            the transform and the slide width in step at both sizes. */}
+        <div className="overflow-hidden rounded-2xl [--slide-step:calc(88%_+_0.75rem)] md:[--slide-step:100%]">
           <div
-            className="flex"
+            className="flex gap-3 md:gap-0"
             style={{
-              transform: `translateX(-${index * 100}%)`,
+              transform: `translateX(calc(-${index} * var(--slide-step)))`,
               transition: `transform ${TRANSITION_MS}ms cubic-bezier(0, 0, 0.2, 1)`,
             }}
           >
             {banners.map((b) => (
-              <div key={b.id} className="w-full shrink-0">
+              <div key={b.id} className="w-[88%] md:w-full shrink-0">
                 <PromoBannerCard banner={b} />
               </div>
             ))}

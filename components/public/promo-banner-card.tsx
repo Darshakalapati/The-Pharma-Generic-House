@@ -26,9 +26,9 @@ export function PromoBannerCard({ banner, clickableSurface = true, className }: 
   return <TextBanner banner={banner} className={className} />;
 }
 
-const ASPECT =
-  // 4:3 mobile, 16:9 tablet, 21:9 desktop
-  'aspect-[4/3] sm:aspect-[16/9] lg:aspect-[21/9]';
+// Text banners have no artwork to protect, so they keep a shaped box on
+// tablet/desktop and simply grow to fit their content on phones.
+const TEXT_ASPECT = 'aspect-auto md:aspect-[16/9] lg:aspect-[21/9]';
 
 function ImageBanner({
   banner,
@@ -55,34 +55,45 @@ function ImageBanner({
           }
         : {})}
       className={cn(
-        'relative block w-full overflow-hidden rounded-2xl bg-sand shadow-card',
-        ASPECT,
+        'block w-full',
         clickableSurface && banner.button_link && 'group cursor-pointer',
         className
       )}
     >
-      {banner.image_url && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={banner.image_url}
-          alt={imageAlt}
-          className="absolute inset-0 h-full w-full object-cover object-center"
-        />
-      )}
+      {/* No fixed aspect: the image sets its own height, so the artwork the
+          admin cropped at 21:9 is shown whole at every width — on phones that
+          just means a shorter banner rather than a re-cropped one. */}
+      <span className="relative block w-full overflow-hidden rounded-2xl bg-sand shadow-card">
+        {banner.image_url && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={banner.image_url}
+            alt={imageAlt}
+            className="block h-auto w-full"
+          />
+        )}
+
+        {hasButton && (
+          <>
+            {/* Overlaid button on tablet+ only — on phones it would cover too
+                much of a small banner, so it moves below the artwork instead. */}
+            <span
+              aria-hidden
+              className="hidden md:block absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/45 via-black/15 to-transparent"
+            />
+            <span className="hidden md:block absolute bottom-6 left-6 sm:bottom-8 sm:left-8">
+              <span className="inline-flex items-center justify-center h-10 px-5 rounded-md border border-plum bg-bg-elevated text-plum text-[0.9375rem] font-medium transition-colors group-hover:bg-plum group-hover:text-white">
+                {banner.button_label}
+              </span>
+            </span>
+          </>
+        )}
+      </span>
 
       {hasButton && (
-        <>
-          {/* Bottom-only gradient for button readability over busy images */}
-          <span
-            aria-hidden
-            className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/45 via-black/15 to-transparent"
-          />
-          <span className="absolute bottom-6 left-6 sm:bottom-8 sm:left-8">
-            <span className="inline-flex items-center justify-center h-10 px-5 rounded-md border border-plum bg-bg-elevated text-plum text-[0.9375rem] font-medium transition-colors group-hover:bg-plum group-hover:text-white">
-              {banner.button_label}
-            </span>
-          </span>
-        </>
+        <span className="md:hidden mt-2 flex h-12 w-full items-center justify-center rounded-md border border-plum bg-bg-elevated text-plum text-[0.9375rem] font-medium">
+          {banner.button_label}
+        </span>
       )}
     </Surface>
   );
@@ -120,7 +131,7 @@ function TextBanner({ banner, className }: { banner: PromoBanner; className?: st
     <div
       className={cn(
         'relative w-full overflow-hidden rounded-2xl shadow-card',
-        ASPECT,
+        TEXT_ASPECT,
         bgClass,
         className
       )}
@@ -143,12 +154,12 @@ function TextBanner({ banner, className }: { banner: PromoBanner; className?: st
       <div className="relative h-full flex items-center">
         <div className="w-full p-8 sm:p-10 lg:p-12 lg:pr-[40%] flex flex-col items-center text-center sm:items-start sm:text-left max-w-3xl">
           {banner.headline && (
-            <h3 className="font-serif font-medium text-[clamp(1.75rem,4vw,2.75rem)] leading-[1.1] tracking-[-0.015em]">
+            <h3 className="font-serif font-medium text-[clamp(1.5rem,4vw,2.75rem)] leading-[1.1] tracking-[-0.015em]">
               {banner.headline}
             </h3>
           )}
           {banner.subheading && (
-            <p className={cn('mt-4 max-w-[50ch] text-[1.0625rem] leading-[1.5]', subClass)}>
+            <p className={cn('mt-4 max-w-[50ch] text-[0.9375rem] md:text-[1.0625rem] leading-[1.6] md:leading-[1.5]', subClass)}>
               {banner.subheading}
             </p>
           )}
@@ -159,7 +170,7 @@ function TextBanner({ banner, className }: { banner: PromoBanner; className?: st
                 ? { target: '_blank', rel: 'noopener noreferrer' }
                 : {})}
               className={cn(
-                'mt-6 inline-flex items-center justify-center h-11 px-5 rounded-md border text-[0.9375rem] font-medium transition-colors',
+                'mt-6 inline-flex w-full md:w-auto items-center justify-center h-12 md:h-11 px-5 rounded-md border text-[0.9375rem] font-medium transition-colors',
                 buttonClass
               )}
             >

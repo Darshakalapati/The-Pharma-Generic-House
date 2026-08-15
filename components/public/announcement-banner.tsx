@@ -54,7 +54,7 @@ export function AnnouncementBannerView({
           <button
             onClick={onDismiss}
             aria-label="Dismiss announcement"
-            className="shrink-0 inline-flex h-7 w-7 items-center justify-center rounded-md text-white/70 hover:text-white hover:bg-white/10 transition-colors"
+            className="shrink-0 inline-flex h-11 w-11 md:h-7 md:w-7 items-center justify-center rounded-md text-white/70 hover:text-white hover:bg-white/10 transition-colors"
           >
             <X className="h-4 w-4" />
           </button>

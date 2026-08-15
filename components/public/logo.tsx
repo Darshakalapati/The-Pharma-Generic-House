@@ -10,6 +10,9 @@ interface LogoProps {
   /** Show the "Vijayawada · Est. 2018" line under the wordmark. Public nav
    *  only — the admin sidebar renders the lockup without it. */
   tagline?: boolean;
+  /** Show the wordmark on phones too. Public nav only, so the admin sidebar's
+   *  compact mobile bar is left exactly as it was. */
+  mobileWordmark?: boolean;
 }
 
 /**
@@ -17,7 +20,7 @@ interface LogoProps {
  * Fraunces. The wordmark is hidden on mobile so the mark alone carries the
  * brand in the narrow nav.
  */
-export function Logo({ className, tagline = false }: LogoProps) {
+export function Logo({ className, tagline = false, mobileWordmark = false }: LogoProps) {
   const reduced = useReducedMotion();
 
   return (
@@ -30,7 +33,11 @@ export function Logo({ className, tagline = false }: LogoProps) {
       <Link
         href="/"
         aria-label="The Pharma Generic House — home"
-        className={cn('inline-flex items-center gap-3 text-ink', className)}
+        className={cn(
+          'inline-flex items-center text-ink',
+          mobileWordmark ? 'gap-2 sm:gap-3' : 'gap-3',
+          className
+        )}
       >
         <Image
           src="/logo.png"
@@ -38,14 +45,22 @@ export function Logo({ className, tagline = false }: LogoProps) {
           width={491}
           height={498}
           priority
-          className="h-8 w-auto sm:h-10"
+          className={cn('w-auto', mobileWordmark ? 'h-7 sm:h-10' : 'h-8 sm:h-10')}
         />
-        <span className="hidden sm:flex flex-col">
-          <span className="font-serif text-[1.0625rem] font-medium tracking-[-0.015em] leading-[1.2] text-ink">
+        <span className={cn('flex-col', mobileWordmark ? 'flex' : 'hidden sm:flex')}>
+          {/* Steps down below 360px so the name always clears the hamburger. */}
+          <span
+            className={cn(
+              'font-serif font-medium tracking-[-0.015em] leading-[1.2] text-ink whitespace-nowrap',
+              mobileWordmark
+                ? 'text-[0.875rem] min-[360px]:text-[0.9375rem] sm:text-[1.0625rem]'
+                : 'text-[1.0625rem]'
+            )}
+          >
             The Pharma Generic House
           </span>
           {tagline && (
-            <span className="mt-0.5 text-[0.6875rem] font-medium uppercase tracking-[0.14em] leading-[1.1] text-ink-muted">
+            <span className="hidden sm:block mt-0.5 text-[0.6875rem] font-medium uppercase tracking-[0.14em] leading-[1.1] text-ink-muted">
               Vijayawada · Est. 2018
             </span>
           )}

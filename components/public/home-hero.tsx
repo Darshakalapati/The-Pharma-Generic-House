@@ -45,12 +45,12 @@ export function HomeHero({ photos = [] }: { photos?: KenBurnsSlide[] }) {
             lab tests — The Pharma Generic House has served Vijayawada for
             over a decade.
           </ScrollRevealItem>
-          <ScrollRevealItem as="div" className="mt-8 flex flex-wrap items-center gap-4 sm:gap-6">
-            <Link href="/products" className="btn-plum">
+          <ScrollRevealItem as="div" className="mt-8 flex flex-col md:flex-row md:flex-wrap md:items-center gap-3 md:gap-6">
+            <Link href="/products" className="btn-plum w-full md:w-auto h-12 md:h-11">
               Browse Products
               <ArrowRight className="h-4 w-4" />
             </Link>
-            <Link href="/doctors" className="link-underline link-plum text-[0.95rem]">
+            <Link href="/doctors" className="link-underline link-plum text-[0.95rem] w-full md:w-auto inline-flex items-center justify-center md:justify-start min-h-[48px] md:min-h-0">
               Book an Appointment →
             </Link>
           </ScrollRevealItem>

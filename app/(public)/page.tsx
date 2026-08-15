@@ -164,8 +164,9 @@ export default async function HomePage() {
 
       {/* Trust bar */}
       <ScrollReveal as="section" className="bg-sand border-y border-line">
-        <ScrollRevealItem as="div" className="container-public py-3.5 overflow-x-auto">
-          <p className="flex items-center gap-3 sm:gap-5 whitespace-nowrap text-[0.875rem] text-ink-muted">
+        <ScrollRevealItem as="div" className="container-public py-3.5 md:overflow-x-auto">
+          {/* Wraps onto two lines on phones rather than scrolling sideways. */}
+          <p className="flex flex-wrap justify-center gap-x-3 gap-y-1 text-center md:flex-nowrap md:justify-start md:gap-5 md:whitespace-nowrap md:text-left text-[0.875rem] text-ink-muted">
             <span>Pharmacy built on trust since 2018</span>
             <span aria-hidden className="text-ink-faint">·</span>
             <span>ThyroCare associate</span>

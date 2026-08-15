@@ -1,6 +1,7 @@
 import { SiteNav } from '@/components/public/site-nav';
 import { SiteFooter } from '@/components/public/site-footer';
 import { WhatsAppFloat } from '@/components/public/whatsapp-float';
+import { MobileActionBar } from '@/components/public/mobile-action-bar';
 import { AnnouncementBanner } from '@/components/public/announcement-banner';
 import { PublicMain } from '@/components/public/motion/public-main';
 import { getShopSettings } from '@/lib/settings';
@@ -39,6 +40,7 @@ export default async function PublicLayout({ children }: { children: React.React
       <PublicMain>{children}</PublicMain>
       <SiteFooter settings={settings} />
       <WhatsAppFloat phone={settings.shop_whatsapp} />
+      <MobileActionBar phone={settings.shop_phone} whatsapp={settings.shop_whatsapp} />
     </div>
   );
 }
