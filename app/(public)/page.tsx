@@ -12,13 +12,14 @@ import {
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { getShopSettings } from '@/lib/settings';
-import { whatsappLink, formatINR, formatTime12, telLink, formatSpecialty } from '@/lib/utils';
-import { IMG, resolveDoctorPhoto } from '@/lib/images';
+import { whatsappLink, telLink } from '@/lib/utils';
+import { IMG } from '@/lib/images';
 import { WhatsAppGlyph } from '@/components/public/whatsapp-glyph';
 import { VideoTestimonials } from '@/components/public/video-testimonials';
 import { CustomerReviews } from '@/components/public/customer-reviews';
 import { PromoBanners } from '@/components/public/promo-banners';
 import { HomeHero } from '@/components/public/home-hero';
+import { DoctorsCarousel } from '@/components/public/doctors-carousel';
 import { HomeStats } from '@/components/public/home-stats';
 import { FamilyStory } from '@/components/public/family-story';
 import { MortarPestleAccent } from '@/components/public/botanical-accents';
@@ -114,10 +115,10 @@ export default async function HomePage() {
     supabase
       .from('doctors')
       .select('*')
+      // No limit — the carousel carries every active doctor.
       .eq('is_active', true)
       .order('display_order', { ascending: true })
-      .order('created_at', { ascending: true })
-      .limit(3),
+      .order('created_at', { ascending: true }),
     supabase
       .from('tests')
       .select('*')
@@ -155,7 +156,6 @@ export default async function HomePage() {
     .slice()
     .sort((a, b) => (featuredOrder.get(a.name) ?? 99) - (featuredOrder.get(b.name) ?? 99));
   const totalTests = totalTestsCount ?? testList.length;
-  const specialty = (s: string) => formatSpecialty(s);
 
   return (
     <>
@@ -223,86 +223,14 @@ export default async function HomePage() {
         <ScrollReveal as="section" className="container-public mt-20 sm:mt-28">
           <ScrollRevealItem as="div" className="max-w-2xl">
             <span className="eyebrow">Consultations</span>
-            <h2 className="h-section mt-4">Three practitioners. By appointment.</h2>
+            <h2 className="h-section mt-4">Our practitioners. By appointment.</h2>
             <p className="mt-4 text-ink-muted text-[1.0625rem] leading-[1.7]">
               Visit on scheduled days for in-shop consultations, or request a homeopathy slot.
             </p>
           </ScrollRevealItem>
 
-          <StaggerGrid inherit className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6" stagger={0.06}>
-            {docs.map((d) => {
-              const photo = resolveDoctorPhoto(d.photo_url, d.name);
-              return (
-                <StaggerGridItem key={d.id}>
-                <article
-                  className="card-soft overflow-hidden flex flex-col group h-full"
-                >
-                  <div className="relative aspect-[4/3] md:aspect-[4/3] bg-sand overflow-hidden">
-                    {photo && (
-                      <Image
-                        src={photo}
-                        alt={d.name}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                        className="object-cover img-soft-color"
-                      />
-                    )}
-                  </div>
-                  <div className="p-6 flex flex-col flex-1">
-                    <span
-                      className={
-                        d.is_on_request
-                          ? 'eyebrow eyebrow--teal'
-                          : 'eyebrow eyebrow--teal'
-                      }
-                    >
-                      {d.is_on_request ? 'By Request' : specialty(d.specialty)}
-                    </span>
-                    <h3 className="mt-2 font-serif font-medium text-[1.375rem] tracking-[-0.015em]">
-                      {d.name}
-                    </h3>
-                    {d.bio && (
-                      <p className="mt-2 text-[0.9375rem] text-ink-muted leading-[1.6] line-clamp-2">
-                        {d.bio}
-                      </p>
-                    )}
-
-                    <div className="mt-4 space-y-1.5 text-[0.875rem] text-ink-muted">
-                      {!d.is_on_request &&
-                        d.available_days.length > 0 &&
-                        d.available_time_start &&
-                        d.available_time_end && (
-                          <p>
-                            <span className="text-ink">{d.available_days.join(', ')}</span> ·{' '}
-                            {formatTime12(d.available_time_start)} –{' '}
-                            {formatTime12(d.available_time_end)}
-                          </p>
-                        )}
-                      {d.consultation_fee != null && (
-                        <p className="font-serif font-medium text-[1.0625rem] text-ink">
-                          {formatINR(d.consultation_fee)}
-                        </p>
-                      )}
-                    </div>
-
-                    <Link
-                      href="/doctors"
-                      className="mt-5 inline-flex items-center gap-1 text-[0.9375rem] font-medium text-plum hover:text-plum-deep self-start"
-                    >
-                      {d.is_on_request ? 'Request Appointment' : 'Book Appointment'}
-                      <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
-                    </Link>
-                  </div>
-                </article>
-                </StaggerGridItem>
-              );
-            })}
-          </StaggerGrid>
-
-          <ScrollRevealItem as="div" className="mt-10 text-center">
-            <Link href="/doctors" className="link-underline link-plum text-[0.95rem]">
-              View all doctors →
-            </Link>
+          <ScrollRevealItem as="div" className="mt-12">
+            <DoctorsCarousel doctors={docs} />
           </ScrollRevealItem>
         </ScrollReveal>
       )}

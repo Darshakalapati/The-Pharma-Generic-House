@@ -346,6 +346,17 @@
   .img-hover-zoom { transition: transform 600ms cubic-bezier(0.2, 0, 0, 1); }
   .img-hover-zoom:hover { transform: scale(1.03); }
 
+  /* Scroll container with no visible scrollbar — used by the doctors
+     carousel, which shows its own arrows and edge fades instead. */
+  .scrollbar-none {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
   /* Grayscale photo with full color on hover (used on doctor cards) */
   .img-soft-color {
     filter: saturate(0.7) brightness(1.02);
