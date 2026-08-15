@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Plus, Edit, Trash2, ImageOff } from 'lucide-react';
+import { Plus, Edit, Trash2, ImageOff, ChevronUp, ChevronDown } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -16,8 +16,7 @@ import {
 } from '@/components/ui/dialog';
 import { DoctorForm } from './doctor-form';
 import { createClient } from '@/lib/supabase/client';
-import { DOCTOR_SPECIALTIES } from '@/lib/constants';
-import { formatINR, formatTime12 } from '@/lib/utils';
+import { formatINR, formatTime12, formatSpecialty } from '@/lib/utils';
 import type { Doctor } from '@/lib/types';
 
 export function DoctorsManager({ doctors }: { doctors: Doctor[] }) {
@@ -27,6 +26,17 @@ export function DoctorsManager({ doctors }: { doctors: Doctor[] }) {
   const [confirmDel, setConfirmDel] = React.useState<Doctor | null>(null);
   const [working, setWorking] = React.useState<string | null>(null);
 
+  const sorted = React.useMemo(
+    () =>
+      [...doctors].sort((a, b) => {
+        if (a.display_order !== b.display_order) {
+          return (a.display_order ?? 0) - (b.display_order ?? 0);
+        }
+        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+      }),
+    [doctors]
+  );
+
   const startCreate = () => {
     setEditing(null);
     setFormOpen(true);
@@ -34,6 +44,34 @@ export function DoctorsManager({ doctors }: { doctors: Doctor[] }) {
   const startEdit = (d: Doctor) => {
     setEditing(d);
     setFormOpen(true);
+  };
+
+  /** Swap with the neighbour, then renumber 1..N so the order stays unambiguous. */
+  const move = async (doctorId: string, direction: -1 | 1) => {
+    const idx = sorted.findIndex((d) => d.id === doctorId);
+    if (idx < 0) return;
+    const target = idx + direction;
+    if (target < 0 || target >= sorted.length) return;
+
+    const next = [...sorted];
+    [next[idx], next[target]] = [next[target], next[idx]];
+
+    setWorking(doctorId);
+    try {
+      const supabase = createClient();
+      const results = await Promise.all(
+        next.map((d, i) =>
+          supabase.from('doctors').update({ display_order: i + 1 }).eq('id', d.id)
+        )
+      );
+      const failed = results.find((r) => r.error);
+      if (failed?.error) throw failed.error;
+      router.refresh();
+    } catch {
+      toast.error('Could not reorder. Have you run migration 0013 in Supabase?');
+    } finally {
+      setWorking(null);
+    }
   };
 
   const doDelete = async () => {
@@ -61,14 +99,14 @@ export function DoctorsManager({ doctors }: { doctors: Doctor[] }) {
         </Button>
       </div>
 
-      {doctors.length === 0 ? (
+      {sorted.length === 0 ? (
         <div className="surface-card p-10 text-center text-brand-muted">
           No doctors yet. Click &quot;Add doctor&quot; to add one.
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {doctors.map((d) => {
-            const sp = DOCTOR_SPECIALTIES.find((s) => s.value === d.specialty);
+          {sorted.map((d, i) => {
+            const sp = formatSpecialty(d.specialty);
             return (
               <div key={d.id} className="surface-card overflow-hidden flex flex-col">
                 <div className="aspect-[4/3] bg-brand-cream-warm relative overflow-hidden">
@@ -80,11 +118,15 @@ export function DoctorsManager({ doctors }: { doctors: Doctor[] }) {
                       <ImageOff className="h-7 w-7" />
                     </div>
                   )}
+                  {/* Position in the public listing, at a glance. */}
+                  <span className="absolute left-2 top-2 grid h-7 min-w-7 place-items-center rounded-full bg-brand-ink/80 px-2 text-xs font-semibold text-white">
+                    {i + 1}
+                  </span>
                 </div>
                 <div className="p-4 flex flex-col flex-1">
                   <div className="flex items-center justify-between flex-wrap gap-2">
                     <Badge variant={d.is_on_request ? 'muted' : 'accent'}>
-                      {d.is_on_request ? 'On request' : sp?.label}
+                      {d.is_on_request ? 'On request' : sp}
                     </Badge>
                     {!d.is_active && <Badge variant="destructive">Inactive</Badge>}
                   </div>
@@ -102,6 +144,26 @@ export function DoctorsManager({ doctors }: { doctors: Doctor[] }) {
                       </p>
                     )}
                   <div className="mt-4 pt-3 border-t border-brand-line/70 flex gap-2">
+                    <div className="flex gap-1">
+                      <button
+                        type="button"
+                        onClick={() => move(d.id, -1)}
+                        disabled={i === 0 || working !== null}
+                        aria-label="Move up"
+                        className="grid h-8 w-8 place-items-center rounded-md border border-brand-line bg-white hover:bg-brand-cream-warm disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        <ChevronUp className="h-3.5 w-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => move(d.id, 1)}
+                        disabled={i === sorted.length - 1 || working !== null}
+                        aria-label="Move down"
+                        className="grid h-8 w-8 place-items-center rounded-md border border-brand-line bg-white hover:bg-brand-cream-warm disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
+                        <ChevronDown className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
                     <Button size="sm" variant="outline" onClick={() => startEdit(d)} className="flex-1">
                       <Edit className="h-3.5 w-3.5" /> Edit
                     </Button>

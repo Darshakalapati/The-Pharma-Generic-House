@@ -1,8 +1,26 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { DOCTOR_SPECIALTIES } from './constants';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+/**
+ * Turn a stored specialty into its display label.
+ *
+ * The three built-ins are stored lowercase ('nadi', 'physiotherapy',
+ * 'homeopathy') and get their proper capitalisation back. Anything else is a
+ * custom specialty the admin typed, so it is shown exactly as entered.
+ *
+ * Every place that renders a specialty goes through here — there is no
+ * enum-to-label map anywhere else.
+ */
+export function formatSpecialty(value: string | null | undefined): string {
+  const raw = (value ?? '').trim();
+  if (!raw) return '';
+  const known = DOCTOR_SPECIALTIES.find((s) => s.value === raw.toLowerCase());
+  return known ? known.label : raw;
 }
 
 export function formatINR(amount: number | null | undefined) {

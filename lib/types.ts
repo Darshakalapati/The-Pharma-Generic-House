@@ -1,4 +1,5 @@
 export type ProductCategory = 'general' | 'pharma' | 'ayurvedic' | 'cosmetic';
+/** The three built-in specialties. Any other value is free text the admin typed. */
 export type DoctorSpecialty = 'nadi' | 'physiotherapy' | 'homeopathy';
 export type AppointmentStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled';
 export type TestBookingStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled';
@@ -19,7 +20,8 @@ export interface Product {
 export interface Doctor {
   id: string;
   name: string;
-  specialty: DoctorSpecialty;
+  /** One of the three built-ins, or any custom specialty typed by the admin. */
+  specialty: string;
   bio: string | null;
   photo_url: string | null;
   consultation_fee: number | null;
@@ -29,6 +31,7 @@ export interface Doctor {
   slot_duration_minutes: number;
   is_active: boolean;
   is_on_request: boolean;
+  display_order: number;
   created_at: string;
 }
 

@@ -14,8 +14,8 @@ import {
   dayOfWeek,
   whatsappLink,
   formatDate,
+  formatSpecialty,
 } from '@/lib/utils';
-import { DOCTOR_SPECIALTIES } from '@/lib/constants';
 import { WhatsAppGlyph } from './whatsapp-glyph';
 import type { Doctor } from '@/lib/types';
 
@@ -42,7 +42,7 @@ interface Props {
 export function AppointmentDialog({ doctor, open, onOpenChange, whatsappNumber }: Props) {
   const [submitting, setSubmitting] = React.useState(false);
   const isOnRequest = doctor.is_on_request;
-  const specialty = DOCTOR_SPECIALTIES.find((s) => s.value === doctor.specialty)?.label;
+  const specialty = formatSpecialty(doctor.specialty);
 
   const {
     register,

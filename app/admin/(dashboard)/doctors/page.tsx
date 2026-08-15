@@ -9,7 +9,8 @@ export default async function AdminDoctorsPage() {
   const { data } = await supabase
     .from('doctors')
     .select('*')
-    .order('created_at', { ascending: false });
+    .order('display_order', { ascending: true })
+    .order('created_at', { ascending: true });
 
   return (
     <div>

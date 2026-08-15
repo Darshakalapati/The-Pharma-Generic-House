@@ -4,9 +4,8 @@ import * as React from 'react';
 import Image from 'next/image';
 import { Calendar, Clock, IndianRupee, ArrowRight } from 'lucide-react';
 import { AppointmentDialog } from './appointment-dialog';
-import { DOCTOR_SPECIALTIES } from '@/lib/constants';
 import { resolveDoctorPhoto } from '@/lib/images';
-import { formatINR, formatTime12 } from '@/lib/utils';
+import { formatINR, formatTime12, formatSpecialty } from '@/lib/utils';
 import { StaggerGrid, StaggerGridItem } from '@/components/public/motion/scroll-reveal';
 import type { Doctor } from '@/lib/types';
 
@@ -50,7 +49,7 @@ export function DoctorList({
 }
 
 function DoctorCard({ doctor, onBook }: { doctor: Doctor; onBook: () => void }) {
-  const specialty = DOCTOR_SPECIALTIES.find((s) => s.value === doctor.specialty)?.label;
+  const specialty = formatSpecialty(doctor.specialty);
   const photo = resolveDoctorPhoto(doctor.photo_url, doctor.name);
 
   return (

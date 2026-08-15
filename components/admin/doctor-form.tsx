@@ -31,19 +31,33 @@ import { ASPECT } from '@/lib/image-crop';
 import { DOCTOR_SPECIALTIES, WEEKDAYS } from '@/lib/constants';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
-import type { Doctor, DoctorSpecialty } from '@/lib/types';
+import type { Doctor } from '@/lib/types';
 
-const formSchema = z.object({
-  name: z.string().min(2, 'Name is required'),
-  specialty: z.enum(['nadi', 'physiotherapy', 'homeopathy']),
-  bio: z.string().optional(),
-  consultation_fee: z.string().optional(),
-  available_time_start: z.string().optional(),
-  available_time_end: z.string().optional(),
-  slot_duration_minutes: z.string().optional(),
-  is_active: z.boolean(),
-  is_on_request: z.boolean(),
-});
+/** Sentinel for the dropdown's "Other…" row — never stored in the database. */
+const OTHER = '__other__';
+const CUSTOM_MAX = 40;
+
+const KNOWN_SPECIALTIES: string[] = DOCTOR_SPECIALTIES.map((s) => s.value);
+
+const formSchema = z
+  .object({
+    name: z.string().min(2, 'Name is required'),
+    // Free text now — either a built-in value or the OTHER sentinel.
+    specialty: z.string().min(1, 'Pick a specialty'),
+    specialty_custom: z.string().max(CUSTOM_MAX, 'Keep it under 40 characters').optional(),
+    bio: z.string().optional(),
+    consultation_fee: z.string().optional(),
+    available_time_start: z.string().optional(),
+    available_time_end: z.string().optional(),
+    slot_duration_minutes: z.string().optional(),
+    is_active: z.boolean(),
+    is_on_request: z.boolean(),
+  })
+  // "Other…" is only a valid choice once it has been named.
+  .refine((v) => v.specialty !== OTHER || !!v.specialty_custom?.trim(), {
+    path: ['specialty_custom'],
+    message: 'Enter the specialty name',
+  });
 type FormValues = z.infer<typeof formSchema>;
 
 export function DoctorForm({
@@ -90,7 +104,12 @@ export function DoctorForm({
       const supabase = createClient();
       const payload: any = {
         name: data.name.trim(),
-        specialty: data.specialty,
+        // Built-ins keep their lowercase values for backward compatibility;
+        // "Other…" stores exactly what the admin typed.
+        specialty:
+          data.specialty === OTHER
+            ? (data.specialty_custom ?? '').trim()
+            : data.specialty,
         bio: data.bio?.trim() || null,
         photo_url: photoUrl,
         consultation_fee: data.consultation_fee ? Number(data.consultation_fee) : null,
@@ -163,7 +182,7 @@ export function DoctorForm({
               <div className="mt-1.5">
                 <Select
                   value={watch('specialty')}
-                  onValueChange={(v) => setValue('specialty', v as DoctorSpecialty)}
+                  onValueChange={(v) => setValue('specialty', v, { shouldValidate: true })}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -174,11 +193,33 @@ export function DoctorForm({
                         {s.label}
                       </SelectItem>
                     ))}
+                    <SelectItem value={OTHER}>Other…</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
           </div>
+
+          {watch('specialty') === OTHER && (
+            <div>
+              <Label htmlFor="specialty-custom">Specialty name</Label>
+              <Input
+                id="specialty-custom"
+                maxLength={CUSTOM_MAX}
+                placeholder="e.g., Dermatology, Ayurveda, General Physician"
+                {...register('specialty_custom')}
+                className={cn('mt-1.5', errors.specialty_custom && 'border-destructive')}
+              />
+              <p className="mt-1 text-xs text-brand-muted">
+                Shown to customers exactly as you type it.
+              </p>
+              {errors.specialty_custom && (
+                <p className="mt-1 text-xs text-destructive">
+                  {errors.specialty_custom.message}
+                </p>
+              )}
+            </div>
+          )}
 
           <div>
             <Label htmlFor="bio">Bio</Label>
@@ -308,7 +349,15 @@ export function DoctorForm({
 function defaults(d: Doctor | null): FormValues {
   return {
     name: d?.name ?? '',
-    specialty: (d?.specialty as DoctorSpecialty) ?? 'nadi',
+    // A stored value outside the built-in three means this doctor has a custom
+    // specialty — reopen the form on "Other…" with the text already filled in.
+    specialty: d
+      ? KNOWN_SPECIALTIES.includes(d.specialty)
+        ? d.specialty
+        : OTHER
+      : 'nadi',
+    specialty_custom:
+      d && !KNOWN_SPECIALTIES.includes(d.specialty) ? d.specialty : '',
     bio: d?.bio ?? '',
     consultation_fee: d?.consultation_fee != null ? String(d.consultation_fee) : '',
     available_time_start: d?.available_time_start ?? '',

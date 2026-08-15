@@ -12,8 +12,7 @@ import {
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { getShopSettings } from '@/lib/settings';
-import { whatsappLink, formatINR, formatTime12, telLink } from '@/lib/utils';
-import { DOCTOR_SPECIALTIES } from '@/lib/constants';
+import { whatsappLink, formatINR, formatTime12, telLink, formatSpecialty } from '@/lib/utils';
 import { IMG, resolveDoctorPhoto } from '@/lib/images';
 import { WhatsAppGlyph } from '@/components/public/whatsapp-glyph';
 import { VideoTestimonials } from '@/components/public/video-testimonials';
@@ -116,7 +115,8 @@ export default async function HomePage() {
       .from('doctors')
       .select('*')
       .eq('is_active', true)
-      .order('is_on_request', { ascending: true })
+      .order('display_order', { ascending: true })
+      .order('created_at', { ascending: true })
       .limit(3),
     supabase
       .from('tests')
@@ -155,8 +155,7 @@ export default async function HomePage() {
     .slice()
     .sort((a, b) => (featuredOrder.get(a.name) ?? 99) - (featuredOrder.get(b.name) ?? 99));
   const totalTests = totalTestsCount ?? testList.length;
-  const specialty = (s: string) =>
-    DOCTOR_SPECIALTIES.find((x) => x.value === s)?.label ?? s;
+  const specialty = (s: string) => formatSpecialty(s);
 
   return (
     <>

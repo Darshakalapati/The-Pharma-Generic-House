@@ -21,7 +21,8 @@ export default async function DoctorsPage() {
     .from('doctors')
     .select('*')
     .eq('is_active', true)
-    .order('is_on_request', { ascending: true });
+    .order('display_order', { ascending: true })
+    .order('created_at', { ascending: true });
 
   const doctors: Doctor[] = data ?? [];
 
