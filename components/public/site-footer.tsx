@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { Phone, MessageCircle, MapPin, Clock } from 'lucide-react';
 import { FooterWordmark } from './logo';
 import { TiltCard } from './tilt-card';
+import { SectionCurve } from './motion/section-curve';
 import { SHOP_EMAIL } from '@/lib/constants';
 import { whatsappLink, telLink } from '@/lib/utils';
 import type { ShopSettings } from '@/lib/types';
@@ -47,6 +48,15 @@ export function SiteFooter({ settings }: { settings: ShopSettings }) {
   return (
     // pb clears the fixed mobile action bar so footer content is never hidden behind it.
     <footer className="relative bg-ink text-bg pb-[72px] md:pb-0">
+      {/* The dark band rises to meet the page rather than starting on a hard
+          line. Positioned absolutely above the footer's own top edge: a
+          negative margin here would collapse with the footer's margin and drag
+          the whole element up instead of just the curve. */}
+      <SectionCurve
+        variant="dome"
+        color="var(--ink)"
+        className="absolute inset-x-0 -top-6 md:-top-10 h-6 md:h-10"
+      />
       <div className="container-public pt-16 pb-0">
         <div>
           <div className="flex items-center gap-4">

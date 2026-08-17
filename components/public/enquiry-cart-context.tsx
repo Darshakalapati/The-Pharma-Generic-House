@@ -12,6 +12,8 @@ interface EnquiryCartContextValue {
   setQty: (product_id: string, qty: number) => void;
   clear: () => void;
   count: number;
+  /** Increments on every add() call — the floating trigger pulses on change. */
+  addPulse: number;
 }
 
 const Ctx = React.createContext<EnquiryCartContextValue | null>(null);
@@ -22,6 +24,7 @@ export function EnquiryCartProvider({ children }: { children: React.ReactNode })
   const [items, setItems] = React.useState<EnquiryItem[]>([]);
   const [open, setOpen] = React.useState(false);
   const [hydrated, setHydrated] = React.useState(false);
+  const [addPulse, setAddPulse] = React.useState(0);
 
   React.useEffect(() => {
     try {
@@ -53,6 +56,9 @@ export function EnquiryCartProvider({ children }: { children: React.ReactNode })
    * cart slide-over panel only.
    */
   const add: EnquiryCartContextValue['add'] = React.useCallback((item) => {
+    // Pulses even when the item is already in the cart, so the tap always
+    // gets an acknowledgement.
+    setAddPulse((n) => n + 1);
     setItems((prev) => {
       if (prev.some((p) => p.product_id === item.product_id)) return prev;
       return [...prev, { ...item, quantity: 1 }];
@@ -78,8 +84,8 @@ export function EnquiryCartProvider({ children }: { children: React.ReactNode })
   const count = items.reduce((acc, i) => acc + i.quantity, 0);
 
   const value = React.useMemo(
-    () => ({ items, open, setOpen, add, remove, setQty, clear, count }),
-    [items, open, add, remove, setQty, clear, count]
+    () => ({ items, open, setOpen, add, remove, setQty, clear, count, addPulse }),
+    [items, open, add, remove, setQty, clear, count, addPulse]
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

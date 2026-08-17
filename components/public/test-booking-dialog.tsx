@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { Magnetic } from '@/components/public/motion/magnetic';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -213,9 +214,11 @@ export function TestBookingDialog({
           >
             Cancel
           </button>
-          <button type="submit" disabled={submitting} className="btn-plum sm:flex-1">
+          <Magnetic className="sm:flex-1">
+          <button type="submit" disabled={submitting} className="btn-plum w-full">
             {submitting ? 'Booking...' : 'Book Test'}
           </button>
+          </Magnetic>
         </div>
       </form>
     </BookingModal>

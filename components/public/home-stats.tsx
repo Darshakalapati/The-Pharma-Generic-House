@@ -24,7 +24,7 @@ export function HomeStats() {
   const reduced = useReducedMotion();
 
   return (
-    <ScrollReveal as="section" className="mt-20 sm:mt-28 bg-bg-elevated border-y border-line">
+    <ScrollReveal as="section" className="ribbon-band mt-20 sm:mt-28 bg-bg-elevated">
       <div className="container-public pt-12 lg:pt-20">
         <ScrollRevealItem as="div" className="text-center">
           <span className="eyebrow">By the numbers</span>

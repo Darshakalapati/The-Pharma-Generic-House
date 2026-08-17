@@ -150,7 +150,8 @@
   }
   .link-underline:hover::after,
   .link-underline:focus-visible::after,
-  .link-underline[data-active='true']::after {
+  .link-underline[data-active='true']::after,
+  .group:hover .link-underline::after {
     transform: scaleX(1);
   }
 
@@ -304,6 +305,10 @@
     border-color: var(--plum);
     box-shadow: 0 0 0 3px rgba(107, 44, 95, 0.12);
   }
+  /* 200ms to match the label lift above it. */
+  .input-field {
+    transition: border-color 200ms ease, box-shadow 200ms ease;
+  }
   textarea.input-field {
     height: auto;
     padding: 0.75rem 0.875rem;
@@ -325,6 +330,98 @@
     font-weight: 500;
     color: var(--ink);
     margin-bottom: 0.4rem;
+    transition: color 200ms ease, transform 200ms ease;
+  }
+
+  /* Focus polish — the label above a focused field lifts 1px and warms to
+     plum, matching the border. Progressive: browsers without :has() simply
+     keep the plain label and still get the border transition. */
+  .form-label:has(+ .input-field:focus),
+  .form-label:has(+ div .input-field:focus),
+  .form-label:has(+ div > .input-field:focus) {
+    color: var(--plum);
+    transform: translateY(-1px);
+  }
+}
+
+/* ── Micro-interactions ─────────────────────────────────────────────────── */
+
+/* One soft ring every 10 seconds. The ripple occupies only the first 12% of
+   the cycle and is fully transparent for the rest, so nothing animates
+   continuously — it is a single blink of attention, not a beacon. */
+.wa-pulse {
+  position: relative;
+}
+.wa-pulse::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  animation: wa-ring 10s ease-out infinite;
+}
+
+@keyframes wa-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(42, 155, 142, 0.4);
+    opacity: 1;
+  }
+  12% {
+    box-shadow: 0 0 0 14px rgba(42, 155, 142, 0);
+    opacity: 0;
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(42, 155, 142, 0);
+    opacity: 0;
+  }
+}
+
+/* Tactile press feedback on touch devices, where there is no hover state to
+   confirm a tap landed. Pointer-coarse only so desktop keeps its hover lift. */
+@media (hover: none) and (pointer: coarse) {
+  .tap-settle {
+    transition: transform 100ms ease-out;
+  }
+  .tap-settle:active {
+    transform: scale(0.985);
+  }
+}
+
+/* Stats band as a printed ribbon: the clip angles the top and bottom edges.
+   clip-path only masks, so the content inside stays perfectly level and needs
+   no counter-transform. ~1.2deg at desktop widths. */
+.ribbon-band {
+  --ribbon-skew: 16px;
+  clip-path: polygon(
+    0 var(--ribbon-skew),
+    100% 0,
+    100% 100%,
+    0 calc(100% - var(--ribbon-skew))
+  );
+}
+@media (min-width: 768px) {
+  .ribbon-band {
+    --ribbon-skew: 30px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wa-pulse::after {
+    animation: none;
+  }
+  .tap-settle,
+  .tap-settle:active {
+    transition: none;
+    transform: none;
+  }
+  .form-label {
+    transition: color 200ms ease;
+  }
+  .form-label:has(+ .input-field:focus),
+  .form-label:has(+ div .input-field:focus),
+  .form-label:has(+ div > .input-field:focus) {
+    transform: none;
   }
 }
 

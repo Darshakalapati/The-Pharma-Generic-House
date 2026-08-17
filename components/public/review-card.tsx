@@ -55,7 +55,7 @@ export function ReviewCard({ review }: { review: Review }) {
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}
-            className="mt-2 ml-6 link-plum text-[0.8125rem] font-medium hover:underline underline-offset-2"
+            className="mt-2 ml-6 link-underline link-plum text-[0.8125rem] font-medium"
           >
             {expanded ? 'Show less' : 'Read more'}
           </button>

@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { X, ShoppingBag, Send, Package, Plus, Minus } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { useEnquiryCart } from './enquiry-cart-context';
 import { createClient } from '@/lib/supabase/client';
 import { whatsappLink, isValidPhoneIN, cn } from '@/lib/utils';
@@ -23,7 +24,8 @@ interface Props {
 }
 
 export function EnquiryCartPanel({ whatsappNumber, reservationEnabled }: Props) {
-  const { items, open, setOpen, count, setQty, remove, clear } = useEnquiryCart();
+  const { items, open, setOpen, count, setQty, remove, clear, addPulse } = useEnquiryCart();
+  const reduced = useReducedMotion();
   const [submitting, setSubmitting] = React.useState(false);
   const [showForm, setShowForm] = React.useState(false);
   const [submitMode, setSubmitMode] = React.useState<'submit' | 'reserve'>('submit');
@@ -107,18 +109,30 @@ export function EnquiryCartPanel({ whatsappNumber, reservationEnabled }: Props) 
     <>
       {/* Floating cart trigger */}
       {count > 0 && (
-        <button
+        <motion.button
           onClick={() => setOpen(true)}
           aria-label="Open enquiry"
+          /* Keyed on the pulse counter so every add() replays the animation,
+             even when the count itself did not change. */
+          key={reduced ? 'trigger' : `trigger-${addPulse}`}
+          initial={false}
+          animate={reduced ? undefined : { scale: [1, 1.15, 1] }}
+          transition={{ duration: 0.35, ease: 'easeOut' }}
           className="fixed bottom-[calc(72px+env(safe-area-inset-bottom,0px))] right-5 md:bottom-5 md:right-[calc(80px+env(safe-area-inset-right,0))] z-40 inline-flex items-center gap-2 rounded-full bg-plum text-white px-5 py-3 text-[0.9375rem] font-medium shadow-elevated hover:bg-plum-deep transition-colors"
         >
           <ShoppingBag className="h-4 w-4" />
           <span>Enquiry</span>
           <span aria-hidden className="text-white/50">·</span>
-          <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-plum-deep text-[0.78rem] px-1.5">
+          <motion.span
+            key={reduced ? 'badge' : `badge-${addPulse}`}
+            initial={false}
+            animate={reduced ? undefined : { scale: [1, 1.25, 1] }}
+            transition={{ duration: 0.3, ease: 'easeOut', delay: 0.05 }}
+            className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-plum-deep text-[0.78rem] px-1.5"
+          >
             {count}
-          </span>
-        </button>
+          </motion.span>
+        </motion.button>
       )}
 
       {/* Overlay */}

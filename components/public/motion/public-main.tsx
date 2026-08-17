@@ -1,30 +1,13 @@
 'use client';
 
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { usePathname } from 'next/navigation';
-
-const EASE_OUT: [number, number, number, number] = [0, 0, 0.2, 1];
-
+/**
+ * Page content wrapper.
+ *
+ * The route-change animation lives in `PageWipe`, which overlays the viewport
+ * rather than wrapping the content. Keeping the content itself un-animated
+ * means a slow route never renders behind a half-faded shell, and there is no
+ * second transition competing with the wipe.
+ */
 export function PublicMain({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const reduced = useReducedMotion();
-
-  if (reduced) {
-    return <main className="min-h-[60vh]">{children}</main>;
-  }
-
-  return (
-    <AnimatePresence mode="wait">
-      <motion.main
-        key={pathname}
-        className="min-h-[60vh]"
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 4 }}
-        transition={{ duration: 0.4, ease: EASE_OUT }}
-      >
-        {children}
-      </motion.main>
-    </AnimatePresence>
-  );
+  return <main className="min-h-[60vh]">{children}</main>;
 }

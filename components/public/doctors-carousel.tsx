@@ -93,7 +93,7 @@ export function DoctorsCarousel({ doctors }: { doctors: Doctor[] }) {
               data-doctor-card
               className="snap-start shrink-0 w-[85vw] max-w-[340px]"
             >
-              <article className="card-soft overflow-hidden flex flex-col group h-full">
+              <article className="card-soft tap-settle overflow-hidden flex flex-col group h-full">
                 <div className="relative aspect-[4/3] md:aspect-[4/3] bg-sand overflow-hidden">
                   {photo && (
                     <Image

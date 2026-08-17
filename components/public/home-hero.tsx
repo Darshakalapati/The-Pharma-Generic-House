@@ -6,6 +6,7 @@ import { ArrowRight } from 'lucide-react';
 import { ScrollReveal, ScrollRevealItem } from '@/components/public/motion/scroll-reveal';
 import { KenBurnsPhoto, type KenBurnsSlide } from '@/components/public/ken-burns-photo';
 import { LeafAccent } from '@/components/public/botanical-accents';
+import { Magnetic } from '@/components/public/motion/magnetic';
 
 const HERO_PHOTO =
   'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=1200&q=85&auto=format&fit=crop';
@@ -46,10 +47,12 @@ export function HomeHero({ photos = [] }: { photos?: KenBurnsSlide[] }) {
             over a decade.
           </ScrollRevealItem>
           <ScrollRevealItem as="div" className="mt-8 flex flex-col md:flex-row md:flex-wrap md:items-center gap-3 md:gap-6">
-            <Link href="/products" className="btn-plum w-full md:w-auto h-12 md:h-11">
-              Browse Products
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+            <Magnetic className="w-full md:w-auto">
+              <Link href="/products" className="btn-plum w-full md:w-auto h-12 md:h-11">
+                Browse Products
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Magnetic>
             <Link href="/doctors" className="link-underline link-plum text-[0.95rem] w-full md:w-auto inline-flex items-center justify-center md:justify-start min-h-[48px] md:min-h-0">
               Book an Appointment →
             </Link>

@@ -39,7 +39,9 @@ export function MobileActionBar({
           rel="noopener noreferrer"
           className="inline-flex h-14 items-center justify-center gap-2 bg-teal text-white text-[0.9375rem] font-semibold"
         >
-          <WhatsAppGlyph className="h-[18px] w-[18px]" />
+          <span className="wa-pulse inline-flex rounded-full">
+            <WhatsAppGlyph className="h-[18px] w-[18px]" />
+          </span>
           WhatsApp
         </a>
       </div>

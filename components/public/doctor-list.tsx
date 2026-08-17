@@ -53,7 +53,7 @@ function DoctorCard({ doctor, onBook }: { doctor: Doctor; onBook: () => void }) 
   const photo = resolveDoctorPhoto(doctor.photo_url, doctor.name);
 
   return (
-    <article className="card-soft overflow-hidden">
+    <article className="card-soft tap-settle overflow-hidden">
       <div className="grid md:grid-cols-12">
         {/* Photo */}
         <div className="relative md:col-span-4 aspect-[4/3] md:aspect-auto md:min-h-[280px] bg-sand">

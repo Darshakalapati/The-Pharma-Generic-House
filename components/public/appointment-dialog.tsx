@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { Magnetic } from '@/components/public/motion/magnetic';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -233,13 +234,15 @@ export function AppointmentDialog({ doctor, open, onOpenChange, whatsappNumber }
             <WhatsAppGlyph className="h-4 w-4" />
             Send & WhatsApp
           </button>
-          <button type="submit" disabled={submitting} className="btn-plum sm:flex-1">
+          <Magnetic className="sm:flex-1">
+          <button type="submit" disabled={submitting} className="btn-plum w-full">
             {submitting
               ? 'Sending...'
               : isOnRequest
                 ? 'Send Request'
                 : 'Book Appointment'}
           </button>
+          </Magnetic>
         </div>
       </form>
     </BookingModal>

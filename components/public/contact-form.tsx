@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { Send } from 'lucide-react';
+import { Magnetic } from '@/components/public/motion/magnetic';
 import { createClient } from '@/lib/supabase/client';
 import { isValidPhoneIN } from '@/lib/utils';
 
@@ -112,10 +113,12 @@ export function ContactForm() {
         )}
       </div>
 
-      <button type="submit" disabled={submitting} className="btn-plum w-full sm:w-auto">
+      <Magnetic className="w-full sm:w-auto">
+      <button type="submit" disabled={submitting} className="btn-plum w-full">
         <Send className="h-4 w-4" />
         {submitting ? 'Sending...' : 'Send Message'}
       </button>
+      </Magnetic>
     </form>
   );
 }

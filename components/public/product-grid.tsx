@@ -125,7 +125,7 @@ function ProductCard({
   const isDisabled = !product.in_stock || added;
 
   return (
-    <article className="card-soft overflow-hidden flex flex-col h-full">
+    <article className="card-soft tap-settle overflow-hidden flex flex-col h-full">
       <div className="relative aspect-square bg-sand overflow-hidden">
         {product.image_url ? (
           // Use plain img to allow any external host (picsum, supabase-stored uploads, unsplash)

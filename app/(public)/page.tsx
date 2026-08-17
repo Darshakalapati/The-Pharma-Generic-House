@@ -23,6 +23,8 @@ import { DoctorsCarousel } from '@/components/public/doctors-carousel';
 import { HomeStats } from '@/components/public/home-stats';
 import { FamilyStory } from '@/components/public/family-story';
 import { MortarPestleAccent } from '@/components/public/botanical-accents';
+import { SectionCurve } from '@/components/public/motion/section-curve';
+import { Magnetic } from '@/components/public/motion/magnetic';
 import {
   ScrollReveal,
   ScrollRevealItem,
@@ -162,8 +164,11 @@ export default async function HomePage() {
       {/* SECTION 1 — HERO ─────────────────────────────────────────── */}
       <HomeHero photos={heroSlides} />
 
+      {/* Hero settles into the trust bar on a shallow curve. */}
+      <SectionCurve variant="valley" color="var(--sand)" className="h-6 md:h-10 -mb-px" />
+
       {/* Trust bar */}
-      <ScrollReveal as="section" className="bg-sand border-y border-line">
+      <ScrollReveal as="section" className="bg-sand border-b border-line">
         <ScrollRevealItem as="div" className="container-public py-3.5 md:overflow-x-auto">
           {/* Wraps onto two lines on phones rather than scrolling sideways. */}
           <p className="flex flex-wrap justify-center gap-x-3 gap-y-1 text-center md:flex-nowrap md:justify-start md:gap-5 md:whitespace-nowrap md:text-left text-[0.875rem] text-ink-muted">
@@ -201,7 +206,7 @@ export default async function HomePage() {
                 {o.body}
               </p>
               <span className="mt-auto pt-5 inline-flex items-center gap-1 text-[0.875rem] font-medium text-plum">
-                Learn more
+                <span className="link-underline">Learn more</span>
                 <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
               </span>
             </Link>
@@ -260,10 +265,12 @@ export default async function HomePage() {
                 home anywhere in Vijayawada. Reports are delivered to you on WhatsApp.
               </ScrollRevealItem>
               <ScrollRevealItem as="div" className="mt-7">
+                <Magnetic>
                 <Link href="/tests" className="inline-flex btn-plum">
                   Book a Test
                   <ArrowRight className="h-4 w-4" />
                 </Link>
+                </Magnetic>
               </ScrollRevealItem>
             </div>
 
