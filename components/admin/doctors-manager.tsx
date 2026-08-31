@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/dialog';
 import { DoctorForm } from './doctor-form';
 import { createClient } from '@/lib/supabase/client';
-import { formatINR, formatTime12, formatSpecialty } from '@/lib/utils';
+import { formatINR, formatTime12, formatSpecialty, formatDays } from '@/lib/utils';
 import type { Doctor } from '@/lib/types';
 
 export function DoctorsManager({ doctors }: { doctors: Doctor[] }) {
@@ -139,7 +139,7 @@ export function DoctorsManager({ doctors }: { doctors: Doctor[] }) {
                     d.available_time_start &&
                     d.available_time_end && (
                       <p className="mt-1 text-xs text-brand-muted">
-                        {d.available_days.join(', ')} ·{' '}
+                        {formatDays(d.available_days)} ·{' '}
                         {formatTime12(d.available_time_start)}–{formatTime12(d.available_time_end)}
                       </p>
                     )}

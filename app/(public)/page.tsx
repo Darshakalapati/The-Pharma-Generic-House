@@ -11,7 +11,8 @@ import {
   FlaskConical,
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
-import { getShopSettings } from '@/lib/settings';
+import { getShopSettings, getSchedule } from '@/lib/settings';
+import { formatHoursSummary } from '@/lib/hours';
 import { whatsappLink, telLink } from '@/lib/utils';
 import { IMG } from '@/lib/images';
 import { WhatsAppGlyph } from '@/components/public/whatsapp-glyph';
@@ -55,7 +56,7 @@ const OFFERS = [
   {
     icon: Stethoscope,
     title: 'Doctor Consultations',
-    body: 'In-house Nadi, Physiotherapy, and Homeopathy consultations.',
+    body: 'Visiting doctors — physician, physiotherapy, homeopathy, and Nadi — by appointment.',
     href: '/doctors',
   },
 ];
@@ -101,7 +102,8 @@ const PRODUCT_TILES = [
 
 export default async function HomePage() {
   const supabase = createClient();
-  const settings = await getShopSettings();
+  const [settings, schedule] = await Promise.all([getShopSettings(), getSchedule()]);
+  const hoursSummary = formatHoursSummary(schedule);
 
   // hero_photos and family_members arrive with migrations 0009 / 0010. Until
   // those are applied the queries just return an error and `data` is null, and
@@ -178,9 +180,7 @@ export default async function HomePage() {
             <span aria-hidden className="text-ink-faint">·</span>
             <span>Home test collection</span>
             <span aria-hidden className="text-ink-faint">·</span>
-            <span>Mon–Sat 9 AM – 10 PM</span>
-            <span aria-hidden className="text-ink-faint">·</span>
-            <span>Sun 9 AM – 2 PM</span>
+            <span>{hoursSummary}</span>
           </p>
         </ScrollRevealItem>
       </ScrollReveal>
@@ -231,7 +231,7 @@ export default async function HomePage() {
             <span className="eyebrow">Consultations</span>
             <h2 className="h-section mt-4">Our practitioners. By appointment.</h2>
             <p className="mt-4 text-ink-muted text-[1.0625rem] leading-[1.7]">
-              Visit on scheduled days for in-shop consultations, or request a homeopathy slot.
+              Visit on scheduled days for in-shop consultations, or request a slot for on-request doctors.
             </p>
           </ScrollRevealItem>
 
@@ -276,7 +276,7 @@ export default async function HomePage() {
 
             <ScrollRevealItem as="div" className="relative aspect-[5/4] rounded-2xl overflow-hidden shadow-card border border-line">
               <Image
-                src={IMG.diagnostics.labEquipment}
+                src={settings.diagnostics_photo_url || IMG.diagnostics.labEquipment}
                 alt="Lab equipment for diagnostic tests"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
@@ -370,7 +370,7 @@ export default async function HomePage() {
             </ScrollRevealItem>
             <ScrollRevealItem as="p" className="mt-5 text-[1.0625rem] text-ink-muted leading-[1.75]">
               We&apos;re a trusted pharmacy in Vijayawada, serving the same community
-              for more than a decade. Our shelves carry general and prescription
+              since 2018. Our shelves carry general and prescription
               medicines, classical Ayurvedic preparations, and trusted personal care
               brands — chosen with care.
             </ScrollRevealItem>
@@ -390,7 +390,7 @@ export default async function HomePage() {
 
           <ScrollRevealItem as="div" className="relative aspect-[5/4] rounded-2xl overflow-hidden shadow-card border border-line">
             <Image
-              src={IMG.pharmacy.interior}
+              src={settings.about_photo_url || IMG.pharmacy.interior}
               alt="Inside The Pharma Generic House"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"

@@ -2,12 +2,19 @@
 
 import * as React from 'react';
 import { ChevronLeft, ChevronRight, Play } from 'lucide-react';
-import { cn, extractYouTubeId, youtubeThumbnailUrl } from '@/lib/utils';
+import { cn, extractYouTubeId, youtubeThumbnailUrl, formatTitle } from '@/lib/utils';
 import { VideoPlayerModal } from './video-player-modal';
 import { StaggerGrid, StaggerGridItem } from '@/components/public/motion/scroll-reveal';
 import type { Video } from '@/lib/types';
 
 const STATIC_GRID_THRESHOLD = 4;
+
+/** Plain-language label for the stored video_type. */
+const VIDEO_TYPE_LABEL: Record<string, string> = {
+  testimonial: 'Customer story',
+  review: 'Product',
+  announcement: 'Shop update',
+};
 
 export function VideoCarousel({ videos }: { videos: Video[] }) {
   const [active, setActive] = React.useState<Video | null>(null);
@@ -154,14 +161,17 @@ function VideoCard({ video, onPlay }: { video: Video; onPlay: () => void }) {
         </span>
       </button>
       <div className="p-4 flex flex-col gap-1 flex-1">
+        <span className="text-[0.6875rem] font-medium uppercase tracking-[0.1em] text-teal-deep">
+          {VIDEO_TYPE_LABEL[video.video_type] ?? 'Video'}
+        </span>
         {video.customer_name && (
           <p className="font-serif font-medium text-[1.0625rem] tracking-[-0.005em] leading-tight">
-            {video.customer_name}
+            {formatTitle(video.customer_name)}
           </p>
         )}
         {!video.customer_name && (
           <p className="font-serif font-medium text-[1.0625rem] tracking-[-0.005em] leading-tight">
-            {video.title}
+            {formatTitle(video.title)}
           </p>
         )}
         {video.description && (

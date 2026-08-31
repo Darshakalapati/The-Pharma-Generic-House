@@ -5,7 +5,7 @@ import { MobileActionBar } from '@/components/public/mobile-action-bar';
 import { PageWipe } from '@/components/public/motion/page-wipe';
 import { AnnouncementBanner } from '@/components/public/announcement-banner';
 import { PublicMain } from '@/components/public/motion/public-main';
-import { getShopSettings } from '@/lib/settings';
+import { getShopSettings, getSchedule } from '@/lib/settings';
 import { createClient } from '@/lib/supabase/server';
 import type { Announcement } from '@/lib/types';
 
@@ -27,9 +27,10 @@ async function getActiveAnnouncement(): Promise<Announcement | null> {
 }
 
 export default async function PublicLayout({ children }: { children: React.ReactNode }) {
-  const [settings, announcement] = await Promise.all([
+  const [settings, announcement, schedule] = await Promise.all([
     getShopSettings(),
     getActiveAnnouncement(),
+    getSchedule(),
   ]);
 
   return (
@@ -37,9 +38,9 @@ export default async function PublicLayout({ children }: { children: React.React
     // the admin panel uses its own root and stays clean.
     <div className="site-grain bg-bg text-ink">
       <AnnouncementBanner announcement={announcement} />
-      <SiteNav shopPhone={settings.shop_phone} shopWhatsApp={settings.shop_whatsapp} />
+      <SiteNav shopPhone={settings.shop_phone} shopWhatsApp={settings.shop_whatsapp} schedule={schedule} />
       <PublicMain>{children}</PublicMain>
-      <SiteFooter settings={settings} />
+      <SiteFooter settings={settings} schedule={schedule} />
       <WhatsAppFloat phone={settings.shop_whatsapp} />
       <MobileActionBar phone={settings.shop_phone} whatsapp={settings.shop_whatsapp} />
       <PageWipe />

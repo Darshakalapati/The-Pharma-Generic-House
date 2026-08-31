@@ -1,6 +1,7 @@
 import { Phone } from 'lucide-react';
 import { WhatsAppGlyph } from './whatsapp-glyph';
 import { whatsappLink, telLink } from '@/lib/utils';
+import { PRESCRIPTION_WA_TEXT } from '@/lib/constants';
 
 /**
  * Fixed Call / WhatsApp bar, phones only.
@@ -34,7 +35,7 @@ export function MobileActionBar({
           Call
         </a>
         <a
-          href={whatsappLink(whatsapp)}
+          href={whatsappLink(whatsapp, PRESCRIPTION_WA_TEXT)}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex h-14 items-center justify-center gap-2 bg-teal text-white text-[0.9375rem] font-semibold"

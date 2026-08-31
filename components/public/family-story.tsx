@@ -18,7 +18,7 @@ const PORTRAIT_ZOOM = 1.05;
 const FALLBACK: Pick<FamilyMember, 'name' | 'role' | 'bio' | 'quote_text' | 'quote_attribution'> = {
   name: 'Uma Shankar Alapati',
   role: 'Founder',
-  bio: 'Uma Shankar Alapati brings over 27 years of medical experience to The Pharma Generic House. He built the pharmacy to translate that experience into something Vijayawada families could rely on — trusted medicines, personal advice, and honest care. Every prescription he fills carries decades of medical understanding behind it. That is why customers come back, and why they bring their neighbours.',
+  bio: 'Uma Shankar Alapati brings over 27 years of medical experience and years of running The Pharma Generic House. He built the pharmacy to translate that experience into something Vijayawada families could rely on — trusted medicines, personal advice, and honest care. Every prescription he fills carries that experience behind it. That is why customers come back, and why they bring their neighbours.',
   quote_text: 'We don’t sell medicines. We sell healing.',
   quote_attribution: 'Uma Shankar Alapati',
 };
@@ -49,7 +49,7 @@ export function FamilyStory({ member }: { member: FamilyMember | null }) {
         <span className="eyebrow">Our story</span>
         <h2 className="h-section mt-4 text-balance">The person behind the shop</h2>
         <p className="mt-6 font-serif italic font-normal text-[1.5rem] leading-[1.4] text-ink-muted text-pretty">
-          Uma Shankar Alapati brings decades of medical experience to Vijayawada —
+          Uma Shankar Alapati brings 27 years of medical experience to Vijayawada —
           one prescription, one honest conversation at a time.
         </p>
       </ScrollRevealItem>

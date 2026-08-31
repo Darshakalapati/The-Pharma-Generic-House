@@ -7,6 +7,9 @@ import { ScrollReveal, ScrollRevealItem } from '@/components/public/motion/scrol
 import { KenBurnsPhoto, type KenBurnsSlide } from '@/components/public/ken-burns-photo';
 import { LeafAccent } from '@/components/public/botanical-accents';
 import { Magnetic } from '@/components/public/motion/magnetic';
+import { WhatsAppGlyph } from '@/components/public/whatsapp-glyph';
+import { whatsappLink } from '@/lib/utils';
+import { SHOP_WHATSAPP, PRESCRIPTION_WA_TEXT } from '@/lib/constants';
 
 const HERO_PHOTO =
   'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=1200&q=85&auto=format&fit=crop';
@@ -43,19 +46,35 @@ export function HomeHero({ photos = [] }: { photos?: KenBurnsSlide[] }) {
           </ScrollRevealItem>
           <ScrollRevealItem as="p" className="mt-6 text-[1.0625rem] text-ink-muted leading-[1.7] max-w-[55ch]">
             From everyday medicines to Ayurvedic care, doctor consultations, and Sunday
-            lab tests — The Pharma Generic House has served Vijayawada for
-            over a decade.
+            lab tests — The Pharma Generic House has served Vijayawada since 2018.
           </ScrollRevealItem>
-          <ScrollRevealItem as="div" className="mt-8 flex flex-col md:flex-row md:flex-wrap md:items-center gap-3 md:gap-6">
+          {/* Three levels: the prescription hand-off is the one action most
+              customers actually want, so it leads. */}
+          <ScrollRevealItem as="div" className="mt-8 flex flex-col md:flex-row md:flex-wrap md:items-center gap-3 md:gap-4">
             <Magnetic className="w-full md:w-auto">
-              <Link href="/products" className="btn-plum w-full md:w-auto h-12 md:h-11">
-                Browse Products
-                <ArrowRight className="h-4 w-4" />
-              </Link>
+              <a
+                href={whatsappLink(SHOP_WHATSAPP, PRESCRIPTION_WA_TEXT)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-teal w-full md:w-auto h-12 md:h-11"
+              >
+                <WhatsAppGlyph className="h-4 w-4" />
+                Send prescription on WhatsApp
+              </a>
             </Magnetic>
-            <Link href="/doctors" className="link-underline link-plum text-[0.95rem] w-full md:w-auto inline-flex items-center justify-center md:justify-start min-h-[48px] md:min-h-0">
-              Book an Appointment →
+            <Link
+              href="/products"
+              className="btn-plum-outline w-full md:w-auto h-12 md:h-11"
+            >
+              Browse Products
             </Link>
+            <Link href="/doctors" className="link-underline link-plum text-[0.95rem] w-full md:w-auto inline-flex items-center justify-center md:justify-start min-h-[48px] md:min-h-0">
+              Book an appointment →
+            </Link>
+          </ScrollRevealItem>
+          <ScrollRevealItem as="p" className="mt-4 text-[0.875rem] text-ink-muted leading-[1.6] max-w-[52ch]">
+            Photograph your prescription, tap the button, and attach it in WhatsApp —
+            we&apos;ll reply with availability and price.
           </ScrollRevealItem>
         </div>
 

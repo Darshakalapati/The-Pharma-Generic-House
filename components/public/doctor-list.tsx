@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { Calendar, Clock, IndianRupee, ArrowRight } from 'lucide-react';
 import { AppointmentDialog } from './appointment-dialog';
 import { resolveDoctorPhoto } from '@/lib/images';
-import { formatINR, formatTime12, formatSpecialty } from '@/lib/utils';
+import { formatINR, formatTime12, formatSpecialty, formatDays } from '@/lib/utils';
 import { StaggerGrid, StaggerGridItem } from '@/components/public/motion/scroll-reveal';
 import type { Doctor } from '@/lib/types';
 
@@ -76,6 +76,11 @@ function DoctorCard({ doctor, onBook }: { doctor: Doctor; onBook: () => void }) 
           <h2 className="mt-2 font-serif font-medium text-[clamp(1.5rem,2.5vw,1.75rem)] tracking-[-0.015em] leading-tight">
             {doctor.name}
           </h2>
+          {doctor.qualifications?.trim() && (
+            <p className="mt-1 text-[0.75rem] font-medium uppercase tracking-[0.1em] text-ink-muted">
+              {doctor.qualifications}
+            </p>
+          )}
           {doctor.bio && (
             <p className="mt-3 text-[1rem] text-ink-muted leading-[1.7] max-w-[60ch]">
               {doctor.bio}
@@ -94,7 +99,7 @@ function DoctorCard({ doctor, onBook }: { doctor: Doctor; onBook: () => void }) 
                   <p className="inline-flex items-center gap-2 text-ink-muted">
                     <Calendar className="h-4 w-4 text-plum/70" />
                     <span>
-                      <span className="text-ink">Days:</span> {doctor.available_days.join(', ')}
+                      <span className="text-ink">Days:</span> {formatDays(doctor.available_days)}
                     </span>
                   </p>
                 )}

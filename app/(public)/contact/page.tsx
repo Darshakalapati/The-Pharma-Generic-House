@@ -1,9 +1,11 @@
 import { Phone, MapPin, ArrowRight, Clock } from 'lucide-react';
 import { ContactForm } from '@/components/public/contact-form';
 import { WhatsAppGlyph } from '@/components/public/whatsapp-glyph';
-import { getShopSettings } from '@/lib/settings';
+import { getShopSettings, getSchedule } from '@/lib/settings';
 import { whatsappLink, telLink } from '@/lib/utils';
-import { SHOP_EMAIL, SHOP_HOURS_DETAILED } from '@/lib/constants';
+import { SHOP_EMAIL, SHOP_ADDRESS_LINES } from '@/lib/constants';
+import { formatHoursDetailed } from '@/lib/hours';
+import { OpenStatus } from '@/components/public/open-status';
 
 export const metadata = {
   title: 'Contact',
@@ -12,7 +14,8 @@ export const metadata = {
 };
 
 export default async function ContactPage() {
-  const settings = await getShopSettings();
+  const [settings, schedule] = await Promise.all([getShopSettings(), getSchedule()]);
+  const hoursRows = formatHoursDetailed(schedule);
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
     settings.shop_address
   )}`;
@@ -80,7 +83,11 @@ export default async function ContactPage() {
             </span>
             <p className="eyebrow mt-5">Come to the shop</p>
             <p className="mt-2 font-serif font-medium text-[1.0625rem] tracking-[-0.005em] leading-snug">
-              {settings.shop_address}
+              {SHOP_ADDRESS_LINES.map((line) => (
+                <span key={line} className="block">
+                  {line}
+                </span>
+              ))}
             </p>
             <span className="mt-4 inline-flex items-center gap-1 text-[0.875rem] font-medium text-plum">
               Get directions
@@ -102,12 +109,15 @@ export default async function ContactPage() {
             </p>
 
             <div className="mt-8">
-              <p className="inline-flex items-center gap-2 eyebrow">
-                <Clock className="h-4 w-4 text-plum" />
-                Shop hours
-              </p>
+              <div className="flex flex-wrap items-center gap-3">
+                <p className="inline-flex items-center gap-2 eyebrow">
+                  <Clock className="h-4 w-4 text-plum" />
+                  Shop hours
+                </p>
+                <OpenStatus schedule={schedule} />
+              </div>
               <dl className="mt-4 border-t border-line">
-                {SHOP_HOURS_DETAILED.map((row) => {
+                {hoursRows.map((row) => {
                   const isSunday = row.day === 'Sunday';
                   return (
                     <div

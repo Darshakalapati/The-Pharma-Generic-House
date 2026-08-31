@@ -45,6 +45,7 @@ const formSchema = z
     // Free text now — either a built-in value or the OTHER sentinel.
     specialty: z.string().min(1, 'Pick a specialty'),
     specialty_custom: z.string().max(CUSTOM_MAX, 'Keep it under 40 characters').optional(),
+    qualifications: z.string().optional(),
     bio: z.string().optional(),
     consultation_fee: z.string().optional(),
     available_time_start: z.string().optional(),
@@ -106,6 +107,7 @@ export function DoctorForm({
         name: data.name.trim(),
         // Built-ins keep their lowercase values for backward compatibility;
         // "Other…" stores exactly what the admin typed.
+        qualifications: data.qualifications?.trim() || null,
         specialty:
           data.specialty === OTHER
             ? (data.specialty_custom ?? '').trim()
@@ -198,6 +200,19 @@ export function DoctorForm({
                 </Select>
               </div>
             </div>
+          </div>
+
+          <div>
+            <Label htmlFor="qualifications">Qualifications</Label>
+            <Input
+              id="qualifications"
+              placeholder="e.g., MBBS, MD (Cardiology)"
+              {...register('qualifications')}
+              className="mt-1.5"
+            />
+            <p className="mt-1 text-xs text-brand-muted">
+              Shown as a small line under the doctor&apos;s name. Leave blank to hide it.
+            </p>
           </div>
 
           {watch('specialty') === OTHER && (
@@ -358,6 +373,7 @@ function defaults(d: Doctor | null): FormValues {
       : 'nadi',
     specialty_custom:
       d && !KNOWN_SPECIALTIES.includes(d.specialty) ? d.specialty : '',
+    qualifications: d?.qualifications ?? '',
     bio: d?.bio ?? '',
     consultation_fee: d?.consultation_fee != null ? String(d.consultation_fee) : '',
     available_time_start: d?.available_time_start ?? '',

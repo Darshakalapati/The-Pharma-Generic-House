@@ -28,11 +28,21 @@ export const metadata: Metadata = {
   },
   description:
     'Trusted pharmacy in Vijayawada. Medicines, ayurvedic remedies, cosmetics, doctor consultations and lab tests — with WhatsApp support.',
-  metadataBase: new URL('https://pharmagenerichouse.com'),
+  metadataBase: new URL('https://www.pharmagenerichouse.com'),
   openGraph: {
-    title: SHOP_NAME,
-    description: SHOP_TAGLINE,
     type: 'website',
+    siteName: SHOP_NAME,
+    locale: 'en_IN',
+    url: '/',
+    title: `${SHOP_NAME} — Medicines, doctors, tests — under one roof.`,
+    description:
+      'Trusted pharmacy in Vijayawada. Medicines, ayurvedic remedies, cosmetics, doctor consultations and lab tests — with WhatsApp support.',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${SHOP_NAME} — Medicines, doctors, tests — under one roof.`,
+    description:
+      'Trusted pharmacy in Vijayawada. Medicines, ayurvedic remedies, cosmetics, doctor consultations and lab tests — with WhatsApp support.',
   },
   icons: {
     icon: [

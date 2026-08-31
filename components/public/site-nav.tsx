@@ -8,6 +8,8 @@ import { Logo } from './logo';
 import { WhatsAppGlyph } from './whatsapp-glyph';
 import { cn, whatsappLink, telLink } from '@/lib/utils';
 import { SHOP_PHONE, SHOP_WHATSAPP } from '@/lib/constants';
+import { OpenStatus } from './open-status';
+import type { Schedule } from '@/lib/hours';
 
 const NAV = [
   { href: '/', label: 'Home' },
@@ -21,9 +23,14 @@ const NAV = [
 interface Props {
   shopPhone?: string;
   shopWhatsApp?: string;
+  schedule: Schedule;
 }
 
-export function SiteNav({ shopPhone = SHOP_PHONE, shopWhatsApp = SHOP_WHATSAPP }: Props) {
+export function SiteNav({
+  shopPhone = SHOP_PHONE,
+  shopWhatsApp = SHOP_WHATSAPP,
+  schedule,
+}: Props) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -77,7 +84,8 @@ export function SiteNav({ shopPhone = SHOP_PHONE, shopWhatsApp = SHOP_WHATSAPP }
             ))}
           </nav>
 
-          <div className="hidden md:block">
+          <div className="hidden md:flex items-center gap-4">
+            <OpenStatus schedule={schedule} />
             <a
               href={telLink(shopPhone)}
               className="btn-plum-outline h-10 px-4 text-[0.875rem]"
@@ -119,7 +127,11 @@ export function SiteNav({ shopPhone = SHOP_PHONE, shopWhatsApp = SHOP_WHATSAPP }
           </button>
         </div>
 
-        <nav className="container-public flex-1 overflow-y-auto pt-8 pb-6">
+        <div className="container-public pt-4">
+          <OpenStatus schedule={schedule} />
+        </div>
+
+        <nav className="container-public flex-1 overflow-y-auto pt-6 pb-6">
           <ul className="flex flex-col gap-1">
             {NAV.map((item, i) => (
               <li

@@ -22,6 +22,8 @@ export interface Doctor {
   name: string;
   /** One of the three built-ins, or any custom specialty typed by the admin. */
   specialty: string;
+  /** Free text, e.g. "MBBS, MD (Cardiology)". Hidden entirely when empty. */
+  qualifications: string | null;
   bio: string | null;
   photo_url: string | null;
   consultation_fee: number | null;
@@ -109,7 +111,9 @@ export interface ShopSettings {
   shop_phone: string;
   shop_whatsapp: string;
   shop_address: string;
-  shop_hours: string;
+  /** Admin-uploaded section photos; empty string falls back to the bundled image. */
+  diagnostics_photo_url: string;
+  about_photo_url: string;
 }
 
 export type AnnouncementColor = 'plum' | 'teal';

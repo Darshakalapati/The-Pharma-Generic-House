@@ -79,6 +79,6 @@ insert into settings (key, value) values
   ('reservation_pickup_enabled', 'false'::jsonb),
   ('shop_phone', to_jsonb('+91 98850 67198'::text)),
   ('shop_whatsapp', to_jsonb('919885067198'::text)),
-  ('shop_address', to_jsonb('MG Road, Near Raghavaiah Park Rd, opp. Golden Pavallion, Governor Peta, Vijayawada, Andhra Pradesh 520002, India'::text)),
-  ('shop_hours', to_jsonb('Mon–Sat: 9 AM – 10 PM · Sun: 9 AM – 2 PM'::text))
+  ('shop_address', to_jsonb('The Pharma Generic House, Opp Golden Pavilion, Governerpeta, Vijayawada, Andhra Pradesh 520002'::text)),
+  ('shop_hours_schedule', '{"mon":{"open":"09:00","close":"22:00"},"tue":{"open":"09:00","close":"22:00"},"wed":{"open":"09:00","close":"22:00"},"thu":{"open":"09:00","close":"22:00"},"fri":{"open":"09:00","close":"22:00"},"sat":{"open":"09:00","close":"22:00"},"sun":{"open":"09:00","close":"14:00"}}'::jsonb)
 on conflict (key) do nothing;

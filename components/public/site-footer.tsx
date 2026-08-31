@@ -4,7 +4,9 @@ import { Phone, MessageCircle, MapPin, Clock } from 'lucide-react';
 import { FooterWordmark } from './logo';
 import { TiltCard } from './tilt-card';
 import { SectionCurve } from './motion/section-curve';
-import { SHOP_EMAIL } from '@/lib/constants';
+import { SHOP_EMAIL, SHOP_ADDRESS_LINES } from '@/lib/constants';
+import { formatHoursSummary, type Schedule } from '@/lib/hours';
+import { OpenStatus } from './open-status';
 import { whatsappLink, telLink } from '@/lib/utils';
 import type { ShopSettings } from '@/lib/types';
 
@@ -44,7 +46,13 @@ const WORDMARK_SIZE = 'clamp(1.75rem, 6vw, 8rem)';
  */
 const COLUMN_BOX = 'h-full rounded-xl p-7';
 
-export function SiteFooter({ settings }: { settings: ShopSettings }) {
+export function SiteFooter({
+  settings,
+  schedule,
+}: {
+  settings: ShopSettings;
+  schedule: Schedule;
+}) {
   return (
     // pb clears the fixed mobile action bar so footer content is never hidden behind it.
     <footer className="relative bg-ink text-bg pb-[72px] md:pb-0">
@@ -81,7 +89,13 @@ export function SiteFooter({ settings }: { settings: ShopSettings }) {
             <ul className="mt-5 space-y-3 text-[0.9375rem] text-bg/70">
               <li className="flex items-start gap-2.5">
                 <MapPin className="h-4 w-4 mt-0.5 text-teal-soft shrink-0" />
-                <span>{settings.shop_address}</span>
+                <span>
+                  {SHOP_ADDRESS_LINES.map((line) => (
+                    <span key={line} className="block">
+                      {line}
+                    </span>
+                  ))}
+                </span>
               </li>
               <li>
                 <a href={telLink(settings.shop_phone)} className="flex items-start gap-2.5 hover:text-bg transition-colors">
@@ -102,7 +116,13 @@ export function SiteFooter({ settings }: { settings: ShopSettings }) {
               </li>
               <li className="flex items-start gap-2.5">
                 <Clock className="h-4 w-4 mt-0.5 text-teal-soft shrink-0" />
-                <span>{settings.shop_hours}</span>
+                <span>
+                  <span className="block">{formatHoursSummary(schedule)}</span>
+                  <OpenStatus
+                    schedule={schedule}
+                    className="mt-2 border-bg/20 text-bg/70"
+                  />
+                </span>
               </li>
             </ul>
           </TiltCard>
@@ -171,10 +191,10 @@ export function SiteFooter({ settings }: { settings: ShopSettings }) {
         <div className="mt-14 pt-4 border-t border-bg/15 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[0.8rem] text-bg/55">
             <span>© 2026 The Pharma Generic House</span>
-            <Link href="/contact" className="hover:text-bg transition-colors">
+            <Link href="/privacy" className="hover:text-bg transition-colors">
               Privacy
             </Link>
-            <Link href="/contact" className="hover:text-bg transition-colors">
+            <Link href="/terms" className="hover:text-bg transition-colors">
               Terms
             </Link>
           </div>

@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Star } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, formatReviewDate } from '@/lib/utils';
 import type { Review } from '@/lib/types';
 
 // Show a "Read more" toggle for reviews that are likely to overflow ~5 lines.
@@ -67,7 +67,7 @@ export function ReviewCard({ review }: { review: Review }) {
         <p className="text-[0.95rem]">
           <span className="font-serif font-medium text-ink">{review.customer_name}</span>
           <span aria-hidden className="mx-2 text-ink-faint">·</span>
-          <span className="text-ink-muted text-[0.875rem]">{review.review_date_label}</span>
+          <span className="text-ink-muted text-[0.875rem]">{formatReviewDate(review.review_date_label)}</span>
         </p>
       </div>
     </article>

@@ -16,11 +16,74 @@ export function cn(...inputs: ClassValue[]) {
  * Every place that renders a specialty goes through here — there is no
  * enum-to-label map anywhere else.
  */
+/** Words that stay lowercase inside a title, unless they lead it. */
+const SMALL_WORDS = new Set(['and', 'of', 'the', 'for', 'in', 'on', 'to', 'a', 'an', '&']);
+
 export function formatSpecialty(value: string | null | undefined): string {
   const raw = (value ?? '').trim();
   if (!raw) return '';
   const known = DOCTOR_SPECIALTIES.find((s) => s.value === raw.toLowerCase());
-  return known ? known.label : raw;
+  if (known) return known.label;
+  // Custom specialty: Title Case, but leave joining words lowercase so
+  // "physician and cardiologist" reads "Physician and Cardiologist".
+  return raw
+    .split(/\s+/)
+    .map((word, i) => {
+      const lower = word.toLowerCase();
+      if (i > 0 && SMALL_WORDS.has(lower)) return lower;
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(' ');
+}
+
+const DAY_SEQUENCE = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+/**
+ * Render a doctor's available days compactly and in week order.
+ *
+ * Stored order is whatever the admin clicked, so this sorts first. A run of
+ * three or more consecutive days collapses to a range — "Mon, Wed, Fri, Tue,
+ * Sat, Thu" becomes "Mon – Sat" — and all seven become "Every day".
+ */
+export function formatDays(days: string[] | null | undefined): string {
+  if (!days || days.length === 0) return '';
+  const norm = (d: string) => d.trim().slice(0, 3).toLowerCase();
+  const present = DAY_SEQUENCE.filter((d) =>
+    days.some((x) => norm(x) === d.toLowerCase())
+  );
+  if (present.length === 0) return '';
+  if (present.length === 7) return 'Every day';
+
+  // Group indices into consecutive runs.
+  const idx = present.map((d) => DAY_SEQUENCE.indexOf(d));
+  const runs: number[][] = [];
+  for (const i of idx) {
+    const last = runs[runs.length - 1];
+    if (last && i === last[last.length - 1] + 1) last.push(i);
+    else runs.push([i]);
+  }
+  return runs
+    .map((run) =>
+      run.length >= 3
+        ? `${DAY_SEQUENCE[run[0]]} – ${DAY_SEQUENCE[run[run.length - 1]]}`
+        : run.map((i) => DAY_SEQUENCE[i]).join(', ')
+    )
+    .join(', ');
+}
+
+/** "2 Years Ago" → "2 years ago". Display-only; stored data is untouched. */
+export function formatReviewDate(label: string | null | undefined): string {
+  const raw = (label ?? '').trim();
+  if (!raw) return '';
+  const lower = raw.toLowerCase();
+  return lower.charAt(0).toUpperCase() + lower.slice(1);
+}
+
+/** Trim and capitalise the first character — used for video titles. */
+export function formatTitle(value: string | null | undefined): string {
+  const raw = (value ?? '').trim();
+  if (!raw) return '';
+  return raw.charAt(0).toUpperCase() + raw.slice(1);
 }
 
 export function formatINR(amount: number | null | undefined) {

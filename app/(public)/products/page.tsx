@@ -7,6 +7,9 @@ import {
   ScrollReveal,
   ScrollRevealItem,
 } from '@/components/public/motion/scroll-reveal';
+import { WhatsAppGlyph } from '@/components/public/whatsapp-glyph';
+import { whatsappLink } from '@/lib/utils';
+import { SHOP_WHATSAPP, PRESCRIPTION_WA_TEXT } from '@/lib/constants';
 import type { Product } from '@/lib/types';
 
 export const metadata = {
@@ -41,6 +44,15 @@ export default async function ProductsPage({
             Add what you need to your enquiry list and we&apos;ll confirm availability on
             WhatsApp. Pick up from the shop or arrange home delivery.
           </p>
+          <a
+            href={whatsappLink(SHOP_WHATSAPP, PRESCRIPTION_WA_TEXT)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-teal mt-6 h-12 w-full sm:h-10 sm:w-auto"
+          >
+            <WhatsAppGlyph className="h-4 w-4" />
+            Send prescription on WhatsApp
+          </a>
         </ScrollRevealItem>
       </ScrollReveal>
 

@@ -4,7 +4,7 @@
 
 export const SHOP_NAME = 'The Pharma Generic House';
 export const SHOP_TAGLINE = 'Your trusted neighbourhood pharmacy';
-export const SHOP_EST = 2010;
+export const SHOP_EST = 2018;
 
 // Phone number as displayed on the site (with country code and spaces).
 export const SHOP_PHONE = '+91 98850 67198';
@@ -15,28 +15,32 @@ export const SHOP_PHONE_TEL = '+919885067198';
 // WhatsApp number for wa.me links (no plus, country code first).
 export const SHOP_WHATSAPP = '919885067198';
 
+// The one canonical address. Every display site, the maps embed, the
+// directions link and the JSON-LD all read from here or from the matching
+// `shop_address` setting seeded to the same string.
 export const SHOP_ADDRESS =
-  'MG Road, Near Raghavaiah Park Rd, opp. Golden Pavallion, Governor Peta, Vijayawada, Andhra Pradesh 520002, India';
+  'The Pharma Generic House, Opp Golden Pavilion, Governerpeta, Vijayawada, Andhra Pradesh 520002';
 
-// Short summary form used in the footer, hero trust bar, and contact CTA band.
-export const SHOP_HOURS = 'Mon–Sat: 9 AM – 10 PM · Sun: 9 AM – 2 PM';
-
-// Day-by-day breakdown for the contact page hours table.
-export const SHOP_HOURS_DETAILED = [
-  { day: 'Monday', hours: '9 AM – 10 PM' },
-  { day: 'Tuesday', hours: '9 AM – 10 PM' },
-  { day: 'Wednesday', hours: '9 AM – 10 PM' },
-  { day: 'Thursday', hours: '9 AM – 10 PM' },
-  { day: 'Friday', hours: '9 AM – 10 PM' },
-  { day: 'Saturday', hours: '9 AM – 10 PM' },
-  { day: 'Sunday', hours: '9 AM – 2 PM' },
+/** The same address split for multi-line display (footer, contact card). */
+export const SHOP_ADDRESS_LINES = [
+  'The Pharma Generic House',
+  'Opp Golden Pavilion, Governerpeta',
+  'Vijayawada, Andhra Pradesh 520002',
 ] as const;
+
+// Opening hours are NOT stored here — they live as a structured schedule in
+// lib/hours.ts (and the `shop_hours_schedule` setting). Every hours string on
+// the site is derived from that one shape.
 
 export const SHOP_CITY = 'Vijayawada';
 
 export const TEST_DAY = 'Sunday';
 
 export const SHOP_EMAIL = 'usalapati@yahoo.com';
+
+// Prefilled message for the "Send prescription on WhatsApp" call to action.
+export const PRESCRIPTION_WA_TEXT =
+  "Hi The Pharma Generic House, I'd like to order medicines. I'm attaching my prescription.";
 
 // Public Google Maps URL for the shop's review listing. Used by the home
 // page reviews section ("Read all reviews on Google →") and the admin

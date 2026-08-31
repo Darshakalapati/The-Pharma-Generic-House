@@ -16,6 +16,7 @@ import {
   whatsappLink,
   formatDate,
   formatSpecialty,
+  formatDays,
 } from '@/lib/utils';
 import { WhatsAppGlyph } from './whatsapp-glyph';
 import type { Doctor } from '@/lib/types';
@@ -136,7 +137,7 @@ export function AppointmentDialog({ doctor, open, onOpenChange, whatsappNumber }
       subtitle={
         isOnRequest
           ? "Available on request — we'll confirm a time."
-          : `${specialty} · ${doctor.available_days.join(', ')}`
+          : `${specialty} · ${formatDays(doctor.available_days)}`
       }
     >
       <form onSubmit={handleSubmit((d) => submit(d, false))} className="space-y-4">

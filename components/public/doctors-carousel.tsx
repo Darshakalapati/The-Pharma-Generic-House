@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useReducedMotion } from 'framer-motion';
-import { formatINR, formatTime12, formatSpecialty } from '@/lib/utils';
+import { formatINR, formatTime12, formatSpecialty, formatDays } from '@/lib/utils';
 import { resolveDoctorPhoto } from '@/lib/images';
 import type { Doctor } from '@/lib/types';
 
@@ -112,6 +112,11 @@ export function DoctorsCarousel({ doctors }: { doctors: Doctor[] }) {
                   <h3 className="mt-2 font-serif font-medium text-[1.375rem] tracking-[-0.015em]">
                     {d.name}
                   </h3>
+                  {d.qualifications?.trim() && (
+                    <p className="mt-1 text-[0.75rem] font-medium uppercase tracking-[0.1em] text-ink-muted">
+                      {d.qualifications}
+                    </p>
+                  )}
                   {d.bio && (
                     <p className="mt-2 text-[0.9375rem] text-ink-muted leading-[1.6] line-clamp-2">
                       {d.bio}
@@ -124,7 +129,7 @@ export function DoctorsCarousel({ doctors }: { doctors: Doctor[] }) {
                       d.available_time_start &&
                       d.available_time_end && (
                         <p>
-                          <span className="text-ink">{d.available_days.join(', ')}</span> ·{' '}
+                          <span className="text-ink">{formatDays(d.available_days)}</span> ·{' '}
                           {formatTime12(d.available_time_start)} –{' '}
                           {formatTime12(d.available_time_end)}
                         </p>
