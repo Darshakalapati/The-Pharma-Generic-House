@@ -17,6 +17,7 @@ import {
   formatDate,
   formatSpecialty,
   formatDays,
+  getDoctorAvailability,
 } from '@/lib/utils';
 import { WhatsAppGlyph } from './whatsapp-glyph';
 import type { Doctor } from '@/lib/types';
@@ -43,6 +44,14 @@ interface Props {
 
 export function AppointmentDialog({ doctor, open, onOpenChange, whatsappNumber }: Props) {
   const [submitting, setSubmitting] = React.useState(false);
+  // Resolved after mount for the same reason as the card badge: "today" must
+  // never be baked into a cached render.
+  const [availability, setAvailability] = React.useState<ReturnType<
+    typeof getDoctorAvailability
+  > | null>(null);
+  React.useEffect(() => {
+    setAvailability(getDoctorAvailability(doctor, new Date()));
+  }, [doctor]);
   const isOnRequest = doctor.is_on_request;
   const specialty = formatSpecialty(doctor.specialty);
 
@@ -51,6 +60,7 @@ export function AppointmentDialog({ doctor, open, onOpenChange, whatsappNumber }
     handleSubmit,
     formState: { errors },
     reset,
+    setValue,
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: { preferred_date: '', preferred_time: '' },
@@ -87,6 +97,16 @@ export function AppointmentDialog({ doctor, open, onOpenChange, whatsappNumber }
   React.useEffect(() => {
     if (!open) reset();
   }, [open, reset]);
+
+  // When the doctor consults today, start the date picker on today — but only
+  // if today is genuinely selectable under the existing rules.
+  React.useEffect(() => {
+    if (!open || availability?.state !== 'today') return;
+    const today = upcomingDates[0];
+    if (today && !today.disabled) {
+      setValue('preferred_date', today.value);
+    }
+  }, [open, availability, upcomingDates, setValue]);
 
   const submit = async (data: FormValues, andWhatsApp = false) => {
     setSubmitting(true);
@@ -140,6 +160,19 @@ export function AppointmentDialog({ doctor, open, onOpenChange, whatsappNumber }
           : `${specialty} · ${formatDays(doctor.available_days)}`
       }
     >
+      {availability && availability.state !== 'on_request' && (
+        <p
+          className={
+            availability.state === 'today'
+              ? 'mb-4 text-[0.9375rem] font-medium text-teal-deep'
+              : 'mb-4 text-[0.9375rem] text-ink-muted'
+          }
+        >
+          {availability.state === 'today'
+            ? `Available today${availability.timeRange ? `, ${availability.timeRange}` : ''}`
+            : `Next available: ${availability.day}`}
+        </p>
+      )}
       <form onSubmit={handleSubmit((d) => submit(d, false))} className="space-y-4">
         <div>
           <label htmlFor="ap-name" className="form-label">Patient name</label>

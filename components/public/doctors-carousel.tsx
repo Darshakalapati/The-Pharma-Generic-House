@@ -7,6 +7,7 @@ import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useReducedMotion } from 'framer-motion';
 import { formatINR, formatTime12, formatSpecialty, formatDays } from '@/lib/utils';
 import { resolveDoctorPhoto } from '@/lib/images';
+import { DoctorAvailabilityBadge } from './doctor-availability-badge';
 import type { Doctor } from '@/lib/types';
 
 /** Matches the `gap-6` on the track. Used to compute one arrow-click step. */
@@ -95,6 +96,7 @@ export function DoctorsCarousel({ doctors }: { doctors: Doctor[] }) {
             >
               <article className="card-soft tap-settle overflow-hidden flex flex-col group h-full">
                 <div className="relative aspect-[4/3] md:aspect-[4/3] bg-sand overflow-hidden">
+                  <DoctorAvailabilityBadge doctor={d} />
                   {photo && (
                     <Image
                       src={photo}

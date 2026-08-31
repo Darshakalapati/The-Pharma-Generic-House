@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { createClient } from '@/lib/supabase/client';
 import { ImageUpload } from './image-upload';
+import { GoogleRatingPill } from '@/components/public/google-rating';
 import { ASPECT } from '@/lib/image-crop';
 import {
   DAY_ORDER,
@@ -55,6 +56,16 @@ export function SettingsForm({
     settings.about_photo_url || null
   );
   const [savingPhotos, setSavingPhotos] = React.useState(false);
+  const [googleRating, setGoogleRating] = React.useState(
+    settings.google_rating != null ? String(settings.google_rating) : ''
+  );
+  const [googleCount, setGoogleCount] = React.useState(
+    settings.google_review_count != null ? String(settings.google_review_count) : ''
+  );
+  const [savingGoogle, setSavingGoogle] = React.useState(false);
+
+  const parsedRating = googleRating.trim() === '' ? null : Number(googleRating);
+  const parsedCount = googleCount.trim() === '' ? null : Number(googleCount);
 
   const {
     register,
@@ -79,6 +90,28 @@ export function SettingsForm({
       toast.error('Could not save hours. Have you run migration 0014 in Supabase?');
     } finally {
       setSavingHours(false);
+    }
+  };
+
+  const saveGoogle = async () => {
+    if (parsedRating !== null && (!Number.isFinite(parsedRating) || parsedRating < 1 || parsedRating > 5)) {
+      toast.error('Rating must be between 1 and 5.');
+      return;
+    }
+    if (parsedCount !== null && (!Number.isFinite(parsedCount) || parsedCount < 0)) {
+      toast.error('Number of reviews must be a positive whole number.');
+      return;
+    }
+    setSavingGoogle(true);
+    try {
+      await upsert('google_rating', parsedRating);
+      await upsert('google_review_count', parsedCount === null ? null : Math.round(parsedCount));
+      toast.success('Google rating saved.');
+      router.refresh();
+    } catch {
+      toast.error('Could not save. Have you run migration 0015 in Supabase?');
+    } finally {
+      setSavingGoogle(false);
     }
   };
 
@@ -343,6 +376,63 @@ export function SettingsForm({
         <Button className="mt-5" disabled={savingPhotos} onClick={savePhotos}>
           <Save className="h-4 w-4" />
           {savingPhotos ? 'Saving...' : 'Save site photos'}
+        </Button>
+      </section>
+
+      {/* Google rating — display-only figures copied from the Business Profile. */}
+      <section className="surface-card p-6 sm:p-8">
+        <h2 className="font-serif text-xl font-semibold text-brand-ink">Google rating</h2>
+        <p className="mt-1 text-sm text-brand-muted">
+          Copy these from your Google Business Profile. Update every month or two —
+          customers trust current numbers.
+        </p>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          <div>
+            <Label htmlFor="google_rating">Rating</Label>
+            <Input
+              id="google_rating"
+              type="number"
+              step="0.1"
+              min={1}
+              max={5}
+              placeholder="4.8"
+              value={googleRating}
+              onChange={(e) => setGoogleRating(e.target.value)}
+              className="mt-1.5"
+            />
+          </div>
+          <div>
+            <Label htmlFor="google_review_count">Number of reviews</Label>
+            <Input
+              id="google_review_count"
+              type="number"
+              min={0}
+              step={1}
+              placeholder="120"
+              value={googleCount}
+              onChange={(e) => setGoogleCount(e.target.value)}
+              className="mt-1.5"
+            />
+          </div>
+        </div>
+
+        <div className="mt-5">
+          <p className="text-[0.7rem] uppercase tracking-[0.12em] text-brand-muted font-medium mb-2">
+            Preview
+          </p>
+          {parsedRating && parsedCount ? (
+            <GoogleRatingPill rating={parsedRating} count={parsedCount} />
+          ) : (
+            <p className="text-xs text-brand-muted">
+              Leave either field blank and the badge stays hidden on the website.
+            </p>
+          )}
+        </div>
+
+        <Button className="mt-5" disabled={savingGoogle} onClick={saveGoogle}>
+          <Save className="h-4 w-4" />
+          {savingGoogle ? 'Saving...' : 'Save Google rating'}
         </Button>
       </section>
     </div>

@@ -1,4 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
+import { getShopSettings } from '@/lib/settings';
+import { GoogleRatingLine } from './google-rating';
 import { GOOGLE_REVIEWS_URL } from '@/lib/constants';
 import { ReviewGrid } from './review-grid';
 import {
@@ -9,6 +11,7 @@ import type { Review } from '@/lib/types';
 
 export async function CustomerReviews() {
   const supabase = createClient();
+  const settings = await getShopSettings();
   const { data } = await supabase
     .from('reviews')
     .select('*')
@@ -23,12 +26,19 @@ export async function CustomerReviews() {
 
   return (
     <ScrollReveal as="section" className="container-public mt-20 sm:mt-28">
-      <ScrollRevealItem as="div" className="max-w-2xl">
+      <ScrollRevealItem as="div">
         <span className="eyebrow">From Google</span>
-        <h2 className="h-section mt-4">What our customers say.</h2>
-        <p className="mt-4 text-[1.0625rem] text-ink-muted leading-[1.7]">
-          Verified reviews from people who trust us with their health.
-        </p>
+        <h2 className="h-section mt-4 max-w-2xl">What our customers say.</h2>
+        <div className="mt-4 flex flex-col gap-3 md:flex-row md:items-baseline md:justify-between md:gap-8">
+          <p className="text-[1.0625rem] text-ink-muted leading-[1.7] max-w-2xl">
+            Verified reviews from people who trust us with their health.
+          </p>
+          <GoogleRatingLine
+            rating={settings.google_rating}
+            count={settings.google_review_count}
+            className="shrink-0"
+          />
+        </div>
       </ScrollRevealItem>
 
       <ReviewGrid reviews={reviews} />

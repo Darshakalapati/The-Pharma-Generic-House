@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Calendar, Clock, IndianRupee, ArrowRight } from 'lucide-react';
 import { AppointmentDialog } from './appointment-dialog';
 import { resolveDoctorPhoto } from '@/lib/images';
+import { DoctorAvailabilityBadge } from './doctor-availability-badge';
 import { formatINR, formatTime12, formatSpecialty, formatDays } from '@/lib/utils';
 import { StaggerGrid, StaggerGridItem } from '@/components/public/motion/scroll-reveal';
 import type { Doctor } from '@/lib/types';
@@ -57,6 +58,7 @@ function DoctorCard({ doctor, onBook }: { doctor: Doctor; onBook: () => void }) 
       <div className="grid md:grid-cols-12">
         {/* Photo */}
         <div className="relative md:col-span-4 aspect-[4/3] md:aspect-auto md:min-h-[280px] bg-sand">
+          <DoctorAvailabilityBadge doctor={doctor} />
           {photo && (
             <Image
               src={photo}

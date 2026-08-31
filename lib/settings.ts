@@ -14,6 +14,8 @@ const DEFAULTS: ShopSettings = {
   shop_address: SHOP_ADDRESS,
   diagnostics_photo_url: '',
   about_photo_url: '',
+  google_rating: null,
+  google_review_count: null,
 };
 
 export async function getShopSettings(): Promise<ShopSettings> {
@@ -30,6 +32,8 @@ export async function getShopSettings(): Promise<ShopSettings> {
       shop_address: extractString(map.get('shop_address')) ?? DEFAULTS.shop_address,
       diagnostics_photo_url: extractString(map.get('diagnostics_photo_url')) ?? '',
       about_photo_url: extractString(map.get('about_photo_url')) ?? '',
+      google_rating: extractNumber(map.get('google_rating')),
+      google_review_count: extractNumber(map.get('google_review_count')),
     };
   } catch {
     return DEFAULTS;
@@ -41,6 +45,18 @@ function extractBool(v: unknown): boolean | null {
   if (v && typeof v === 'object' && 'value' in (v as any)) {
     const inner = (v as any).value;
     if (typeof inner === 'boolean') return inner;
+  }
+  return null;
+}
+
+/** Numeric settings arrive as a bare jsonb number, or wrapped as { value }. */
+function extractNumber(v: unknown): number | null {
+  const raw =
+    v && typeof v === 'object' && 'value' in (v as any) ? (v as any).value : v;
+  if (typeof raw === 'number' && Number.isFinite(raw)) return raw;
+  if (typeof raw === 'string' && raw.trim() !== '') {
+    const n = Number(raw);
+    return Number.isFinite(n) ? n : null;
   }
   return null;
 }

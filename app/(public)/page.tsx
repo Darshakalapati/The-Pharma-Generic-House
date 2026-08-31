@@ -164,7 +164,11 @@ export default async function HomePage() {
   return (
     <>
       {/* SECTION 1 — HERO ─────────────────────────────────────────── */}
-      <HomeHero photos={heroSlides} />
+      <HomeHero
+        photos={heroSlides}
+        googleRating={settings.google_rating}
+        googleReviewCount={settings.google_review_count}
+      />
 
       {/* Hero settles into the trust bar on a shallow curve. */}
       <SectionCurve variant="valley" color="var(--sand)" className="h-6 md:h-10 -mb-px" />

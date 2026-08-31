@@ -6,6 +6,7 @@ import { ArrowRight } from 'lucide-react';
 import { ScrollReveal, ScrollRevealItem } from '@/components/public/motion/scroll-reveal';
 import { KenBurnsPhoto, type KenBurnsSlide } from '@/components/public/ken-burns-photo';
 import { LeafAccent } from '@/components/public/botanical-accents';
+import { GoogleRatingPill } from '@/components/public/google-rating';
 import { Magnetic } from '@/components/public/motion/magnetic';
 import { WhatsAppGlyph } from '@/components/public/whatsapp-glyph';
 import { whatsappLink } from '@/lib/utils';
@@ -27,7 +28,15 @@ const FALLBACK_SLIDE: KenBurnsSlide = {
 const SINGLE_PHOTO_CYCLE_MS = 20000;
 const MULTI_PHOTO_CYCLE_MS = 12000;
 
-export function HomeHero({ photos = [] }: { photos?: KenBurnsSlide[] }) {
+export function HomeHero({
+  photos = [],
+  googleRating = null,
+  googleReviewCount = null,
+}: {
+  photos?: KenBurnsSlide[];
+  googleRating?: number | null;
+  googleReviewCount?: number | null;
+}) {
   const reduced = useReducedMotion();
   const slides = photos.length > 0 ? photos : [FALLBACK_SLIDE];
   const cycleMs = slides.length > 1 ? MULTI_PHOTO_CYCLE_MS : SINGLE_PHOTO_CYCLE_MS;
@@ -38,6 +47,11 @@ export function HomeHero({ photos = [] }: { photos?: KenBurnsSlide[] }) {
 
       <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
         <div>
+          {googleRating != null && googleReviewCount != null && (
+            <ScrollRevealItem as="div" className="mb-5">
+              <GoogleRatingPill rating={googleRating} count={googleReviewCount} />
+            </ScrollRevealItem>
+          )}
           <ScrollRevealItem as="span" className="eyebrow block">
             Vijayawada · Trusted Neighbourhood Pharmacy
           </ScrollRevealItem>

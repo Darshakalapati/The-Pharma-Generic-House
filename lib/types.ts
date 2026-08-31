@@ -114,6 +114,10 @@ export interface ShopSettings {
   /** Admin-uploaded section photos; empty string falls back to the bundled image. */
   diagnostics_photo_url: string;
   about_photo_url: string;
+  /** Copied from the Google Business Profile. Null until an admin fills them in;
+   *  the rating badge renders only when both are present. */
+  google_rating: number | null;
+  google_review_count: number | null;
 }
 
 export type AnnouncementColor = 'plum' | 'teal';
