@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useT } from './i18n/language-provider';
 import { X } from 'lucide-react';
 import { cn, extractYouTubeId, youtubeEmbedUrl, instagramEmbedUrl } from '@/lib/utils';
 import type { Video } from '@/lib/types';
@@ -15,6 +16,7 @@ interface Props {
  * the native HTML5 <video> element with controls.
  */
 export function VideoPlayerModal({ video, onClose }: Props) {
+  const { dict } = useT();
   const open = !!video;
 
   React.useEffect(() => {
@@ -44,7 +46,7 @@ export function VideoPlayerModal({ video, onClose }: Props) {
     >
       <button
         onClick={onClose}
-        aria-label="Close video"
+        aria-label={dict.videos.closeAria}
         className="absolute top-4 right-4 sm:top-6 sm:right-6 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors"
       >
         <X className="h-5 w-5" />
@@ -109,9 +111,10 @@ function PlayerInner({ video }: { video: Video }) {
 }
 
 function FallbackLink({ video }: { video: Video }) {
+  const { dict } = useT();
   return (
     <div className="rounded-2xl bg-bg-elevated p-8 text-center max-w-md mx-auto">
-      <p className="text-ink-muted text-sm">Could not load this video.</p>
+      <p className="text-ink-muted text-sm">{dict.videos.loadError}</p>
       <a
         href={video.video_url}
         target="_blank"

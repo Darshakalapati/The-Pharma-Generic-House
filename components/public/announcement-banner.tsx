@@ -4,6 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useT } from './i18n/language-provider';
 import type { Announcement } from '@/lib/types';
 
 const DISMISS_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
@@ -18,11 +19,17 @@ export function AnnouncementBannerView({
   onDismiss,
   showDismiss = true,
   innerRef,
+  regionLabel = 'Site announcement',
+  dismissLabel = 'Dismiss announcement',
 }: {
   announcement: Pick<Announcement, 'text' | 'link_label' | 'link_url' | 'background_color'>;
   onDismiss?: () => void;
   showDismiss?: boolean;
   innerRef?: React.Ref<HTMLDivElement>;
+  /** Localised labels, supplied by the public banner. Defaulted so the admin
+   *  preview can render this view without a LanguageProvider. */
+  regionLabel?: string;
+  dismissLabel?: string;
 }) {
   const bg =
     announcement.background_color === 'teal'
@@ -35,7 +42,7 @@ export function AnnouncementBannerView({
     <div
       ref={innerRef}
       role="region"
-      aria-label="Site announcement"
+      aria-label={regionLabel}
       className={cn('w-full', bg)}
     >
       <div className="container-public flex items-center justify-center gap-3 py-2.5 sm:py-2 min-h-[44px] text-[0.8125rem] sm:text-[0.875rem] leading-snug">
@@ -53,7 +60,7 @@ export function AnnouncementBannerView({
         {showDismiss && (
           <button
             onClick={onDismiss}
-            aria-label="Dismiss announcement"
+            aria-label={dismissLabel}
             className="shrink-0 inline-flex h-11 w-11 md:h-7 md:w-7 items-center justify-center rounded-md text-white/70 hover:text-white hover:bg-white/10 transition-colors"
           >
             <X className="h-4 w-4" />
@@ -70,6 +77,7 @@ export function AnnouncementBannerView({
  * itself, and a fade-out animation on dismiss.
  */
 export function AnnouncementBanner({ announcement }: { announcement: Announcement | null }) {
+  const { dict } = useT();
   const [hidden, setHidden] = React.useState(false);
   const [closing, setClosing] = React.useState(false);
   const ref = React.useRef<HTMLDivElement | null>(null);
@@ -135,6 +143,8 @@ export function AnnouncementBanner({ announcement }: { announcement: Announcemen
         announcement={announcement}
         onDismiss={dismiss}
         innerRef={ref}
+        regionLabel={dict.banner.regionLabel}
+        dismissLabel={dict.banner.dismiss}
       />
     </div>
   );

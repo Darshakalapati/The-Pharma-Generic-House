@@ -9,15 +9,18 @@ import { WhatsAppGlyph } from './whatsapp-glyph';
 import { cn, whatsappLink, telLink } from '@/lib/utils';
 import { SHOP_PHONE, SHOP_WHATSAPP } from '@/lib/constants';
 import { OpenStatus } from './open-status';
+import { LanguageToggle } from './language-toggle';
+import { useT } from './i18n/language-provider';
 import type { Schedule } from '@/lib/hours';
 
-const NAV = [
-  { href: '/', label: 'Home' },
-  { href: '/products', label: 'Products' },
-  { href: '/doctors', label: 'Doctors' },
-  { href: '/tests', label: 'Diagnostics' },
-  { href: '/about', label: 'About' },
-  { href: '/contact', label: 'Contact' },
+/** Labels resolve from the dictionary at render time. */
+const NAV: { href: string; key: 'home' | 'products' | 'doctors' | 'diagnostics' | 'about' | 'contact' }[] = [
+  { href: '/', key: 'home' },
+  { href: '/products', key: 'products' },
+  { href: '/doctors', key: 'doctors' },
+  { href: '/tests', key: 'diagnostics' },
+  { href: '/about', key: 'about' },
+  { href: '/contact', key: 'contact' },
 ];
 
 interface Props {
@@ -31,6 +34,7 @@ export function SiteNav({
   shopWhatsApp = SHOP_WHATSAPP,
   schedule,
 }: Props) {
+  const { dict } = useT();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -66,7 +70,7 @@ export function SiteNav({
         )}
       >
         <div className="container-public flex h-[72px] items-center justify-between">
-          <Logo tagline mobileWordmark />
+          <Logo tagline mobileWordmark taglineText={dict.hero.estTagline} />
 
           <nav className="hidden md:flex items-center gap-8">
             {NAV.map((item) => (
@@ -79,24 +83,25 @@ export function SiteNav({
                   isActive(item.href) ? 'text-ink' : 'text-ink/80 hover:text-ink'
                 )}
               >
-                {item.label}
+                {dict.nav[item.key]}
               </Link>
             ))}
           </nav>
 
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden md:flex items-center gap-3">
+            <LanguageToggle />
             <OpenStatus schedule={schedule} />
             <a
               href={telLink(shopPhone)}
               className="btn-plum-outline h-10 px-4 text-[0.875rem]"
             >
               <Phone className="h-4 w-4" />
-              Call us
+              {dict.nav.callUs}
             </a>
           </div>
 
           <button
-            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-label={open ? dict.nav.closeMenu : dict.nav.openMenu}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
             className="md:hidden inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-ink hover:bg-sand transition-colors"
@@ -117,9 +122,9 @@ export function SiteNav({
         style={{ paddingTop: 'env(safe-area-inset-top, 0)' }}
       >
         <div className="container-public flex h-[72px] items-center justify-between border-b border-line">
-          <Logo tagline mobileWordmark />
+          <Logo tagline mobileWordmark taglineText={dict.hero.estTagline} />
           <button
-            aria-label="Close menu"
+            aria-label={dict.nav.closeMenu}
             onClick={() => setOpen(false)}
             className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg hover:bg-sand"
           >
@@ -127,7 +132,8 @@ export function SiteNav({
           </button>
         </div>
 
-        <div className="container-public pt-4">
+        <div className="container-public pt-4 flex flex-col gap-3">
+          <LanguageToggle className="w-full justify-center py-2.5" />
           <OpenStatus schedule={schedule} />
         </div>
 
@@ -149,7 +155,7 @@ export function SiteNav({
                     isActive(item.href) ? 'text-plum' : 'text-ink'
                   )}
                 >
-                  {item.label}
+                  {dict.nav[item.key]}
                 </Link>
               </li>
             ))}
@@ -163,7 +169,7 @@ export function SiteNav({
         >
           <a href={telLink(shopPhone)} className="btn-plum-outline">
             <Phone className="h-4 w-4" />
-            Call
+            {dict.nav.call}
           </a>
           <a
             href={whatsappLink(shopWhatsApp)}
@@ -172,7 +178,7 @@ export function SiteNav({
             className="btn-teal"
           >
             <WhatsAppGlyph className="h-4 w-4" />
-            WhatsApp
+            {dict.nav.whatsapp}
           </a>
         </div>
       </div>

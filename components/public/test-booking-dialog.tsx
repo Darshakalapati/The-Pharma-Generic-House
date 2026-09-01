@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { Magnetic } from '@/components/public/motion/magnetic';
+import { useT } from './i18n/language-provider';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -13,10 +14,10 @@ import { isValidPhoneIN, formatDate, dayOfWeek, cn, formatINR } from '@/lib/util
 import type { MedicalTest } from '@/lib/types';
 
 const formSchema = z.object({
-  patient_name: z.string().min(2, 'Please enter your full name'),
-  patient_phone: z.string().refine(isValidPhoneIN, 'Please enter a valid Indian phone number'),
+  patient_name: z.string().min(2, 'nameRequired'),
+  patient_phone: z.string().refine(isValidPhoneIN, 'invalidPhone'),
   patient_address: z.string().optional(),
-  preferred_date: z.string().min(1, 'Please pick a date'),
+  preferred_date: z.string().min(1, 'required'),
   collection_type: z.enum(['shop', 'home']),
   notes: z.string().optional(),
 });
@@ -31,6 +32,7 @@ export function TestBookingDialog({
   open: boolean;
   onOpenChange: (v: boolean) => void;
 }) {
+  const { dict } = useT();
   const [submitting, setSubmitting] = React.useState(false);
 
   const {
@@ -70,7 +72,7 @@ export function TestBookingDialog({
   const submit = async (data: FormValues) => {
     if (!test) return;
     if (data.collection_type === 'home' && !data.patient_address?.trim()) {
-      toast.error('Please add an address for home collection.');
+      toast.error(dict.forms.addressRequired);
       return;
     }
     setSubmitting(true);
@@ -91,7 +93,7 @@ export function TestBookingDialog({
       reset();
       onOpenChange(false);
     } catch {
-      toast.error('Could not book. Please try again or WhatsApp us.');
+      toast.error(dict.forms.errorGeneric);
     } finally {
       setSubmitting(false);
     }
@@ -110,7 +112,7 @@ export function TestBookingDialog({
       <form onSubmit={handleSubmit(submit)} className="space-y-4">
         {/* Collection toggle */}
         <div>
-          <label className="form-label">Where to collect samples?</label>
+          <label className="form-label">{dict.forms.whereCollect}</label>
           <div className="grid grid-cols-2 gap-2">
             <button
               type="button"
@@ -142,52 +144,52 @@ export function TestBookingDialog({
         </div>
 
         <div>
-          <label htmlFor="tb-name" className="form-label">Full name</label>
+          <label htmlFor="tb-name" className="form-label">{dict.forms.fullName}</label>
           <input
             id="tb-name"
             autoComplete="name"
-            placeholder="Patient name"
+            placeholder={dict.forms.fullName}
             {...register('patient_name')}
             className="input-field"
           />
-          <FieldError msg={errors.patient_name?.message} />
+          <FieldError msg={errors.patient_name?.message} dict={dict} />
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label htmlFor="tb-phone" className="form-label">Phone</label>
+            <label htmlFor="tb-phone" className="form-label">{dict.forms.phone}</label>
             <input
               id="tb-phone"
               type="tel"
               inputMode="tel"
               autoComplete="tel"
-              placeholder="10-digit mobile"
+              placeholder={dict.forms.phonePlaceholder}
               {...register('patient_phone')}
               className="input-field"
             />
-            <FieldError msg={errors.patient_phone?.message} />
+            <FieldError msg={errors.patient_phone?.message} dict={dict} />
           </div>
           <div>
-            <label htmlFor="tb-date" className="form-label">Preferred date</label>
+            <label htmlFor="tb-date" className="form-label">{dict.forms.date}</label>
             <select id="tb-date" {...register('preferred_date')} className="input-field">
-              <option value="">Pick a date</option>
+              <option value="">{dict.forms.pickDate}</option>
               {dates.map((d) => (
                 <option key={d.value} value={d.value}>
                   {d.label}
                 </option>
               ))}
             </select>
-            <FieldError msg={errors.preferred_date?.message} />
+            <FieldError msg={errors.preferred_date?.message} dict={dict} />
           </div>
         </div>
 
         {collectionType === 'home' && (
           <div>
-            <label htmlFor="tb-address" className="form-label">Home address</label>
+            <label htmlFor="tb-address" className="form-label">{dict.forms.homeAddress}</label>
             <textarea
               id="tb-address"
               rows={2}
-              placeholder="House number, street, landmark, area"
+              placeholder={dict.forms.addressPlaceholder}
               {...register('patient_address')}
               className="input-field"
             />
@@ -195,11 +197,11 @@ export function TestBookingDialog({
         )}
 
         <div>
-          <label htmlFor="tb-notes" className="form-label">Notes (optional)</label>
+          <label htmlFor="tb-notes" className="form-label">{dict.forms.notes}</label>
           <textarea
             id="tb-notes"
             rows={2}
-            placeholder="Anything else we should know?"
+            placeholder={dict.forms.notesPlaceholder}
             {...register('notes')}
             className="input-field"
           />
@@ -216,7 +218,7 @@ export function TestBookingDialog({
           </button>
           <Magnetic className="sm:flex-1">
           <button type="submit" disabled={submitting} className="btn-plum w-full">
-            {submitting ? 'Booking...' : 'Book Test'}
+            {submitting ? dict.forms.sending : dict.diagnostics.bookTest}
           </button>
           </Magnetic>
         </div>

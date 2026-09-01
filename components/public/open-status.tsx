@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { getOpenStatus, type Schedule } from '@/lib/hours';
+import { useT } from './i18n/language-provider';
 import { cn } from '@/lib/utils';
 
 const REFRESH_MS = 60_000;
@@ -22,16 +23,17 @@ export function OpenStatus({
   schedule: Schedule;
   className?: string;
 }) {
+  const { dict } = useT();
   const [status, setStatus] = React.useState<ReturnType<typeof getOpenStatus> | null>(
     null
   );
 
   React.useEffect(() => {
-    const tick = () => setStatus(getOpenStatus(schedule, new Date()));
+    const tick = () => setStatus(getOpenStatus(schedule, new Date(), dict));
     tick();
     const id = window.setInterval(tick, REFRESH_MS);
     return () => window.clearInterval(id);
-  }, [schedule]);
+  }, [schedule, dict]);
 
   if (!status) return null;
 

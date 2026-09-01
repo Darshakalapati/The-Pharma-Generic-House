@@ -4,6 +4,7 @@ import * as React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PromoBannerCard } from './promo-banner-card';
+import { useT } from './i18n/language-provider';
 import type { PromoBanner } from '@/lib/types';
 
 const ROTATE_MS = 7000;
@@ -11,6 +12,7 @@ const TRANSITION_MS = 400;
 const SWIPE_THRESHOLD = 50;
 
 export function PromoBannerCarousel({ banners }: { banners: PromoBanner[] }) {
+  const { dict } = useT();
   const [index, setIndex] = React.useState(0);
   const [paused, setPaused] = React.useState(false);
   const touchStartX = React.useRef<number | null>(null);
@@ -92,7 +94,7 @@ export function PromoBannerCarousel({ banners }: { banners: PromoBanner[] }) {
         {/* Desktop arrows */}
         <button
           type="button"
-          aria-label="Previous banner"
+          aria-label={dict.doctors.prevBanner}
           onClick={prev}
           className="hidden lg:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 z-10 h-10 w-10 items-center justify-center rounded-full border border-line bg-bg-elevated shadow-soft hover:border-plum hover:text-plum transition-colors"
         >
@@ -100,7 +102,7 @@ export function PromoBannerCarousel({ banners }: { banners: PromoBanner[] }) {
         </button>
         <button
           type="button"
-          aria-label="Next banner"
+          aria-label={dict.doctors.nextBanner}
           onClick={next}
           className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 z-10 h-10 w-10 items-center justify-center rounded-full border border-line bg-bg-elevated shadow-soft hover:border-plum hover:text-plum transition-colors"
         >
@@ -112,7 +114,7 @@ export function PromoBannerCarousel({ banners }: { banners: PromoBanner[] }) {
       <div
         className="mt-5 flex items-center justify-center gap-2"
         role="tablist"
-        aria-label="Banner navigation"
+        aria-label={dict.doctors.bannerNav}
       >
         {banners.map((b, i) => (
           <button
@@ -120,7 +122,7 @@ export function PromoBannerCarousel({ banners }: { banners: PromoBanner[] }) {
             type="button"
             role="tab"
             aria-selected={i === index}
-            aria-label={`Go to banner ${i + 1}`}
+            aria-label={`${dict.doctors.bannerNav} ${i + 1}`}
             onClick={() => goTo(i)}
             className={cn(
               'h-2 rounded-full transition-all duration-200',

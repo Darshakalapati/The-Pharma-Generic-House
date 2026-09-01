@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { Fraunces, Inter } from 'next/font/google';
+import { Fraunces, Inter, Noto_Serif_Telugu, Noto_Sans_Telugu } from 'next/font/google';
+import { getLocale } from '@/lib/i18n';
 import { Toaster } from 'sonner';
 import './globals.css';
 import { SHOP_NAME, SHOP_TAGLINE } from '@/lib/constants';
@@ -11,6 +12,22 @@ const fraunces = Fraunces({
   weight: ['300', '400', '500', '600'],
   style: ['normal', 'italic'],
   variable: '--font-fraunces',
+  display: 'swap',
+});
+
+// Telugu needs its own faces — Fraunces and Inter have no Telugu glyphs, so
+// without these the entire UI would render as tofu boxes.
+const notoSerifTelugu = Noto_Serif_Telugu({
+  subsets: ['telugu'],
+  weight: ['400', '500'],
+  variable: '--font-noto-serif-telugu',
+  display: 'swap',
+});
+
+const notoSansTelugu = Noto_Sans_Telugu({
+  subsets: ['telugu'],
+  weight: ['400', '500', '600'],
+  variable: '--font-noto-sans-telugu',
   display: 'swap',
 });
 
@@ -56,8 +73,15 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // Read server-side so the correct language and fonts are in the very first
+  // paint — no flash of English before a client effect swaps it.
+  const locale = getLocale();
+
   return (
-    <html lang="en" className={`${fraunces.variable} ${inter.variable}`}>
+    <html
+      lang={locale}
+      className={`${fraunces.variable} ${inter.variable} ${notoSerifTelugu.variable} ${notoSansTelugu.variable}`}
+    >
       <body>
         {children}
         <Toaster

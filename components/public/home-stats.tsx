@@ -4,12 +4,13 @@ import * as React from 'react';
 import { useReducedMotion } from 'framer-motion';
 import { ScrollReveal, ScrollRevealItem } from '@/components/public/motion/scroll-reveal';
 import { cn } from '@/lib/utils';
+import { useT } from './i18n/language-provider';
 
-const STATS = [
-  { value: '125+', label: 'customers every day' },
-  { value: '50+', label: 'prescriptions filled daily' },
-  { value: '30,000+', label: 'prescriptions since 2018' },
-  { value: '7+', label: 'years serving Vijayawada' },
+const STATS: { value: string; key: 'customersDaily' | 'rxDaily' | 'rxSince' | 'years' }[] = [
+  { value: '125+', key: 'customersDaily' },
+  { value: '50+', key: 'rxDaily' },
+  { value: '30,000+', key: 'rxSince' },
+  { value: '7+', key: 'years' },
 ];
 
 /**
@@ -21,13 +22,14 @@ const STATS = [
  * four-column grid with hairline dividers.
  */
 export function HomeStats() {
+  const { dict } = useT();
   const reduced = useReducedMotion();
 
   return (
     <ScrollReveal as="section" className="ribbon-band mt-20 sm:mt-28 bg-bg-elevated">
       <div className="container-public pt-12 lg:pt-20">
         <ScrollRevealItem as="div" className="text-center">
-          <span className="eyebrow">By the numbers</span>
+          <span className="eyebrow">{dict.stats.eyebrow}</span>
         </ScrollRevealItem>
       </div>
 
@@ -36,7 +38,7 @@ export function HomeStats() {
           <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
             {STATS.map((stat, i) => (
               <div
-                key={stat.label}
+                key={stat.key}
                 className={cn(
                   'relative flex flex-col items-center justify-center text-center px-5 py-7',
                   // Hairline divider between columns, desktop only.
@@ -48,7 +50,7 @@ export function HomeStats() {
                   {stat.value}
                 </span>
                 <span className="mt-4 text-[1rem] font-normal uppercase tracking-[0.06em] text-ink-muted leading-snug max-w-[18ch]">
-                  {stat.label}
+                  {dict.stats[stat.key]}
                 </span>
               </div>
             ))}
@@ -61,13 +63,13 @@ export function HomeStats() {
             {[0, 1].map((copy) => (
               <div key={copy} className="flex items-center" aria-hidden={copy === 1}>
                 {STATS.map((stat) => (
-                  <React.Fragment key={stat.label}>
+                  <React.Fragment key={stat.key}>
                     <div className="flex items-baseline gap-3 whitespace-nowrap">
                       <span className="font-serif font-normal text-[2.5rem] leading-none text-plum tabular-nums">
                         {stat.value}
                       </span>
                       <span className="text-[1rem] font-normal text-ink-muted first-letter:uppercase">
-                        {stat.label}
+                        {dict.stats[stat.key]}
                       </span>
                     </div>
                     <span
@@ -84,7 +86,7 @@ export function HomeStats() {
 
       <div className="container-public pb-12 lg:pb-20">
         <ScrollRevealItem as="p" className="mt-10 text-center font-serif italic font-normal text-[1.125rem] text-ink-muted">
-          Real numbers, real trust.
+          {dict.stats.caption}
         </ScrollRevealItem>
       </div>
     </ScrollReveal>

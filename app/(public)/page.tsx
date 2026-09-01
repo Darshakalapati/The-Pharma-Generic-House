@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
 import { getShopSettings, getSchedule } from '@/lib/settings';
+import { getDictionary, getLocale, t } from '@/lib/i18n';
 import { formatHoursSummary } from '@/lib/hours';
 import { whatsappLink, telLink } from '@/lib/utils';
 import { IMG } from '@/lib/images';
@@ -34,31 +35,12 @@ import {
 } from '@/components/public/motion/scroll-reveal';
 import type { Doctor, FamilyMember, HeroPhoto, MedicalTest } from '@/lib/types';
 
+/** Icons and links only — every string comes from the dictionary by index. */
 const OFFERS = [
-  {
-    icon: Pill,
-    title: 'General & Pharma Medicines',
-    body: 'Branded and generic medicines for everyday and prescription needs.',
-    href: '/products?cat=general',
-  },
-  {
-    icon: Leaf,
-    title: 'Ayurvedic Care',
-    body: 'Traditional remedies, classical formulations, and daily wellness products.',
-    href: '/products?cat=ayurvedic',
-  },
-  {
-    icon: Sparkles,
-    title: 'Cosmetic & Personal Care',
-    body: 'Trusted skincare, hair care, and personal hygiene brands.',
-    href: '/products?cat=cosmetic',
-  },
-  {
-    icon: Stethoscope,
-    title: 'Doctor Consultations',
-    body: 'Visiting doctors — physician, physiotherapy, homeopathy, and Nadi — by appointment.',
-    href: '/doctors',
-  },
+  { icon: Pill, href: '/products?cat=general' },
+  { icon: Leaf, href: '/products?cat=ayurvedic' },
+  { icon: Sparkles, href: '/products?cat=cosmetic' },
+  { icon: Stethoscope, href: '/doctors' },
 ];
 
 // The six diagnostics featured on the home page preview band. Names match
@@ -74,36 +56,17 @@ const FEATURED_TEST_NAMES = [
 ];
 
 const PRODUCT_TILES = [
-  {
-    image: IMG.categories.general,
-    title: 'General Medicine',
-    body: 'Daily essentials, fevers, antacids, and over-the-counter care.',
-    href: '/products?cat=general',
-  },
-  {
-    image: IMG.categories.pharma,
-    title: 'Pharma (Prescription)',
-    body: 'Branded prescription medicines, including cold-chain stored items.',
-    href: '/products?cat=pharma',
-  },
-  {
-    image: IMG.categories.ayurvedic,
-    title: 'Ayurvedic',
-    body: 'Classical formulations — Chyawanprash, Triphala, herbal oils.',
-    href: '/products?cat=ayurvedic',
-  },
-  {
-    image: IMG.categories.cosmetic,
-    title: 'Cosmetic & Personal Care',
-    body: 'Sunscreens, serums, lip balms, and dermatologically sound brands.',
-    href: '/products?cat=cosmetic',
-  },
+  { image: IMG.categories.general, href: '/products?cat=general' },
+  { image: IMG.categories.pharma, href: '/products?cat=pharma' },
+  { image: IMG.categories.ayurvedic, href: '/products?cat=ayurvedic' },
+  { image: IMG.categories.cosmetic, href: '/products?cat=cosmetic' },
 ];
 
 export default async function HomePage() {
   const supabase = createClient();
+  const dict = getDictionary(getLocale());
   const [settings, schedule] = await Promise.all([getShopSettings(), getSchedule()]);
-  const hoursSummary = formatHoursSummary(schedule);
+  const hoursSummary = formatHoursSummary(schedule, dict);
 
   // hero_photos and family_members arrive with migrations 0009 / 0010. Until
   // those are applied the queries just return an error and `data` is null, and
@@ -178,11 +141,11 @@ export default async function HomePage() {
         <ScrollRevealItem as="div" className="container-public py-3.5 md:overflow-x-auto">
           {/* Wraps onto two lines on phones rather than scrolling sideways. */}
           <p className="flex flex-wrap justify-center gap-x-3 gap-y-1 text-center md:flex-nowrap md:justify-start md:gap-5 md:whitespace-nowrap md:text-left text-[0.875rem] text-ink-muted">
-            <span>Pharmacy built on trust since 2018</span>
+            <span>{dict.trustbar.builtOnTrust}</span>
             <span aria-hidden className="text-ink-faint">·</span>
-            <span>ThyroCare associate</span>
+            <span>{dict.trustbar.thyro}</span>
             <span aria-hidden className="text-ink-faint">·</span>
-            <span>Home test collection</span>
+            <span>{dict.trustbar.homeCollection}</span>
             <span aria-hidden className="text-ink-faint">·</span>
             <span>{hoursSummary}</span>
           </p>
@@ -194,23 +157,23 @@ export default async function HomePage() {
         <MortarPestleAccent className="left-0 -bottom-10" />
 
         <ScrollRevealItem as="div" className="max-w-2xl">
-          <span className="eyebrow">What we offer</span>
-          <h2 className="h-section mt-4">Four ways we help you stay well.</h2>
+          <span className="eyebrow">{dict.offer.eyebrow}</span>
+          <h2 className="h-section mt-4">{dict.offer.heading}</h2>
         </ScrollRevealItem>
 
         <StaggerGrid inherit className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch" stagger={0.06}>
-          {OFFERS.map((o) => (
-            <StaggerGridItem key={o.title} className="h-full">
+          {OFFERS.map((o, i) => (
+            <StaggerGridItem key={o.href} className="h-full">
             <Link href={o.href} className="card-soft p-7 flex flex-col h-full group">
               <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-plum-tint text-plum">
                 <o.icon className="h-5 w-5" />
               </span>
-              <h3 className="h-card mt-5">{o.title}</h3>
+              <h3 className="h-card mt-5">{dict.offer.cards[i].title}</h3>
               <p className="mt-2 text-[0.95rem] text-ink-muted leading-[1.6] flex-1">
-                {o.body}
+                {dict.offer.cards[i].body}
               </p>
               <span className="mt-auto pt-5 inline-flex items-center gap-1 text-[0.875rem] font-medium text-plum">
-                <span className="link-underline">Learn more</span>
+                <span className="link-underline">{dict.offer.learnMore}</span>
                 <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
               </span>
             </Link>
@@ -226,16 +189,16 @@ export default async function HomePage() {
       <HomeStats />
 
       {/* SECTION 2.7 — OUR STORY / THE PERSON BEHIND THE SHOP ─────── */}
-      <FamilyStory member={featuredMember} />
+      <FamilyStory member={featuredMember} dict={dict} />
 
       {/* SECTION 3 — DOCTORS ──────────────────────────────────────── */}
       {docs.length > 0 && (
         <ScrollReveal as="section" className="container-public mt-20 sm:mt-28">
           <ScrollRevealItem as="div" className="max-w-2xl">
-            <span className="eyebrow">Consultations</span>
-            <h2 className="h-section mt-4">Our practitioners. By appointment.</h2>
+            <span className="eyebrow">{dict.doctors.eyebrow}</span>
+            <h2 className="h-section mt-4">{dict.doctors.heading}</h2>
             <p className="mt-4 text-ink-muted text-[1.0625rem] leading-[1.7]">
-              Visit on scheduled days for in-shop consultations, or request a slot for on-request doctors.
+              {dict.doctors.sub}
             </p>
           </ScrollRevealItem>
 
@@ -257,21 +220,18 @@ export default async function HomePage() {
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
             <div>
               <ScrollRevealItem as="span" className="eyebrow eyebrow--teal block">
-                Diagnostics · Associated with ThyroCare
+                {dict.diagnostics.eyebrow}
               </ScrollRevealItem>
               <ScrollRevealItem as="h2" className="h-section mt-4 text-balance">
-                Lab tests, every Sunday at our shop.
+                {dict.diagnostics.heading}
               </ScrollRevealItem>
               <ScrollRevealItem as="p" className="mt-5 text-[1.0625rem] text-ink-muted leading-[1.75]">
-                Walk in any Sunday between 9 AM and 1 PM and our certified ThyroCare
-                technician will collect your samples on-site. Need a test on another day?
-                The technician arrives at the shop within 45 minutes — or visits your
-                home anywhere in Vijayawada. Reports are delivered to you on WhatsApp.
+                {dict.diagnostics.body}
               </ScrollRevealItem>
               <ScrollRevealItem as="div" className="mt-7">
                 <Magnetic>
                 <Link href="/tests" className="inline-flex btn-plum">
-                  Book a Test
+                  {dict.diagnostics.bookTest}
                   <ArrowRight className="h-4 w-4" />
                 </Link>
                 </Magnetic>
@@ -313,9 +273,9 @@ export default async function HomePage() {
                 ))}
               </StaggerGrid>
               <p className="mt-6 text-[0.875rem] text-ink-muted text-center">
-                Showing {testList.length} of {totalTests} tests.{' '}
+                {t(dict.diagnostics.showing, { shown: testList.length, total: totalTests })}{' '}
                 <Link href="/tests" className="link-plum link-underline">
-                  View all diagnostics →
+                  {dict.diagnostics.viewAll}
                 </Link>
               </p>
             </div>
@@ -326,35 +286,33 @@ export default async function HomePage() {
       {/* SECTION 5 — PRODUCTS PREVIEW ────────────────────────────── */}
       <ScrollReveal as="section" className="container-public mt-20 sm:mt-28">
         <ScrollRevealItem as="div" className="max-w-2xl">
-          <span className="eyebrow">Our Shelves</span>
-          <h2 className="h-section mt-4">Browse what we keep in store.</h2>
+          <span className="eyebrow">{dict.shelves.eyebrow}</span>
+          <h2 className="h-section mt-4">{dict.shelves.heading}</h2>
           <p className="mt-4 text-ink-muted text-[1.0625rem] leading-[1.7]">
-            Tap a category to see products. Add items to your enquiry list, then send
-            them to us on WhatsApp — we&apos;ll confirm availability and you can pick up
-            at the shop.
+            {dict.shelves.sub}
           </p>
         </ScrollRevealItem>
 
         <StaggerGrid inherit className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" stagger={0.06}>
-          {PRODUCT_TILES.map((t) => (
-            <StaggerGridItem key={t.title}>
-            <Link href={t.href} className="card-soft overflow-hidden block group">
+          {PRODUCT_TILES.map((tile, i) => (
+            <StaggerGridItem key={tile.href}>
+            <Link href={tile.href} className="card-soft overflow-hidden block group">
               <div className="relative aspect-[4/3] bg-sand overflow-hidden">
                 <Image
-                  src={t.image}
-                  alt={t.title}
+                  src={tile.image}
+                  alt={dict.shelves.tiles[i].title}
                   fill
                   sizes="(max-width: 768px) 100vw, 25vw"
                   className="object-cover img-hover-zoom"
                 />
               </div>
               <div className="p-6">
-                <h3 className="h-card">{t.title}</h3>
+                <h3 className="h-card">{dict.shelves.tiles[i].title}</h3>
                 <p className="mt-2 text-[0.9375rem] text-ink-muted leading-[1.6]">
-                  {t.body}
+                  {dict.shelves.tiles[i].body}
                 </p>
                 <span className="mt-4 inline-flex items-center gap-1 text-[0.875rem] font-medium text-plum">
-                  <span className="link-underline">Browse</span>
+                  <span className="link-underline">{dict.shelves.browseLink}</span>
                   <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                 </span>
               </div>
@@ -368,26 +326,22 @@ export default async function HomePage() {
       <ScrollReveal as="section" className="container-public mt-20 sm:mt-28">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
           <div>
-            <ScrollRevealItem as="span" className="eyebrow block">About us</ScrollRevealItem>
+            <ScrollRevealItem as="span" className="eyebrow block">{dict.aboutTeaser.eyebrow}</ScrollRevealItem>
             <ScrollRevealItem as="h2" className="h-section mt-4 text-balance">
-              A neighbourhood pharmacy, built on trust.
+              {dict.aboutTeaser.heading}
             </ScrollRevealItem>
             <ScrollRevealItem as="p" className="mt-5 text-[1.0625rem] text-ink-muted leading-[1.75]">
-              We&apos;re a trusted pharmacy in Vijayawada, serving the same community
-              since 2018. Our shelves carry general and prescription
-              medicines, classical Ayurvedic preparations, and trusted personal care
-              brands — chosen with care.
+              {dict.aboutTeaser.body1}
             </ScrollRevealItem>
             <ScrollRevealItem as="p" className="mt-4 text-[1.0625rem] text-ink-muted leading-[1.75]">
-              Alongside the shelves, we host visiting doctors and run a Sunday lab day
-              with ThyroCare. Everything you need to stay well, in one place.
+              {dict.aboutTeaser.body2}
             </ScrollRevealItem>
             <ScrollRevealItem as="div" className="mt-7">
               <Link
                 href="/about"
                 className="inline-block link-underline link-plum text-[0.95rem]"
               >
-                Read more about us →
+                {dict.aboutTeaser.readMore}
               </Link>
             </ScrollRevealItem>
           </div>
@@ -395,7 +349,7 @@ export default async function HomePage() {
           <ScrollRevealItem as="div" className="relative aspect-[5/4] rounded-2xl overflow-hidden shadow-card border border-line">
             <Image
               src={settings.about_photo_url || IMG.pharmacy.interior}
-              alt="Inside The Pharma Generic House"
+              alt={dict.aboutTeaser.photoAlt}
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
@@ -408,16 +362,16 @@ export default async function HomePage() {
       <ScrollReveal as="section" className="mt-24 sm:mt-32 bg-plum text-white">
         <div className="container-public py-16 sm:py-20 text-center">
           <ScrollRevealItem as="h2" className="font-serif font-medium text-[clamp(1.875rem,4vw,2.75rem)] leading-[1.1] tracking-[-0.02em] text-white text-balance max-w-3xl mx-auto">
-            Have a question? We&apos;re here to help.
+            {dict.contactCta.heading}
           </ScrollRevealItem>
           <ScrollRevealItem as="p" className="mt-4 text-[1.0625rem] text-white/85 max-w-2xl mx-auto leading-[1.7]">
-            Call us, message on WhatsApp, or visit the shop. We respond quickly.
+            {dict.contactCta.sub}
           </ScrollRevealItem>
 
           <ScrollRevealItem as="div" className="mt-10 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 max-w-2xl mx-auto">
             <a href={telLink(settings.shop_phone)} className="btn-light-outline flex-1 sm:flex-initial">
               <Phone className="h-4 w-4" />
-              Call us
+              {dict.nav.callUs}
             </a>
             <a
               href={whatsappLink(settings.shop_whatsapp)}
@@ -426,16 +380,16 @@ export default async function HomePage() {
               className="btn-teal flex-1 sm:flex-initial"
             >
               <WhatsAppGlyph className="h-4 w-4" />
-              WhatsApp
+              {dict.nav.whatsapp}
             </a>
             <Link href="/contact" className="btn-light-outline flex-1 sm:flex-initial">
               <MapPin className="h-4 w-4" />
-              Visit
+              {dict.contactCta.visit}
             </Link>
           </ScrollRevealItem>
 
           <ScrollRevealItem as="p" className="mt-8 text-[0.875rem] text-white/70">
-            Mon–Sat 9 AM – 10 PM · Sun 9 AM – 2 PM
+            {hoursSummary}
           </ScrollRevealItem>
         </div>
       </ScrollReveal>

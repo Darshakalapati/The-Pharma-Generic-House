@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { getShopSettings } from '@/lib/settings';
+import { getDictionary, getLocale } from '@/lib/i18n';
 import { ProductGrid } from '@/components/public/product-grid';
 import { EnquiryCartProvider } from '@/components/public/enquiry-cart-context';
 import { EnquiryCartPanel } from '@/components/public/enquiry-cart-panel';
@@ -9,7 +10,7 @@ import {
 } from '@/components/public/motion/scroll-reveal';
 import { WhatsAppGlyph } from '@/components/public/whatsapp-glyph';
 import { whatsappLink } from '@/lib/utils';
-import { SHOP_WHATSAPP, PRESCRIPTION_WA_TEXT } from '@/lib/constants';
+import { SHOP_WHATSAPP, PRESCRIPTION_WA_TEXT, PRESCRIPTION_WA_TEXT_TE } from '@/lib/constants';
 import type { Product } from '@/lib/types';
 
 export const metadata = {
@@ -23,6 +24,9 @@ export default async function ProductsPage({
 }: {
   searchParams: { cat?: string };
 }) {
+  const locale = getLocale();
+  const dict = getDictionary(locale);
+  const rxText = locale === 'te' ? PRESCRIPTION_WA_TEXT_TE : PRESCRIPTION_WA_TEXT;
   const supabase = createClient();
   const settings = await getShopSettings();
 
@@ -38,20 +42,19 @@ export default async function ProductsPage({
     <EnquiryCartProvider>
       <ScrollReveal as="section" className="container-public pt-12 sm:pt-16 pb-8">
         <ScrollRevealItem as="div" className="max-w-2xl">
-          <span className="eyebrow">Catalogue</span>
-          <h1 className="h-hero mt-4 text-balance">Browse our shelves.</h1>
+          <span className="eyebrow">{dict.products.eyebrow}</span>
+          <h1 className="h-hero mt-4 text-balance">{dict.products.heading}</h1>
           <p className="mt-5 text-[1.0625rem] text-ink-muted leading-[1.7]">
-            Add what you need to your enquiry list and we&apos;ll confirm availability on
-            WhatsApp. Pick up from the shop or arrange home delivery.
+            {dict.products.sub}
           </p>
           <a
-            href={whatsappLink(SHOP_WHATSAPP, PRESCRIPTION_WA_TEXT)}
+            href={whatsappLink(SHOP_WHATSAPP, rxText)}
             target="_blank"
             rel="noopener noreferrer"
             className="btn-teal mt-6 h-12 w-full sm:h-10 sm:w-auto"
           >
             <WhatsAppGlyph className="h-4 w-4" />
-            Send prescription on WhatsApp
+            {dict.hero.sendRx}
           </a>
         </ScrollRevealItem>
       </ScrollReveal>

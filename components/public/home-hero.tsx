@@ -10,7 +10,8 @@ import { GoogleRatingPill } from '@/components/public/google-rating';
 import { Magnetic } from '@/components/public/motion/magnetic';
 import { WhatsAppGlyph } from '@/components/public/whatsapp-glyph';
 import { whatsappLink } from '@/lib/utils';
-import { SHOP_WHATSAPP, PRESCRIPTION_WA_TEXT } from '@/lib/constants';
+import { SHOP_WHATSAPP, PRESCRIPTION_WA_TEXT, PRESCRIPTION_WA_TEXT_TE } from '@/lib/constants';
+import { useT } from '@/components/public/i18n/language-provider';
 
 const HERO_PHOTO =
   'https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=1200&q=85&auto=format&fit=crop';
@@ -37,6 +38,8 @@ export function HomeHero({
   googleRating?: number | null;
   googleReviewCount?: number | null;
 }) {
+  const { dict, locale } = useT();
+  const rxText = locale === 'te' ? PRESCRIPTION_WA_TEXT_TE : PRESCRIPTION_WA_TEXT;
   const reduced = useReducedMotion();
   const slides = photos.length > 0 ? photos : [FALLBACK_SLIDE];
   const cycleMs = slides.length > 1 ? MULTI_PHOTO_CYCLE_MS : SINGLE_PHOTO_CYCLE_MS;
@@ -49,46 +52,44 @@ export function HomeHero({
         <div>
           {googleRating != null && googleReviewCount != null && (
             <ScrollRevealItem as="div" className="mb-5">
-              <GoogleRatingPill rating={googleRating} count={googleReviewCount} />
+              <GoogleRatingPill rating={googleRating} count={googleReviewCount} dict={dict} />
             </ScrollRevealItem>
           )}
           <ScrollRevealItem as="span" className="eyebrow block">
-            Vijayawada · Trusted Neighbourhood Pharmacy
+            {dict.hero.eyebrow}
           </ScrollRevealItem>
           <ScrollRevealItem as="h1" className="h-hero mt-5 text-balance">
-            Medicines, doctors, and lab tests — under one trusted roof.
+            {dict.hero.headline}
           </ScrollRevealItem>
           <ScrollRevealItem as="p" className="mt-6 text-[1.0625rem] text-ink-muted leading-[1.7] max-w-[55ch]">
-            From everyday medicines to Ayurvedic care, doctor consultations, and Sunday
-            lab tests — The Pharma Generic House has served Vijayawada since 2018.
+            {dict.hero.subhead}
           </ScrollRevealItem>
           {/* Three levels: the prescription hand-off is the one action most
               customers actually want, so it leads. */}
           <ScrollRevealItem as="div" className="mt-8 flex flex-col md:flex-row md:flex-wrap md:items-center gap-3 md:gap-4">
             <Magnetic className="w-full md:w-auto">
               <a
-                href={whatsappLink(SHOP_WHATSAPP, PRESCRIPTION_WA_TEXT)}
+                href={whatsappLink(SHOP_WHATSAPP, rxText)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-teal w-full md:w-auto h-12 md:h-11"
               >
                 <WhatsAppGlyph className="h-4 w-4" />
-                Send prescription on WhatsApp
+                {dict.hero.sendRx}
               </a>
             </Magnetic>
             <Link
               href="/products"
               className="btn-plum-outline w-full md:w-auto h-12 md:h-11"
             >
-              Browse Products
+              {dict.hero.browse}
             </Link>
             <Link href="/doctors" className="link-underline link-plum text-[0.95rem] w-full md:w-auto inline-flex items-center justify-center md:justify-start min-h-[48px] md:min-h-0">
-              Book an appointment →
+              {dict.hero.bookAppt}
             </Link>
           </ScrollRevealItem>
           <ScrollRevealItem as="p" className="mt-4 text-[0.875rem] text-ink-muted leading-[1.6] max-w-[52ch]">
-            Photograph your prescription, tap the button, and attach it in WhatsApp —
-            we&apos;ll reply with availability and price.
+            {dict.hero.rxHelper}
           </ScrollRevealItem>
         </div>
 
@@ -102,7 +103,7 @@ export function HomeHero({
             <KenBurnsPhoto
               slides={slides}
               cycleMs={cycleMs}
-              fallbackAlt={HERO_ALT}
+              fallbackAlt={dict.hero.photoAlt}
               sizes="(max-width: 1024px) 100vw, 50vw"
               priority
             />

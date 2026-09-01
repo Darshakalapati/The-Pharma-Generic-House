@@ -1,6 +1,8 @@
 'use client';
+import { useT } from './i18n/language-provider';
 
 import * as React from 'react';
+import type { Dictionary } from '@/lib/i18n/types';
 import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -25,6 +27,7 @@ export function BookingModal({
   subtitle,
   children,
 }: Props) {
+  const { dict } = useT();
   React.useEffect(() => {
     if (open) {
       const prev = document.body.style.overflow;
@@ -83,7 +86,7 @@ export function BookingModal({
           </div>
           <button
             onClick={() => onOpenChange(false)}
-            aria-label="Close"
+            aria-label={dict.doctors.closeAria}
             className="ml-4 inline-flex h-9 w-9 items-center justify-center rounded-md text-ink-muted hover:bg-sand hover:text-ink transition-colors shrink-0"
           >
             <X className="h-5 w-5" />
@@ -100,7 +103,14 @@ export function BookingModal({
   );
 }
 
-export function FieldError({ msg }: { msg?: string }) {
+/**
+ * Validation messages are stored in the zod schema as dictionary keys
+ * ("invalidPhone"), so the same schema renders in whichever language the
+ * visitor is reading. An unrecognised key falls through as literal text.
+ */
+export function FieldError({ msg, dict }: { msg?: string; dict?: Dictionary }) {
   if (!msg) return null;
-  return <p className="mt-1.5 text-[0.78rem] text-plum">{msg}</p>;
+  const forms = dict?.forms as Record<string, string> | undefined;
+  const text = forms && msg in forms ? forms[msg] : msg;
+  return <p className="mt-1.5 text-[0.78rem] text-plum">{text}</p>;
 }

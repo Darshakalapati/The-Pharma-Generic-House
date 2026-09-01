@@ -9,18 +9,19 @@ import { formatHoursSummary, type Schedule } from '@/lib/hours';
 import { OpenStatus } from './open-status';
 import { whatsappLink, telLink } from '@/lib/utils';
 import type { ShopSettings } from '@/lib/types';
+import type { Dictionary } from '@/lib/i18n/types';
 
-const COL_BROWSE = [
-  { label: 'General Medicine', href: '/products?cat=general' },
-  { label: 'Pharma', href: '/products?cat=pharma' },
-  { label: 'Ayurvedic', href: '/products?cat=ayurvedic' },
-  { label: 'Cosmetic', href: '/products?cat=cosmetic' },
+const COL_BROWSE: { key: keyof Dictionary['footer']['categories']; href: string }[] = [
+  { key: 'general', href: '/products?cat=general' },
+  { key: 'pharma', href: '/products?cat=pharma' },
+  { key: 'ayurvedic', href: '/products?cat=ayurvedic' },
+  { key: 'cosmetic', href: '/products?cat=cosmetic' },
 ];
 
-const COL_SERVICES = [
-  { label: 'Doctors', href: '/doctors' },
-  { label: 'Diagnostics', href: '/tests' },
-  { label: 'About us', href: '/about' },
+const COL_SERVICES: { key: 'doctors' | 'diagnostics' | 'about'; href: string }[] = [
+  { key: 'doctors', href: '/doctors' },
+  { key: 'diagnostics', href: '/tests' },
+  { key: 'about', href: '/about' },
 ];
 
 /**
@@ -49,9 +50,11 @@ const COLUMN_BOX = 'h-full rounded-xl p-7';
 export function SiteFooter({
   settings,
   schedule,
+  dict,
 }: {
   settings: ShopSettings;
   schedule: Schedule;
+  dict: Dictionary;
 }) {
   return (
     // pb clears the fixed mobile action bar so footer content is never hidden behind it.
@@ -78,14 +81,14 @@ export function SiteFooter({
             <FooterWordmark className="text-bg" />
           </div>
           <p className="mt-3 text-[0.95rem] text-bg/70 max-w-md">
-            Your trusted neighbourhood pharmacy. Vijayawada.
+            {dict.footer.tagline}
           </p>
         </div>
 
         <div className="mt-14 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
           {/* Shop column */}
           <TiltCard className={COLUMN_BOX}>
-            <h3 className="eyebrow eyebrow--teal text-[0.7rem]">Shop</h3>
+            <h3 className="eyebrow eyebrow--teal text-[0.7rem]">{dict.footer.shop}</h3>
             <ul className="mt-5 space-y-3 text-[0.9375rem] text-bg/70">
               <li className="flex items-start gap-2.5">
                 <MapPin className="h-4 w-4 mt-0.5 text-teal-soft shrink-0" />
@@ -111,13 +114,13 @@ export function SiteFooter({
                   className="flex items-start gap-2.5 hover:text-bg transition-colors"
                 >
                   <MessageCircle className="h-4 w-4 mt-0.5 text-teal-soft shrink-0" />
-                  <span>WhatsApp us</span>
+                  <span>{dict.footer.whatsappUs}</span>
                 </a>
               </li>
               <li className="flex items-start gap-2.5">
                 <Clock className="h-4 w-4 mt-0.5 text-teal-soft shrink-0" />
                 <span>
-                  <span className="block">{formatHoursSummary(schedule)}</span>
+                  <span className="block">{formatHoursSummary(schedule, dict)}</span>
                   <OpenStatus
                     schedule={schedule}
                     className="mt-2 border-bg/20 text-bg/70"
@@ -129,12 +132,12 @@ export function SiteFooter({
 
           {/* Browse */}
           <TiltCard className={COLUMN_BOX}>
-            <h3 className="eyebrow eyebrow--teal text-[0.7rem]">Browse</h3>
+            <h3 className="eyebrow eyebrow--teal text-[0.7rem]">{dict.footer.browse}</h3>
             <ul className="mt-5 space-y-2.5 text-[0.9375rem] text-bg/70">
               {COL_BROWSE.map((l) => (
-                <li key={l.label}>
+                <li key={l.key}>
                   <Link href={l.href} className="hover:text-bg transition-colors">
-                    {l.label}
+                    {dict.footer.categories[l.key]}
                   </Link>
                 </li>
               ))}
@@ -143,12 +146,12 @@ export function SiteFooter({
 
           {/* Services */}
           <TiltCard className={COLUMN_BOX}>
-            <h3 className="eyebrow eyebrow--teal text-[0.7rem]">Services</h3>
+            <h3 className="eyebrow eyebrow--teal text-[0.7rem]">{dict.footer.services}</h3>
             <ul className="mt-5 space-y-2.5 text-[0.9375rem] text-bg/70">
               {COL_SERVICES.map((l) => (
-                <li key={l.label}>
+                <li key={l.key}>
                   <Link href={l.href} className="hover:text-bg transition-colors">
-                    {l.label}
+                    {dict.nav[l.key]}
                   </Link>
                 </li>
               ))}
@@ -157,11 +160,11 @@ export function SiteFooter({
 
           {/* Get in touch */}
           <TiltCard className={COLUMN_BOX}>
-            <h3 className="eyebrow eyebrow--teal text-[0.7rem]">Get in touch</h3>
+            <h3 className="eyebrow eyebrow--teal text-[0.7rem]">{dict.footer.getInTouch}</h3>
             <ul className="mt-5 space-y-2.5 text-[0.9375rem] text-bg/70">
               <li>
                 <Link href="/contact" className="hover:text-bg transition-colors">
-                  Contact form
+                  {dict.footer.contactForm}
                 </Link>
               </li>
               <li>
@@ -171,12 +174,12 @@ export function SiteFooter({
                   rel="noopener noreferrer"
                   className="hover:text-bg transition-colors"
                 >
-                  WhatsApp
+                  {dict.nav.whatsapp}
                 </a>
               </li>
               <li>
                 <a href={telLink(settings.shop_phone)} className="hover:text-bg transition-colors">
-                  Call
+                  {dict.footer.call}
                 </a>
               </li>
               <li>
@@ -190,16 +193,16 @@ export function SiteFooter({
 
         <div className="mt-14 pt-4 border-t border-bg/15 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[0.8rem] text-bg/55">
-            <span>© 2026 The Pharma Generic House</span>
+            <span>{dict.footer.rights}</span>
             <Link href="/privacy" className="hover:text-bg transition-colors">
-              Privacy
+              {dict.footer.privacy}
             </Link>
             <Link href="/terms" className="hover:text-bg transition-colors">
-              Terms
+              {dict.footer.terms}
             </Link>
           </div>
           <p className="font-serif italic font-normal text-[0.9375rem] text-teal-soft">
-            Medicines, doctors, tests — under one roof.
+            {dict.footer.bottomTagline}
           </p>
         </div>
       </div>

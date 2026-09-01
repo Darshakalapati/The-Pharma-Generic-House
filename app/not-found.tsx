@@ -4,14 +4,16 @@ import { SiteNav } from '@/components/public/site-nav';
 import { SiteFooter } from '@/components/public/site-footer';
 import { WhatsAppGlyph } from '@/components/public/whatsapp-glyph';
 import { getShopSettings, getSchedule } from '@/lib/settings';
+import { getDictionary, getLocale } from '@/lib/i18n';
+import { LanguageProvider } from '@/components/public/i18n/language-provider';
 import { whatsappLink } from '@/lib/utils';
 
 export const metadata = { title: 'Page not found' };
 
-const LINKS = [
-  { href: '/', label: 'Home' },
-  { href: '/products', label: 'Products' },
-  { href: '/contact', label: 'Contact' },
+const LINKS: { href: string; key: 'home' | 'products' | 'contact' }[] = [
+  { href: '/', key: 'home' },
+  { href: '/products', key: 'products' },
+  { href: '/contact', key: 'contact' },
 ];
 
 /**
@@ -19,10 +21,13 @@ const LINKS = [
  * it renders the nav and footer itself to match the rest of the site.
  */
 export default async function NotFound() {
+  const locale = getLocale();
+  const dict = getDictionary(locale);
   const [settings, schedule] = await Promise.all([getShopSettings(), getSchedule()]);
 
   return (
-    <div className="site-grain bg-bg text-ink">
+    <LanguageProvider dict={dict} locale={locale}>
+      <div className={`site-grain bg-bg text-ink${locale === 'te' ? ' lang-te' : ''}`}>
       <SiteNav
         shopPhone={settings.shop_phone}
         shopWhatsApp={settings.shop_whatsapp}
@@ -37,9 +42,9 @@ export default async function NotFound() {
           height={498}
           className="h-[72px] w-auto"
         />
-        <h1 className="h-section mt-8 text-balance">This page has moved on.</h1>
+        <h1 className="h-section mt-8 text-balance">{dict.notFound.heading}</h1>
         <p className="mt-4 text-[1.0625rem] text-ink-muted leading-[1.7]">
-          The medicines are still here — let&apos;s get you back.
+          {dict.notFound.line}
         </p>
 
         <div className="mt-8 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[0.95rem]">
@@ -51,7 +56,7 @@ export default async function NotFound() {
                 </span>
               )}
               <Link href={l.href} className="link-underline link-plum">
-                {l.label}
+                {dict.notFound[l.key]}
               </Link>
             </span>
           ))}
@@ -64,11 +69,12 @@ export default async function NotFound() {
           className="btn-teal mt-8"
         >
           <WhatsAppGlyph className="h-4 w-4" />
-          Message us on WhatsApp
+          {dict.notFound.whatsappCta}
         </a>
       </main>
 
-      <SiteFooter settings={settings} schedule={schedule} />
-    </div>
+      <SiteFooter settings={settings} schedule={schedule} dict={dict} />
+      </div>
+    </LanguageProvider>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useT } from './i18n/language-provider';
 import { FlaskConical, ArrowRight } from 'lucide-react';
 import { TestBookingDialog } from './test-booking-dialog';
 import { formatINR } from '@/lib/utils';
@@ -8,12 +9,13 @@ import { StaggerGrid, StaggerGridItem } from '@/components/public/motion/scroll-
 import type { MedicalTest } from '@/lib/types';
 
 export function TestList({ tests }: { tests: MedicalTest[] }) {
+  const { dict } = useT();
   const [active, setActive] = React.useState<MedicalTest | null>(null);
 
   if (tests.length === 0) {
     return (
       <div className="card-soft p-12 text-center text-ink-muted">
-        No tests are available right now.
+        {dict.diagnostics.none}
       </div>
     );
   }
@@ -46,13 +48,13 @@ export function TestList({ tests }: { tests: MedicalTest[] }) {
                   {formatINR(t.price)}
                 </p>
               ) : (
-                <span className="text-[0.875rem] text-ink-muted">Walk-in / Free</span>
+                <span className="text-[0.875rem] text-ink-muted">{dict.diagnostics.walkInFree}</span>
               )}
               <button
                 onClick={() => setActive(t)}
                 className="inline-flex items-center gap-1 text-[0.95rem] font-medium text-plum hover:text-plum-deep transition-colors"
               >
-                Book Test
+                {dict.diagnostics.bookTest}
                 <ArrowRight className="h-3.5 w-3.5" />
               </button>
             </div>

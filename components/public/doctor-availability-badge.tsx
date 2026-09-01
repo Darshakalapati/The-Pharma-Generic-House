@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { getDoctorAvailability, cn } from '@/lib/utils';
 import type { Doctor } from '@/lib/types';
+import { useT } from './i18n/language-provider';
 
 /**
  * "Available today" / "Next: Wed" marker, overlaid on a doctor's photo.
@@ -22,13 +23,14 @@ export function DoctorAvailabilityBadge({
   doctor: Doctor;
   className?: string;
 }) {
+  const { dict } = useT();
   const [availability, setAvailability] = React.useState<ReturnType<
     typeof getDoctorAvailability
   > | null>(null);
 
   React.useEffect(() => {
-    setAvailability(getDoctorAvailability(doctor, new Date()));
-  }, [doctor]);
+    setAvailability(getDoctorAvailability(doctor, new Date(), dict));
+  }, [doctor, dict]);
 
   if (!availability || availability.state === 'on_request') return null;
 
@@ -50,7 +52,7 @@ export function DoctorAvailabilityBadge({
         <span aria-hidden className="block h-2 w-2 shrink-0 rounded-full bg-white" />
       )}
       <span className="truncate">
-        {isToday ? 'Available today' : `Next: ${day}`}
+        {isToday ? dict.doctors.availableToday : `${dict.doctors.next}: ${day}`}
         {/* The time range is the first thing to go on a narrow card. */}
         {timeRange && <span className="hidden sm:inline"> · {timeRange}</span>}
       </span>

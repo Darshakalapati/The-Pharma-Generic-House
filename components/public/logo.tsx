@@ -13,6 +13,10 @@ interface LogoProps {
   /** Show the wordmark on phones too. Public nav only, so the admin sidebar's
    *  compact mobile bar is left exactly as it was. */
   mobileWordmark?: boolean;
+  /** Localised "Vijayawada · Est. 2018" line, supplied by the public nav.
+   *  Passed in rather than read from the language context so this component
+   *  stays usable in the admin sidebar, which has no LanguageProvider. */
+  taglineText?: string;
 }
 
 /**
@@ -20,7 +24,12 @@ interface LogoProps {
  * Fraunces. The wordmark is hidden on mobile so the mark alone carries the
  * brand in the narrow nav.
  */
-export function Logo({ className, tagline = false, mobileWordmark = false }: LogoProps) {
+export function Logo({
+  className,
+  tagline = false,
+  mobileWordmark = false,
+  taglineText = 'Vijayawada · Est. 2018',
+}: LogoProps) {
   const reduced = useReducedMotion();
 
   return (
@@ -32,7 +41,7 @@ export function Logo({ className, tagline = false, mobileWordmark = false }: Log
     >
       <Link
         href="/"
-        aria-label="The Pharma Generic House — home"
+        aria-label="The Pharma Generic House"
         className={cn(
           'inline-flex items-center text-ink',
           mobileWordmark ? 'gap-2 sm:gap-3' : 'gap-3',
@@ -61,7 +70,7 @@ export function Logo({ className, tagline = false, mobileWordmark = false }: Log
           </span>
           {tagline && (
             <span className="hidden sm:block mt-0.5 text-[0.6875rem] font-medium uppercase tracking-[0.14em] leading-[1.1] text-ink-muted">
-              Vijayawada · Est. 2018
+              {taglineText}
             </span>
           )}
         </span>

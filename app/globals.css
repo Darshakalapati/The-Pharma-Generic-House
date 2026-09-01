@@ -551,3 +551,90 @@
     animation: none;
   }
 }
+
+/* ── Telugu typography ──────────────────────────────────────────────────────
+   Applied via `lang-te` on <body> when the Telugu cookie is set.
+
+   Three things Telugu needs that the Latin design does not:
+   1. Its own faces — Fraunces and Inter carry no Telugu glyphs at all.
+   2. Zero letter-spacing. The site's negative tracking pulls conjunct clusters
+      (ఖ్య, స్త్ర) into each other and breaks their shaping.
+   3. Extra line-height. Telugu stacks vowel signs above and below the
+      baseline, so glyphs are taller than Latin at the same font-size and clip
+      inside fixed-height buttons, pills and badges without it.
+
+   Latin runs inside Telugu text (the brand name, "WhatsApp", times, ₹) fall
+   through to Fraunces/Inter via the fallback chain. */
+.lang-te {
+  font-family: var(--font-noto-sans-telugu), var(--font-inter), system-ui, sans-serif;
+  line-height: 1.7;
+}
+
+.lang-te h1,
+.lang-te h2,
+.lang-te h3,
+.lang-te h4,
+.lang-te h5,
+.lang-te h6,
+.lang-te .font-serif,
+.lang-te .h-hero,
+.lang-te .h-section,
+.lang-te .h-card {
+  font-family: var(--font-noto-serif-telugu), var(--font-fraunces), serif;
+  letter-spacing: 0;
+}
+
+.lang-te .h-hero {
+  line-height: 1.2;
+}
+.lang-te .h-section {
+  line-height: 1.25;
+}
+.lang-te .h-card,
+.lang-te h3 {
+  line-height: 1.35;
+}
+.lang-te h1 {
+  line-height: 1.2;
+}
+.lang-te h2 {
+  line-height: 1.25;
+}
+
+/* The eyebrow keeps its colour and size; only the tracking has to go, and
+   uppercase is a no-op on Telugu so the class can stay as it is. */
+.lang-te .eyebrow {
+  letter-spacing: 0;
+  line-height: 1.5;
+}
+
+/* Anything that sets negative tracking through a utility. */
+.lang-te [class*='tracking-['],
+.lang-te .tracking-tight,
+.lang-te .tracking-tighter,
+.lang-te .tracking-h1,
+.lang-te .tracking-h2 {
+  letter-spacing: 0 !important;
+}
+
+/* Fixed-height controls need room for the taller glyphs. `auto` lets a button
+   grow rather than clip its descenders. */
+.lang-te .btn-plum,
+.lang-te .btn-plum-outline,
+.lang-te .btn-teal,
+.lang-te .btn-light-outline {
+  height: auto;
+  min-height: 2.75rem;
+  padding-block: 0.5rem;
+  line-height: 1.5;
+}
+
+.lang-te .input-field,
+.lang-te .form-label {
+  line-height: 1.6;
+}
+.lang-te .input-field:not(textarea) {
+  height: auto;
+  min-height: 2.75rem;
+  padding-block: 0.5rem;
+}

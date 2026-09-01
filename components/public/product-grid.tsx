@@ -3,10 +3,22 @@
 import * as React from 'react';
 import { Search, Plus, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useT } from './i18n/language-provider';
 import { PRODUCT_CATEGORIES } from '@/lib/constants';
 import { useEnquiryCart } from './enquiry-cart-context';
 import { StaggerGrid, StaggerGridItem } from '@/components/public/motion/scroll-reveal';
 import type { Product } from '@/lib/types';
+import type { Dictionary } from '@/lib/i18n/types';
+
+/** UI label for a product category. Product names themselves never translate. */
+function productCategoryLabel(value: string, dict: Dictionary): string {
+  if (value === 'all') return dict.products.all;
+  if (value === 'general') return dict.products.general;
+  if (value === 'pharma') return dict.products.pharma;
+  if (value === 'ayurvedic') return dict.products.ayurvedic;
+  if (value === 'cosmetic') return dict.products.cosmetic;
+  return value;
+}
 
 const FILTERS = [
   { value: 'all', label: 'All Products' },
@@ -20,6 +32,9 @@ export function ProductGrid({
   products: Product[];
   initialCategory?: string;
 }) {
+  const { dict } = useT();
+  /** Filter chips are UI, so they translate; product names never do. */
+  const catLabel = (value: string) => productCategoryLabel(value, dict);
   const [category, setCategory] = React.useState<string>(initialCategory);
   const [query, setQuery] = React.useState('');
   const { items, add } = useEnquiryCart();
@@ -58,7 +73,7 @@ export function ProductGrid({
                           : 'text-ink-muted border-transparent hover:text-ink'
                       )}
                     >
-                      {f.label}
+                      {catLabel(f.value)}
                     </button>
                   </li>
                 );
@@ -74,7 +89,7 @@ export function ProductGrid({
             />
             <input
               type="search"
-              placeholder="Search products..."
+              placeholder={dict.products.searchPlaceholder}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="input-field pl-9 h-10"
@@ -114,7 +129,9 @@ function ProductCard({
   added: boolean;
   onAdd: () => void;
 }) {
+  const { dict } = useT();
   const cat = PRODUCT_CATEGORIES.find((c) => c.value === product.category);
+  const catName = cat ? productCategoryLabel(cat.value, dict) : null;
 
   // Disable the button when:
   //  - the product is out of stock, or
@@ -142,7 +159,7 @@ function ProductCard({
         )}
         {!product.in_stock && (
           <span className="absolute top-2 left-2 inline-flex items-center px-2 py-1 rounded-md bg-bg-elevated/95 backdrop-blur border border-line text-[0.7rem] font-medium text-ink-muted">
-            Out of stock
+            {dict.products.outOfStock}
           </span>
         )}
       </div>
@@ -179,11 +196,11 @@ function ProductCard({
         >
           {added ? (
             <>
-              <Check className="h-3.5 w-3.5" /> Added
+              <Check className="h-3.5 w-3.5" /> {dict.cart.added}
             </>
           ) : (
             <>
-              <Plus className="h-3.5 w-3.5" /> Add to Enquiry
+              <Plus className="h-3.5 w-3.5" /> {dict.cart.addToEnquiry}
             </>
           )}
         </button>

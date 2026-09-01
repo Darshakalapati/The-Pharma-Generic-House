@@ -8,6 +8,7 @@ import { useReducedMotion } from 'framer-motion';
 import { formatINR, formatTime12, formatSpecialty, formatDays } from '@/lib/utils';
 import { resolveDoctorPhoto } from '@/lib/images';
 import { DoctorAvailabilityBadge } from './doctor-availability-badge';
+import { useT } from './i18n/language-provider';
 import type { Doctor } from '@/lib/types';
 
 /** Matches the `gap-6` on the track. Used to compute one arrow-click step. */
@@ -23,6 +24,7 @@ const GAP_PX = 24;
  * swipe is the affordance, helped along by the next card peeking in.
  */
 export function DoctorsCarousel({ doctors }: { doctors: Doctor[] }) {
+  const { dict } = useT();
   const trackRef = React.useRef<HTMLDivElement | null>(null);
   const reduced = useReducedMotion();
 
@@ -109,7 +111,7 @@ export function DoctorsCarousel({ doctors }: { doctors: Doctor[] }) {
                 </div>
                 <div className="p-6 flex flex-col flex-1">
                   <span className="eyebrow eyebrow--teal">
-                    {d.is_on_request ? 'By Request' : formatSpecialty(d.specialty)}
+                    {d.is_on_request ? dict.doctors.byRequest : formatSpecialty(d.specialty, dict)}
                   </span>
                   <h3 className="mt-2 font-serif font-medium text-[1.375rem] tracking-[-0.015em]">
                     {d.name}
@@ -131,7 +133,7 @@ export function DoctorsCarousel({ doctors }: { doctors: Doctor[] }) {
                       d.available_time_start &&
                       d.available_time_end && (
                         <p>
-                          <span className="text-ink">{formatDays(d.available_days)}</span> ·{' '}
+                          <span className="text-ink">{formatDays(d.available_days, dict)}</span> ·{' '}
                           {formatTime12(d.available_time_start)} –{' '}
                           {formatTime12(d.available_time_end)}
                         </p>
@@ -147,7 +149,7 @@ export function DoctorsCarousel({ doctors }: { doctors: Doctor[] }) {
                     href="/doctors"
                     className="mt-5 inline-flex items-center gap-1 text-[0.9375rem] font-medium text-plum hover:text-plum-deep self-start"
                   >
-                    {d.is_on_request ? 'Request Appointment' : 'Book Appointment'}
+                    {d.is_on_request ? dict.doctors.request : dict.doctors.book}
                     <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </div>
@@ -158,10 +160,18 @@ export function DoctorsCarousel({ doctors }: { doctors: Doctor[] }) {
       </div>
 
       {showArrows && !atStart && (
-        <CarouselArrow direction="left" onClick={() => scrollByCard(-1)} />
+        <CarouselArrow
+          direction="left"
+          onClick={() => scrollByCard(-1)}
+          labels={{ prev: dict.doctors.prevAria, next: dict.doctors.nextAria }}
+        />
       )}
       {showArrows && !atEnd && (
-        <CarouselArrow direction="right" onClick={() => scrollByCard(1)} />
+        <CarouselArrow
+          direction="right"
+          onClick={() => scrollByCard(1)}
+          labels={{ prev: dict.doctors.prevAria, next: dict.doctors.nextAria }}
+        />
       )}
     </div>
   );
@@ -170,16 +180,18 @@ export function DoctorsCarousel({ doctors }: { doctors: Doctor[] }) {
 function CarouselArrow({
   direction,
   onClick,
+  labels,
 }: {
   direction: 'left' | 'right';
   onClick: () => void;
+  labels: { prev: string; next: string };
 }) {
   const Icon = direction === 'left' ? ChevronLeft : ChevronRight;
   return (
     <button
       type="button"
       onClick={onClick}
-      aria-label={direction === 'left' ? 'Previous doctors' : 'More doctors'}
+      aria-label={direction === 'left' ? labels.prev : labels.next}
       className={[
         'absolute top-1/2 -translate-y-1/2 z-10 hidden md:inline-flex h-10 w-10 items-center justify-center',
         'rounded-full border border-line bg-bg-elevated text-plum shadow-soft',

@@ -6,6 +6,7 @@ import { whatsappLink, telLink } from '@/lib/utils';
 import { SHOP_EMAIL, SHOP_ADDRESS_LINES } from '@/lib/constants';
 import { formatHoursDetailed } from '@/lib/hours';
 import { OpenStatus } from '@/components/public/open-status';
+import { getDictionary, getLocale } from '@/lib/i18n';
 
 export const metadata = {
   title: 'Contact',
@@ -14,8 +15,9 @@ export const metadata = {
 };
 
 export default async function ContactPage() {
+  const dict = getDictionary(getLocale());
   const [settings, schedule] = await Promise.all([getShopSettings(), getSchedule()]);
-  const hoursRows = formatHoursDetailed(schedule);
+  const hoursRows = formatHoursDetailed(schedule, dict);
   const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
     settings.shop_address
   )}`;
@@ -28,10 +30,10 @@ export default async function ContactPage() {
       {/* Hero */}
       <section className="container-public pt-12 sm:pt-16 pb-8">
         <div className="max-w-2xl">
-          <span className="eyebrow">Get in touch</span>
-          <h1 className="h-hero mt-4 text-balance">Reach us anytime.</h1>
+          <span className="eyebrow">{dict.contact.eyebrow}</span>
+          <h1 className="h-hero mt-4 text-balance">{dict.contact.heading}</h1>
           <p className="mt-5 text-[1.0625rem] text-ink-muted leading-[1.7]">
-            We respond quickly. Call, message, or come to the shop.
+            {dict.contact.sub}
           </p>
         </div>
       </section>
@@ -43,12 +45,12 @@ export default async function ContactPage() {
             <span className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-plum-tint text-plum">
               <Phone className="h-5 w-5" />
             </span>
-            <p className="eyebrow mt-5">Call us</p>
+            <p className="eyebrow mt-5">{dict.contact.callUsEyebrow}</p>
             <p className="mt-2 font-serif font-medium text-[1.25rem] tracking-[-0.005em] break-all">
               {settings.shop_phone}
             </p>
             <span className="mt-4 inline-flex items-center gap-1 text-[0.875rem] font-medium text-plum">
-              Tap to call
+              {dict.contact.tapToCall}
               <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
             </span>
           </a>
@@ -67,7 +69,7 @@ export default async function ContactPage() {
               {settings.shop_phone}
             </p>
             <span className="mt-4 inline-flex items-center gap-1 text-[0.875rem] font-medium text-teal-deep">
-              Open chat
+              {dict.contact.openChat}
               <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
             </span>
           </a>
@@ -81,7 +83,7 @@ export default async function ContactPage() {
             <span className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-plum-tint text-plum">
               <MapPin className="h-5 w-5" />
             </span>
-            <p className="eyebrow mt-5">Come to the shop</p>
+            <p className="eyebrow mt-5">{dict.contact.visitEyebrow}</p>
             <p className="mt-2 font-serif font-medium text-[1.0625rem] tracking-[-0.005em] leading-snug">
               {SHOP_ADDRESS_LINES.map((line) => (
                 <span key={line} className="block">
@@ -90,7 +92,7 @@ export default async function ContactPage() {
               ))}
             </p>
             <span className="mt-4 inline-flex items-center gap-1 text-[0.875rem] font-medium text-plum">
-              Get directions
+              {dict.contact.getDirections}
               <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
             </span>
           </a>
@@ -101,24 +103,23 @@ export default async function ContactPage() {
       <section className="container-public mt-20 sm:mt-24">
         <div className="grid lg:grid-cols-12 gap-10 lg:gap-14">
           <div className="lg:col-span-5">
-            <span className="eyebrow">Send a message</span>
-            <h2 className="h-section mt-4">Send us a message.</h2>
+            <span className="eyebrow">{dict.contact.sendEyebrow}</span>
+            <h2 className="h-section mt-4">{dict.contact.sendHeading}</h2>
             <p className="mt-5 text-[1rem] text-ink-muted leading-[1.7]">
-              We&apos;ll reply on WhatsApp or by phone within a few hours during shop
-              hours. For urgent needs, please call directly.
+              {dict.contact.sendSub}
             </p>
 
             <div className="mt-8">
               <div className="flex flex-wrap items-center gap-3">
                 <p className="inline-flex items-center gap-2 eyebrow">
                   <Clock className="h-4 w-4 text-plum" />
-                  Shop hours
+                  {dict.contact.shopHours}
                 </p>
                 <OpenStatus schedule={schedule} />
               </div>
               <dl className="mt-4 border-t border-line">
                 {hoursRows.map((row) => {
-                  const isSunday = row.day === 'Sunday';
+                  const isSunday = row.isSunday;
                   return (
                     <div
                       key={row.day}
@@ -134,7 +135,7 @@ export default async function ContactPage() {
                         {row.day}
                         {isSunday && (
                           <span className="ml-2 eyebrow eyebrow--teal text-[0.65rem]">
-                            Test day
+                            {dict.diagnostics.testDay}
                           </span>
                         )}
                       </dt>
@@ -166,7 +167,7 @@ export default async function ContactPage() {
       <section className="container-public mt-20 sm:mt-24 pb-16">
         <div className="rounded-2xl overflow-hidden border border-line">
           <iframe
-            title="Map showing The Pharma Generic House location"
+            title={dict.contact.mapTitle}
             src={mapEmbedUrl}
             className="h-[360px] sm:h-[420px] w-full border-0 map-soft"
             loading="lazy"

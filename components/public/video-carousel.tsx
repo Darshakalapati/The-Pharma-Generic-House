@@ -4,19 +4,17 @@ import * as React from 'react';
 import { ChevronLeft, ChevronRight, Play } from 'lucide-react';
 import { cn, extractYouTubeId, youtubeThumbnailUrl, formatTitle } from '@/lib/utils';
 import { VideoPlayerModal } from './video-player-modal';
+import { useT } from './i18n/language-provider';
 import { StaggerGrid, StaggerGridItem } from '@/components/public/motion/scroll-reveal';
 import type { Video } from '@/lib/types';
 
 const STATIC_GRID_THRESHOLD = 4;
 
 /** Plain-language label for the stored video_type. */
-const VIDEO_TYPE_LABEL: Record<string, string> = {
-  testimonial: 'Customer story',
-  review: 'Product',
-  announcement: 'Shop update',
-};
+
 
 export function VideoCarousel({ videos }: { videos: Video[] }) {
+  const { dict } = useT();
   const [active, setActive] = React.useState<Video | null>(null);
   const scrollerRef = React.useRef<HTMLDivElement | null>(null);
   const [canScrollLeft, setCanScrollLeft] = React.useState(false);
@@ -80,7 +78,7 @@ export function VideoCarousel({ videos }: { videos: Video[] }) {
       {/* Desktop arrows */}
       <button
         type="button"
-        aria-label="Scroll left"
+        aria-label={dict.doctors.scrollLeft}
         onClick={() => scrollBy(-1)}
         disabled={!canScrollLeft}
         className={cn(
@@ -94,7 +92,7 @@ export function VideoCarousel({ videos }: { videos: Video[] }) {
       </button>
       <button
         type="button"
-        aria-label="Scroll right"
+        aria-label={dict.doctors.scrollRight}
         onClick={() => scrollBy(1)}
         disabled={!canScrollRight}
         className={cn(
@@ -129,13 +127,14 @@ export function VideoCarousel({ videos }: { videos: Video[] }) {
 }
 
 function VideoCard({ video, onPlay }: { video: Video; onPlay: () => void }) {
+  const { dict } = useT();
   const thumb = resolveThumbnail(video);
   return (
     <article className="card-soft overflow-hidden flex flex-col h-full">
       <button
         type="button"
         onClick={onPlay}
-        aria-label={`Play video: ${video.title}`}
+        aria-label={`${dict.videos.playAria}: ${video.title}`}
         className="group relative aspect-[9/16] bg-ink overflow-hidden block"
       >
         {thumb ? (
@@ -162,7 +161,11 @@ function VideoCard({ video, onPlay }: { video: Video; onPlay: () => void }) {
       </button>
       <div className="p-4 flex flex-col gap-1 flex-1">
         <span className="text-[0.6875rem] font-medium uppercase tracking-[0.1em] text-teal-deep">
-          {VIDEO_TYPE_LABEL[video.video_type] ?? 'Video'}
+          {video.video_type === 'testimonial'
+            ? dict.videos.customerStory
+            : video.video_type === 'review'
+              ? dict.videos.product
+              : dict.videos.shopUpdate}
         </span>
         {video.customer_name && (
           <p className="font-serif font-medium text-[1.0625rem] tracking-[-0.005em] leading-tight">

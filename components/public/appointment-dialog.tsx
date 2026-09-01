@@ -21,16 +21,18 @@ import {
 } from '@/lib/utils';
 import { WhatsAppGlyph } from './whatsapp-glyph';
 import type { Doctor } from '@/lib/types';
+import { useT } from './i18n/language-provider';
 
+/** Error keys, resolved to the visitor's language at render time. */
 const formSchema = z.object({
-  patient_name: z.string().min(2, 'Please enter your full name'),
-  patient_phone: z.string().refine(isValidPhoneIN, 'Please enter a valid Indian phone number'),
+  patient_name: z.string().min(2, 'nameRequired'),
+  patient_phone: z.string().refine(isValidPhoneIN, 'invalidPhone'),
   patient_age: z
     .string()
     .optional()
-    .refine((v) => !v || (Number(v) > 0 && Number(v) < 120), 'Enter a valid age'),
-  preferred_date: z.string().min(1, 'Please pick a date'),
-  preferred_time: z.string().min(1, 'Please pick a time'),
+    .refine((v) => !v || (Number(v) > 0 && Number(v) < 120), 'invalidAge'),
+  preferred_date: z.string().min(1, 'required'),
+  preferred_time: z.string().min(1, 'required'),
   notes: z.string().optional(),
 });
 type FormValues = z.infer<typeof formSchema>;
@@ -43,6 +45,7 @@ interface Props {
 }
 
 export function AppointmentDialog({ doctor, open, onOpenChange, whatsappNumber }: Props) {
+  const { dict } = useT();
   const [submitting, setSubmitting] = React.useState(false);
   // Resolved after mount for the same reason as the card badge: "today" must
   // never be baked into a cached render.
@@ -50,10 +53,10 @@ export function AppointmentDialog({ doctor, open, onOpenChange, whatsappNumber }
     typeof getDoctorAvailability
   > | null>(null);
   React.useEffect(() => {
-    setAvailability(getDoctorAvailability(doctor, new Date()));
-  }, [doctor]);
+    setAvailability(getDoctorAvailability(doctor, new Date(), dict));
+  }, [doctor, dict]);
   const isOnRequest = doctor.is_on_request;
-  const specialty = formatSpecialty(doctor.specialty);
+  const specialty = formatSpecialty(doctor.specialty, dict);
 
   const {
     register,
@@ -124,7 +127,7 @@ export function AppointmentDialog({ doctor, open, onOpenChange, whatsappNumber }
       });
       if (error) throw error;
 
-      toast.success("Appointment requested. We'll confirm on WhatsApp shortly.");
+      toast.success(dict.forms.successAppointment);
 
       if (andWhatsApp) {
         const msg = [
@@ -142,7 +145,7 @@ export function AppointmentDialog({ doctor, open, onOpenChange, whatsappNumber }
       reset();
       onOpenChange(false);
     } catch {
-      toast.error('Could not send. Please try again or WhatsApp us.');
+      toast.error(dict.forms.errorGeneric);
     } finally {
       setSubmitting(false);
     }
@@ -152,12 +155,12 @@ export function AppointmentDialog({ doctor, open, onOpenChange, whatsappNumber }
     <BookingModal
       open={open}
       onOpenChange={onOpenChange}
-      eyebrow={isOnRequest ? 'Request appointment' : 'Book appointment'}
+      eyebrow={isOnRequest ? dict.doctors.requestEyebrow : dict.doctors.bookEyebrow}
       title={doctor.name}
       subtitle={
         isOnRequest
-          ? "Available on request — we'll confirm a time."
-          : `${specialty} · ${formatDays(doctor.available_days)}`
+          ? dict.doctors.onRequestNote
+          : `${specialty} · ${formatDays(doctor.available_days, dict)}`
       }
     >
       {availability && availability.state !== 'on_request' && (
@@ -169,71 +172,71 @@ export function AppointmentDialog({ doctor, open, onOpenChange, whatsappNumber }
           }
         >
           {availability.state === 'today'
-            ? `Available today${availability.timeRange ? `, ${availability.timeRange}` : ''}`
-            : `Next available: ${availability.day}`}
+            ? `${dict.doctors.availableTodayAt}${availability.timeRange ? `, ${availability.timeRange}` : ''}`
+            : `${dict.doctors.nextAvailable}: ${availability.day}`}
         </p>
       )}
       <form onSubmit={handleSubmit((d) => submit(d, false))} className="space-y-4">
         <div>
-          <label htmlFor="ap-name" className="form-label">Patient name</label>
+          <label htmlFor="ap-name" className="form-label">{dict.forms.name}</label>
           <input
             id="ap-name"
             autoComplete="name"
-            placeholder="Full name"
+            placeholder={dict.forms.fullName}
             {...register('patient_name')}
             className="input-field"
           />
-          <FieldError msg={errors.patient_name?.message} />
+          <FieldError msg={errors.patient_name?.message} dict={dict} />
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label htmlFor="ap-phone" className="form-label">Phone</label>
+            <label htmlFor="ap-phone" className="form-label">{dict.forms.phone}</label>
             <input
               id="ap-phone"
               type="tel"
               inputMode="tel"
               autoComplete="tel"
-              placeholder="10-digit mobile"
+              placeholder={dict.forms.phonePlaceholder}
               {...register('patient_phone')}
               className="input-field"
             />
-            <FieldError msg={errors.patient_phone?.message} />
+            <FieldError msg={errors.patient_phone?.message} dict={dict} />
           </div>
           <div>
-            <label htmlFor="ap-age" className="form-label">Age (optional)</label>
+            <label htmlFor="ap-age" className="form-label">{dict.forms.age}</label>
             <input
               id="ap-age"
               type="number"
               inputMode="numeric"
               min={1}
               max={120}
-              placeholder="e.g. 42"
+              placeholder={dict.forms.agePlaceholder}
               {...register('patient_age')}
               className="input-field"
             />
-            <FieldError msg={errors.patient_age?.message} />
+            <FieldError msg={errors.patient_age?.message} dict={dict} />
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label htmlFor="ap-date" className="form-label">Preferred date</label>
+            <label htmlFor="ap-date" className="form-label">{dict.forms.date}</label>
             <select id="ap-date" {...register('preferred_date')} className="input-field">
-              <option value="">Pick a date</option>
+              <option value="">{dict.forms.pickDate}</option>
               {upcomingDates.map((d) => (
                 <option key={d.value} value={d.value} disabled={d.disabled}>
                   {d.label}
-                  {d.disabled ? ' — unavailable' : ''}
+                  {d.disabled ? ` — ${dict.forms.unavailable}` : ''}
                 </option>
               ))}
             </select>
-            <FieldError msg={errors.preferred_date?.message} />
+            <FieldError msg={errors.preferred_date?.message} dict={dict} />
           </div>
           <div>
-            <label htmlFor="ap-time" className="form-label">Preferred time</label>
+            <label htmlFor="ap-time" className="form-label">{dict.forms.time}</label>
             <select id="ap-time" {...register('preferred_time')} className="input-field">
-              <option value="">Pick a time</option>
+              <option value="">{dict.forms.pickTime}</option>
               {(slots.length > 0
                 ? slots
                 : ['09:00', '10:00', '11:00', '15:00', '16:00', '17:00']
@@ -243,16 +246,16 @@ export function AppointmentDialog({ doctor, open, onOpenChange, whatsappNumber }
                 </option>
               ))}
             </select>
-            <FieldError msg={errors.preferred_time?.message} />
+            <FieldError msg={errors.preferred_time?.message} dict={dict} />
           </div>
         </div>
 
         <div>
-          <label htmlFor="ap-notes" className="form-label">Notes (optional)</label>
+          <label htmlFor="ap-notes" className="form-label">{dict.forms.notes}</label>
           <textarea
             id="ap-notes"
             rows={3}
-            placeholder="Anything you'd like the doctor to know"
+            placeholder={dict.forms.notesPlaceholder}
             {...register('notes')}
             className="input-field"
           />
@@ -271,10 +274,10 @@ export function AppointmentDialog({ doctor, open, onOpenChange, whatsappNumber }
           <Magnetic className="sm:flex-1">
           <button type="submit" disabled={submitting} className="btn-plum w-full">
             {submitting
-              ? 'Sending...'
+              ? dict.forms.sending
               : isOnRequest
-                ? 'Send Request'
-                : 'Book Appointment'}
+                ? dict.doctors.request
+                : dict.doctors.book}
           </button>
           </Magnetic>
         </div>

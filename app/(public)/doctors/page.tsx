@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { getShopSettings } from '@/lib/settings';
+import { getDictionary, getLocale } from '@/lib/i18n';
 import { DoctorList } from '@/components/public/doctor-list';
 import {
   ScrollReveal,
@@ -14,6 +15,7 @@ export const metadata = {
 };
 
 export default async function DoctorsPage() {
+  const dict = getDictionary(getLocale());
   const supabase = createClient();
   const settings = await getShopSettings();
 
@@ -30,10 +32,10 @@ export default async function DoctorsPage() {
     <>
       <ScrollReveal as="section" className="container-public pt-12 sm:pt-16 pb-8">
         <ScrollRevealItem as="div" className="max-w-2xl">
-          <span className="eyebrow">Consultations</span>
-          <h1 className="h-hero mt-4 text-balance">Our resident doctors.</h1>
+          <span className="eyebrow">{dict.doctors.pageEyebrow}</span>
+          <h1 className="h-hero mt-4 text-balance">{dict.doctors.pageHeading}</h1>
           <p className="mt-5 text-[1.0625rem] text-ink-muted leading-[1.7]">
-            Book an appointment online or request a slot. We&apos;ll confirm by WhatsApp.
+            {dict.doctors.pageSub}
           </p>
         </ScrollRevealItem>
       </ScrollReveal>

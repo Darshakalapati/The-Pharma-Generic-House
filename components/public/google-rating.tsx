@@ -1,6 +1,7 @@
 import { Star } from 'lucide-react';
 import { GOOGLE_REVIEWS_URL } from '@/lib/constants';
 import { cn } from '@/lib/utils';
+import type { Dictionary } from '@/lib/i18n/types';
 
 /**
  * Numbers copied from the shop's Google Business Profile by an admin.
@@ -27,10 +28,12 @@ export function GoogleRatingPill({
   rating,
   count,
   className,
+  dict,
 }: {
   rating: number | null;
   count: number | null;
   className?: string;
+  dict?: Dictionary;
 }) {
   if (!hasGoogleRating(rating, count)) return null;
 
@@ -50,12 +53,14 @@ export function GoogleRatingPill({
       <span className="font-serif font-medium text-[0.9375rem] text-ink">
         {formatRating(rating!)}
       </span>
-      <span className="text-[0.8125rem] font-medium text-ink-muted">on Google</span>
+      <span className="text-[0.8125rem] font-medium text-ink-muted">
+        {dict?.reviews.onGoogle ?? 'on Google'}
+      </span>
       <span aria-hidden className="text-ink-faint">
         ·
       </span>
       <span className="text-[0.8125rem] font-medium text-ink-muted">
-        {count!.toLocaleString('en-IN')} reviews
+        {count!.toLocaleString('en-IN')} {dict?.reviews.reviewsOnGoogle ?? 'reviews'}
       </span>
     </a>
   );
@@ -66,10 +71,12 @@ export function GoogleRatingLine({
   rating,
   count,
   className,
+  dict,
 }: {
   rating: number | null;
   count: number | null;
   className?: string;
+  dict?: Dictionary;
 }) {
   if (!hasGoogleRating(rating, count)) return null;
 
@@ -89,7 +96,9 @@ export function GoogleRatingLine({
       <span aria-hidden className="text-ink-faint">
         ·
       </span>
-      <span>{count!.toLocaleString('en-IN')} reviews on Google</span>
+      <span>
+        {count!.toLocaleString('en-IN')} {dict?.reviews.reviewsOnGoogle ?? 'reviews on Google'}
+      </span>
     </a>
   );
 }

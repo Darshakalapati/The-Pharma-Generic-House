@@ -1,4 +1,5 @@
 import { SHOP_EMAIL, SHOP_PHONE } from '@/lib/constants';
+import { getDictionary, getLocale } from '@/lib/i18n';
 
 export const metadata = {
   title: 'Terms',
@@ -9,15 +10,21 @@ export const metadata = {
 const UPDATED = '17 August 2026';
 
 export default function TermsPage() {
+  const dict = getDictionary(getLocale());
   return (
     <>
       <section className="container-public pt-12 sm:pt-16 pb-8">
         <div className="max-w-3xl">
-          <span className="eyebrow">Legal</span>
-          <h1 className="h-hero mt-4 text-balance">Terms.</h1>
+          <span className="eyebrow">{dict.legal.eyebrow}</span>
+          <h1 className="h-hero mt-4 text-balance">{dict.legal.termsTitle}</h1>
           <p className="mt-5 text-[1.0625rem] text-ink-muted leading-[1.7]">
             Last updated: {UPDATED}
           </p>
+          {dict.legal.teNotice && (
+            <p className="mt-4 rounded-xl border border-line bg-bg-elevated px-4 py-3 text-[0.9375rem] text-ink-muted">
+              {dict.legal.teNotice}
+            </p>
+          )}
         </div>
       </section>
 

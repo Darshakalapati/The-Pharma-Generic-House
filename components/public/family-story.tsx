@@ -5,6 +5,7 @@ import {
 import { KenBurnsPhoto } from '@/components/public/ken-burns-photo';
 import { BottleAccent } from '@/components/public/botanical-accents';
 import type { FamilyMember } from '@/lib/types';
+import type { Dictionary } from '@/lib/i18n/types';
 
 /** Very slow, very small — 30 seconds for a 5% zoom on the portrait. */
 const PORTRAIT_CYCLE_MS = 30000;
@@ -23,7 +24,13 @@ const FALLBACK: Pick<FamilyMember, 'name' | 'role' | 'bio' | 'quote_text' | 'quo
   quote_attribution: 'Uma Shankar Alapati',
 };
 
-export function FamilyStory({ member }: { member: FamilyMember | null }) {
+export function FamilyStory({
+  member,
+  dict,
+}: {
+  member: FamilyMember | null;
+  dict: Dictionary;
+}) {
   const name = member?.name?.trim() || FALLBACK.name;
   const bio = member?.bio?.trim() || FALLBACK.bio;
   const photo = member?.photo_url?.trim() || null;
@@ -46,11 +53,10 @@ export function FamilyStory({ member }: { member: FamilyMember | null }) {
       <BottleAccent className="right-0 top-6" />
 
       <ScrollRevealItem as="div" className="max-w-3xl">
-        <span className="eyebrow">Our story</span>
-        <h2 className="h-section mt-4 text-balance">The person behind the shop</h2>
+        <span className="eyebrow">{dict.founder.eyebrow}</span>
+        <h2 className="h-section mt-4 text-balance">{dict.founder.heading}</h2>
         <p className="mt-6 font-serif italic font-normal text-[1.5rem] leading-[1.4] text-ink-muted text-pretty">
-          Uma Shankar Alapati brings 27 years of medical experience to Vijayawada —
-          one prescription, one honest conversation at a time.
+          {dict.founder.subhead}
         </p>
       </ScrollRevealItem>
 
@@ -70,7 +76,7 @@ export function FamilyStory({ member }: { member: FamilyMember | null }) {
           ) : (
             <div className="aspect-[4/5] rounded-2xl border border-line bg-sand grid place-items-center">
               <span className="font-serif italic text-[1.0625rem] text-ink-muted">
-                Photograph coming soon
+                {dict.founder.photoComingSoon}
               </span>
             </div>
           )}

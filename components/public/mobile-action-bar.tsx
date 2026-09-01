@@ -1,7 +1,9 @@
 import { Phone } from 'lucide-react';
 import { WhatsAppGlyph } from './whatsapp-glyph';
 import { whatsappLink, telLink } from '@/lib/utils';
-import { PRESCRIPTION_WA_TEXT } from '@/lib/constants';
+import { PRESCRIPTION_WA_TEXT, PRESCRIPTION_WA_TEXT_TE } from '@/lib/constants';
+import { getDictionary } from '@/lib/i18n';
+import type { Locale } from '@/lib/i18n/types';
 
 /**
  * Fixed Call / WhatsApp bar, phones only.
@@ -17,10 +19,14 @@ import { PRESCRIPTION_WA_TEXT } from '@/lib/constants';
 export function MobileActionBar({
   phone,
   whatsapp,
+  locale,
 }: {
   phone: string;
   whatsapp: string;
+  locale: Locale;
 }) {
+  const dict = getDictionary(locale);
+  const rxText = locale === 'te' ? PRESCRIPTION_WA_TEXT_TE : PRESCRIPTION_WA_TEXT;
   return (
     <div
       className="md:hidden fixed inset-x-0 bottom-0 z-30 border-t border-line bg-bg-elevated"
@@ -32,10 +38,10 @@ export function MobileActionBar({
           className="inline-flex h-14 items-center justify-center gap-2 bg-bg-elevated text-plum text-[0.9375rem] font-semibold"
         >
           <Phone className="h-[18px] w-[18px]" />
-          Call
+          {dict.nav.call}
         </a>
         <a
-          href={whatsappLink(whatsapp, PRESCRIPTION_WA_TEXT)}
+          href={whatsappLink(whatsapp, rxText)}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex h-14 items-center justify-center gap-2 bg-teal text-white text-[0.9375rem] font-semibold"
@@ -43,7 +49,7 @@ export function MobileActionBar({
           <span className="wa-pulse inline-flex rounded-full">
             <WhatsAppGlyph className="h-[18px] w-[18px]" />
           </span>
-          WhatsApp
+          {dict.nav.whatsapp}
         </a>
       </div>
     </div>

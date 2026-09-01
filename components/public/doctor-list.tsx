@@ -6,6 +6,7 @@ import { Calendar, Clock, IndianRupee, ArrowRight } from 'lucide-react';
 import { AppointmentDialog } from './appointment-dialog';
 import { resolveDoctorPhoto } from '@/lib/images';
 import { DoctorAvailabilityBadge } from './doctor-availability-badge';
+import { useT } from './i18n/language-provider';
 import { formatINR, formatTime12, formatSpecialty, formatDays } from '@/lib/utils';
 import { StaggerGrid, StaggerGridItem } from '@/components/public/motion/scroll-reveal';
 import type { Doctor } from '@/lib/types';
@@ -17,12 +18,13 @@ export function DoctorList({
   doctors: Doctor[];
   whatsappNumber: string;
 }) {
+  const { dict } = useT();
   const [active, setActive] = React.useState<Doctor | null>(null);
 
   if (doctors.length === 0) {
     return (
       <div className="card-soft p-12 text-center text-ink-muted">
-        No doctors are listed at the moment.
+        {dict.doctors.none}
       </div>
     );
   }
@@ -50,7 +52,8 @@ export function DoctorList({
 }
 
 function DoctorCard({ doctor, onBook }: { doctor: Doctor; onBook: () => void }) {
-  const specialty = formatSpecialty(doctor.specialty);
+  const { dict } = useT();
+  const specialty = formatSpecialty(doctor.specialty, dict);
   const photo = resolveDoctorPhoto(doctor.photo_url, doctor.name);
 
   return (
@@ -73,7 +76,7 @@ function DoctorCard({ doctor, onBook }: { doctor: Doctor; onBook: () => void }) 
         {/* Info */}
         <div className="md:col-span-8 p-6 sm:p-8 flex flex-col">
           <span className="eyebrow eyebrow--teal">
-            {doctor.is_on_request ? 'By Request' : specialty}
+            {doctor.is_on_request ? dict.doctors.byRequest : specialty}
           </span>
           <h2 className="mt-2 font-serif font-medium text-[clamp(1.5rem,2.5vw,1.75rem)] tracking-[-0.015em] leading-tight">
             {doctor.name}
@@ -93,7 +96,7 @@ function DoctorCard({ doctor, onBook }: { doctor: Doctor; onBook: () => void }) 
           <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2 text-[0.9375rem]">
             {doctor.is_on_request ? (
               <p className="text-ink-muted">
-                Available on request — we&apos;ll confirm a time.
+                {dict.doctors.onRequestNote}
               </p>
             ) : (
               <>
@@ -101,7 +104,7 @@ function DoctorCard({ doctor, onBook }: { doctor: Doctor; onBook: () => void }) 
                   <p className="inline-flex items-center gap-2 text-ink-muted">
                     <Calendar className="h-4 w-4 text-plum/70" />
                     <span>
-                      <span className="text-ink">Days:</span> {formatDays(doctor.available_days)}
+                      <span className="text-ink">{dict.doctors.days}</span> {formatDays(doctor.available_days, dict)}
                     </span>
                   </p>
                 )}
@@ -109,7 +112,7 @@ function DoctorCard({ doctor, onBook }: { doctor: Doctor; onBook: () => void }) 
                   <p className="inline-flex items-center gap-2 text-ink-muted">
                     <Clock className="h-4 w-4 text-plum/70" />
                     <span>
-                      <span className="text-ink">Time:</span>{' '}
+                      <span className="text-ink">{dict.doctors.time}</span>{' '}
                       {formatTime12(doctor.available_time_start)} –{' '}
                       {formatTime12(doctor.available_time_end)}
                     </span>
@@ -119,7 +122,7 @@ function DoctorCard({ doctor, onBook }: { doctor: Doctor; onBook: () => void }) 
                   <p className="inline-flex items-center gap-2 text-ink-muted">
                     <IndianRupee className="h-4 w-4 text-plum/70" />
                     <span>
-                      <span className="text-ink">Fee:</span> {formatINR(doctor.consultation_fee)}
+                      <span className="text-ink">{dict.doctors.fee}</span> {formatINR(doctor.consultation_fee)}
                     </span>
                   </p>
                 )}
@@ -129,7 +132,7 @@ function DoctorCard({ doctor, onBook }: { doctor: Doctor; onBook: () => void }) 
 
           <div className="mt-6">
             <button onClick={onBook} className="btn-plum">
-              {doctor.is_on_request ? 'Request Appointment' : 'Book Appointment'}
+              {doctor.is_on_request ? dict.doctors.request : dict.doctors.book}
               <ArrowRight className="h-4 w-4" />
             </button>
           </div>

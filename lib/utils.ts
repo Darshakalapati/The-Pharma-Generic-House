@@ -2,6 +2,7 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { DOCTOR_SPECIALTIES } from './constants';
 import type { Doctor } from './types';
+import type { Dictionary } from './i18n/types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -20,11 +21,22 @@ export function cn(...inputs: ClassValue[]) {
 /** Words that stay lowercase inside a title, unless they lead it. */
 const SMALL_WORDS = new Set(['and', 'of', 'the', 'for', 'in', 'on', 'to', 'a', 'an', '&']);
 
-export function formatSpecialty(value: string | null | undefined): string {
+export function formatSpecialty(
+  value: string | null | undefined,
+  dict?: Dictionary
+): string {
   const raw = (value ?? '').trim();
   if (!raw) return '';
-  const known = DOCTOR_SPECIALTIES.find((s) => s.value === raw.toLowerCase());
-  if (known) return known.label;
+  const lower = raw.toLowerCase();
+  const known = DOCTOR_SPECIALTIES.find((s) => s.value === lower);
+  if (known) {
+    if (!dict) return known.label;
+    // Only the three built-ins translate — a custom specialty is admin content.
+    if (lower === 'nadi') return dict.common.specialties.nadi;
+    if (lower === 'physiotherapy') return dict.common.specialties.physiotherapy;
+    if (lower === 'homeopathy') return dict.common.specialties.homeopathy;
+    return known.label;
+  }
   // Custom specialty: Title Case, but leave joining words lowercase so
   // "physician and cardiologist" reads "Physician and Cardiologist".
   return raw
@@ -46,14 +58,22 @@ const DAY_SEQUENCE = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
  * three or more consecutive days collapses to a range — "Mon, Wed, Fri, Tue,
  * Sat, Thu" becomes "Mon – Sat" — and all seven become "Every day".
  */
-export function formatDays(days: string[] | null | undefined): string {
+export function formatDays(
+  days: string[] | null | undefined,
+  dict?: Dictionary
+): string {
   if (!days || days.length === 0) return '';
+  const label = (short: string): string => {
+    if (!dict) return short;
+    const key = short.toLowerCase() as keyof Dictionary['common']['days'];
+    return dict.common.days[key] ?? short;
+  };
   const norm = (d: string) => d.trim().slice(0, 3).toLowerCase();
   const present = DAY_SEQUENCE.filter((d) =>
     days.some((x) => norm(x) === d.toLowerCase())
   );
   if (present.length === 0) return '';
-  if (present.length === 7) return 'Every day';
+  if (present.length === 7) return dict?.common.everyDay ?? 'Every day';
 
   // Group indices into consecutive runs.
   const idx = present.map((d) => DAY_SEQUENCE.indexOf(d));
@@ -66,8 +86,8 @@ export function formatDays(days: string[] | null | undefined): string {
   return runs
     .map((run) =>
       run.length >= 3
-        ? `${DAY_SEQUENCE[run[0]]} – ${DAY_SEQUENCE[run[run.length - 1]]}`
-        : run.map((i) => DAY_SEQUENCE[i]).join(', ')
+        ? `${label(DAY_SEQUENCE[run[0]])} – ${label(DAY_SEQUENCE[run[run.length - 1]])}`
+        : run.map((i) => label(DAY_SEQUENCE[i])).join(', ')
     )
     .join(', ');
 }
@@ -111,8 +131,14 @@ export function getDoctorAvailability(
     Doctor,
     'available_days' | 'available_time_start' | 'available_time_end' | 'is_on_request'
   >,
-  now: Date = new Date()
+  now: Date = new Date(),
+  dict?: Dictionary
 ): DoctorAvailability {
+  const dayLabel = (short: string): string => {
+    if (!dict) return short;
+    const key = short.toLowerCase() as keyof Dictionary['common']['days'];
+    return dict.common.days[key] ?? short;
+  };
   const timeRange =
     doctor.available_time_start && doctor.available_time_end
       ? formatTimeRange(doctor.available_time_start, doctor.available_time_end)
@@ -133,7 +159,7 @@ export function getDoctorAvailability(
   const start = DAY_SEQUENCE.indexOf(today);
   for (let step = 1; step <= 7; step++) {
     const candidate = DAY_SEQUENCE[(start + step) % 7];
-    if (worksOn(candidate)) return { state: 'next', day: candidate, timeRange };
+    if (worksOn(candidate)) return { state: 'next', day: dayLabel(candidate), timeRange };
   }
   return { state: 'on_request', timeRange };
 }

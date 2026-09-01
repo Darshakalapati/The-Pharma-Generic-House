@@ -42,6 +42,9 @@ export const SHOP_EMAIL = 'usalapati@yahoo.com';
 export const PRESCRIPTION_WA_TEXT =
   "Hi The Pharma Generic House, I'd like to order medicines. I'm attaching my prescription.";
 
+export const PRESCRIPTION_WA_TEXT_TE =
+  'నమస్తే The Pharma Generic House, నాకు మందులు కావాలి. నా ప్రిస్క్రిప్షన్ జత చేస్తున్నాను.';
+
 // Public Google Maps URL for the shop's review listing. Used by the home
 // page reviews section ("Read all reviews on Google →") and the admin
 // /admin/reviews helper tip box.

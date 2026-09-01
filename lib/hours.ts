@@ -1,3 +1,5 @@
+import type { Dictionary } from './i18n/types';
+
 export type DayKey = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
 
 export interface DayHours {
@@ -19,6 +21,29 @@ const LONG_LABEL: Record<DayKey, string> = {
   mon: 'Monday', tue: 'Tuesday', wed: 'Wednesday', thu: 'Thursday',
   fri: 'Friday', sat: 'Saturday', sun: 'Sunday',
 };
+
+/** Day names come from the dictionary when one is passed; English otherwise. */
+function shortLabel(key: DayKey, dict?: Dictionary): string {
+  return dict ? dict.common.days[key] : SHORT_LABEL[key];
+}
+
+function longLabel(key: DayKey, dict?: Dictionary): string {
+  if (!dict) return LONG_LABEL[key];
+  const map: Record<DayKey, string> = {
+    mon: dict.common.fullDays.monday,
+    tue: dict.common.fullDays.tuesday,
+    wed: dict.common.fullDays.wednesday,
+    thu: dict.common.fullDays.thursday,
+    fri: dict.common.fullDays.friday,
+    sat: dict.common.fullDays.saturday,
+    sun: dict.common.fullDays.sunday,
+  };
+  return map[key];
+}
+
+function fill(template: string, params: Record<string, string>): string {
+  return template.replace(/\{(\w+)\}/g, (m, k) => (k in params ? params[k] : m));
+}
 
 /**
  * The shop's opening hours, and the fallback whenever the settings row is
@@ -79,11 +104,11 @@ export function coerceSchedule(raw: unknown): Schedule {
  * "Mon–Sat 9 AM – 10 PM · Sun 9 AM – 2 PM".
  * Consecutive days sharing identical hours collapse into one range.
  */
-export function formatHoursSummary(schedule: Schedule): string {
+export function formatHoursSummary(schedule: Schedule, dict?: Dictionary): string {
   const runs: { days: DayKey[]; text: string }[] = [];
   for (const key of DAY_ORDER) {
     const day = schedule[key];
-    const text = isClosed(day) ? 'Closed' : dayRange(day);
+    const text = isClosed(day) ? (dict?.common.closedLabel ?? 'Closed') : dayRange(day);
     const last = runs[runs.length - 1];
     if (last && last.text === text) last.days.push(key);
     else runs.push({ days: [key], text });
@@ -92,8 +117,8 @@ export function formatHoursSummary(schedule: Schedule): string {
     .map(({ days, text }) => {
       const label =
         days.length === 1
-          ? SHORT_LABEL[days[0]]
-          : `${SHORT_LABEL[days[0]]}–${SHORT_LABEL[days[days.length - 1]]}`;
+          ? shortLabel(days[0], dict)
+          : `${shortLabel(days[0], dict)}–${shortLabel(days[days.length - 1], dict)}`;
       return `${label} ${text}`;
     })
     .join(' · ');
@@ -101,11 +126,15 @@ export function formatHoursSummary(schedule: Schedule): string {
 
 /** Seven rows for the contact page table. */
 export function formatHoursDetailed(
-  schedule: Schedule
-): { day: string; hours: string }[] {
+  schedule: Schedule,
+  dict?: Dictionary
+): { day: string; hours: string; isSunday: boolean }[] {
   return DAY_ORDER.map((key) => ({
-    day: LONG_LABEL[key],
-    hours: isClosed(schedule[key]) ? 'Closed' : dayRange(schedule[key]),
+    day: longLabel(key, dict),
+    hours: isClosed(schedule[key])
+      ? (dict?.common.closedLabel ?? 'Closed')
+      : dayRange(schedule[key]),
+    isSunday: key === 'sun',
   }));
 }
 
@@ -164,7 +193,11 @@ const CLOSING_SOON_MIN = 45;
  * the label is always actionable — "opens 9 AM", "opens tomorrow 9 AM", or
  * "opens Mon 9 AM" — rather than a bare "Closed".
  */
-export function getOpenStatus(schedule: Schedule, now: Date = new Date()): OpenStatus {
+export function getOpenStatus(
+  schedule: Schedule,
+  now: Date = new Date(),
+  dict?: Dictionary
+): OpenStatus {
   const { dayIndex, minutes } = istParts(now);
   const todayKey = DAY_ORDER[dayIndex];
   const today = schedule[todayKey];
@@ -174,13 +207,30 @@ export function getOpenStatus(schedule: Schedule, now: Date = new Date()): OpenS
     const close = toMinutes(today.close!);
     if (open !== null && close !== null && minutes >= open && minutes < close) {
       const closeLabel = formatClock(today.close!);
-      return close - minutes <= CLOSING_SOON_MIN
-        ? { state: 'closing-soon', label: `Closing soon · ${closeLabel}` }
-        : { state: 'open', label: `Open now · closes ${closeLabel}` };
+      if (close - minutes <= CLOSING_SOON_MIN) {
+        return {
+          state: 'closing-soon',
+          label: dict
+            ? fill(dict.status.closingSoon, { time: closeLabel })
+            : `Closing soon · ${closeLabel}`,
+        };
+      }
+      return {
+        state: 'open',
+        label: dict
+          ? fill(dict.status.openNow, { time: closeLabel })
+          : `Open now · closes ${closeLabel}`,
+      };
     }
     // Before opening time, still today.
     if (open !== null && minutes < open) {
-      return { state: 'closed', label: `Closed · opens ${formatClock(today.open!)}` };
+      const openLabel = formatClock(today.open!);
+      return {
+        state: 'closed',
+        label: dict
+          ? fill(dict.status.opensAt, { time: openLabel })
+          : `Closed · opens ${openLabel}`,
+      };
     }
   }
 
@@ -188,9 +238,18 @@ export function getOpenStatus(schedule: Schedule, now: Date = new Date()): OpenS
     const key = DAY_ORDER[(dayIndex + step) % 7];
     const day = schedule[key];
     if (isClosed(day)) continue;
-    const when =
-      step === 1 ? 'tomorrow ' : `${SHORT_LABEL[key]} `;
-    return { state: 'closed', label: `Closed · opens ${when}${formatClock(day.open!)}` };
+    const openLabel = formatClock(day.open!);
+    if (dict) {
+      return {
+        state: 'closed',
+        label:
+          step === 1
+            ? fill(dict.status.opensTomorrow, { time: openLabel })
+            : fill(dict.status.opensOn, { day: shortLabel(key, dict), time: openLabel }),
+      };
+    }
+    const when = step === 1 ? 'tomorrow ' : `${SHORT_LABEL[key]} `;
+    return { state: 'closed', label: `Closed · opens ${when}${openLabel}` };
   }
-  return { state: 'closed', label: 'Closed' };
+  return { state: 'closed', label: dict?.status.closed ?? 'Closed' };
 }
