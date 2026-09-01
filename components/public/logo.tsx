@@ -17,6 +17,9 @@ interface LogoProps {
    *  Passed in rather than read from the language context so this component
    *  stays usable in the admin sidebar, which has no LanguageProvider. */
   taglineText?: string;
+  /** Laptop tier: hide the tagline and step the wordmark down so the brand
+   *  block never has to compete with the links for width. */
+  compact?: boolean;
 }
 
 /**
@@ -29,6 +32,7 @@ export function Logo({
   tagline = false,
   mobileWordmark = false,
   taglineText = 'Vijayawada · Est. 2018',
+  compact = false,
 }: LogoProps) {
   const reduced = useReducedMotion();
 
@@ -62,14 +66,23 @@ export function Logo({
             className={cn(
               'font-serif font-medium tracking-[-0.015em] leading-[1.2] text-ink whitespace-nowrap',
               mobileWordmark
-                ? 'text-[0.875rem] min-[360px]:text-[0.9375rem] sm:text-[1.0625rem]'
+                ? compact
+                  // Holds at 0.9375rem through the laptop tier, growing only at xl.
+                  ? 'text-[0.875rem] min-[360px]:text-[0.9375rem] xl:text-[1.0625rem]'
+                  : 'text-[0.875rem] min-[360px]:text-[0.9375rem] sm:text-[1.0625rem]'
                 : 'text-[1.0625rem]'
             )}
           >
             The Pharma Generic House
           </span>
           {tagline && (
-            <span className="hidden sm:block mt-0.5 text-[0.6875rem] font-medium uppercase tracking-[0.14em] leading-[1.1] text-ink-muted">
+            <span
+              className={cn(
+                'mt-0.5 text-[0.6875rem] font-medium uppercase tracking-[0.14em] leading-[1.1] text-ink-muted',
+                // Below xl the row is tight — the tagline is the first thing to go.
+                compact ? 'hidden xl:block' : 'hidden sm:block'
+              )}
+            >
               {taglineText}
             </span>
           )}

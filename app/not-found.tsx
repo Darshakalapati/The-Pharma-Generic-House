@@ -73,7 +73,7 @@ export default async function NotFound() {
         </a>
       </main>
 
-      <SiteFooter settings={settings} schedule={schedule} dict={dict} />
+      <SiteFooter settings={settings} schedule={schedule} dict={dict} locale={locale} />
       </div>
     </LanguageProvider>
   );

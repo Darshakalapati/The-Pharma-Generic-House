@@ -308,6 +308,8 @@ export const te = {
     tapToCall: 'కాల్ చేయడానికి నొక్కండి',
     chatOnWhatsapp: 'వాట్సాప్‌లో మాట్లాడండి',
     openChat: 'చాట్ తెరవండి',
+    openInMaps: 'గూగుల్ మ్యాప్స్‌లో తెరవండి',
+    openWhatsapp: 'వాట్సాప్ తెరవండి',
     getDirections: 'దారి చూపించండి',
     sendEyebrow: 'సందేశం పంపండి',
     sendHeading: 'మాకు సందేశం పంపండి.',

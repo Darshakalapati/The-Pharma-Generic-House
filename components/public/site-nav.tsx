@@ -69,17 +69,30 @@ export function SiteNav({
             : 'border-b border-transparent bg-bg-elevated'
         )}
       >
-        <div className="container-public flex h-[72px] items-center justify-between">
-          <Logo tagline mobileWordmark taglineText={dict.hero.estTagline} />
+        {/* Three zones, no absolute positioning: the left and right blocks
+            keep their intrinsic width and the links take whatever is left, so
+            nothing can ever ride over anything else. */}
+        <div className="container-public flex h-[72px] items-center gap-4">
+          {/* LEFT — brand */}
+          <div className="shrink-0">
+            <Logo
+              tagline
+              mobileWordmark
+              taglineText={dict.hero.estTagline}
+              compact
+            />
+          </div>
 
-          <nav className="hidden md:flex items-center gap-8">
+          {/* CENTRE — links */}
+          <nav className="hidden lg:flex flex-1 min-w-0 items-center justify-center gap-5 xl:gap-8 2xl:gap-10">
             {NAV.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 data-active={isActive(item.href) || undefined}
                 className={cn(
-                  'link-underline text-[0.9375rem] font-medium transition-colors',
+                  'link-underline whitespace-nowrap font-medium transition-colors',
+                  'text-[0.875rem] xl:text-[0.9375rem]',
                   isActive(item.href) ? 'text-ink' : 'text-ink/80 hover:text-ink'
                 )}
               >
@@ -88,23 +101,35 @@ export function SiteNav({
             ))}
           </nav>
 
-          <div className="hidden md:flex items-center gap-3">
-            <LanguageToggle />
-            <OpenStatus schedule={schedule} />
+          {/* RIGHT — controls */}
+          <div className="hidden lg:flex shrink-0 items-center gap-2">
+            <LanguageToggle className="whitespace-nowrap" />
+            <OpenStatus schedule={schedule} compact />
+            {/* Icon-only below xl, where the row is tightest. */}
             <a
               href={telLink(shopPhone)}
-              className="btn-plum-outline h-10 px-4 text-[0.875rem]"
+              aria-label={dict.nav.callUs}
+              title={dict.nav.callUs}
+              className="btn-plum-outline xl:hidden h-10 w-10 shrink-0 rounded-full p-0"
+            >
+              <Phone className="h-4 w-4" />
+            </a>
+            <a
+              href={telLink(shopPhone)}
+              className="btn-plum-outline hidden xl:inline-flex h-10 px-4 text-[0.875rem] whitespace-nowrap"
             >
               <Phone className="h-4 w-4" />
               {dict.nav.callUs}
             </a>
           </div>
 
+          {/* Hamburger takes over below lg, so tablets and small laptops get
+              the overlay rather than a cramped row. */}
           <button
             aria-label={open ? dict.nav.closeMenu : dict.nav.openMenu}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
-            className="md:hidden inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-ink hover:bg-sand transition-colors"
+            className="lg:hidden ml-auto inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-ink hover:bg-sand transition-colors"
           >
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -114,7 +139,7 @@ export function SiteNav({
       {/* Mobile full-screen overlay */}
       <div
         className={cn(
-          'md:hidden fixed inset-0 z-40 bg-bg-elevated transition-[opacity,transform] duration-300 ease-smooth flex flex-col',
+          'lg:hidden fixed inset-0 z-40 bg-bg-elevated transition-[opacity,transform] duration-300 ease-smooth flex flex-col',
           open
             ? 'opacity-100 pointer-events-auto translate-y-0'
             : 'opacity-0 pointer-events-none -translate-y-2'

@@ -21,6 +21,27 @@ export const SHOP_WHATSAPP = '919885067198';
 export const SHOP_ADDRESS =
   'The Pharma Generic House, Opp Golden Pavilion, Governerpeta, Vijayawada, Andhra Pradesh 520002';
 
+/**
+ * Google Maps link for an address. The `search` form drops a pin on the shop
+ * and Maps itself offers a Directions button from there — and on a phone the
+ * URL hands off to the native Maps app.
+ *
+ * Takes the address so callers can pass the value resolved from settings,
+ * which an admin may have edited, rather than the constant below.
+ */
+export function getMapsUrl(address?: string): string {
+  const resolved = address?.trim() || SHOP_ADDRESS;
+  // The canonical address already leads with the shop name; only prefix it
+  // when an admin has overridden the address with something that doesn't.
+  const query = resolved.toLowerCase().startsWith(SHOP_NAME.toLowerCase())
+    ? resolved
+    : `${SHOP_NAME}, ${resolved}`;
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
+}
+
+/** Convenience for callers with no settings to hand. */
+export const GOOGLE_MAPS_URL = getMapsUrl(SHOP_ADDRESS);
+
 /** The same address split for multi-line display (footer, contact card). */
 export const SHOP_ADDRESS_LINES = [
   'The Pharma Generic House',

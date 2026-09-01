@@ -49,7 +49,7 @@ export default async function PublicLayout({ children }: { children: React.React
           schedule={schedule}
         />
         <PublicMain>{children}</PublicMain>
-        <SiteFooter settings={settings} schedule={schedule} dict={dict} />
+        <SiteFooter settings={settings} schedule={schedule} dict={dict} locale={locale} />
         <WhatsAppFloat phone={settings.shop_whatsapp} />
         <MobileActionBar phone={settings.shop_phone} whatsapp={settings.shop_whatsapp} locale={locale} />
         <PageWipe />

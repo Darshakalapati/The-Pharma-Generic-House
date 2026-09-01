@@ -241,6 +241,8 @@ export interface Dictionary {
     tapToCall: string;
     chatOnWhatsapp: string;
     openChat: string;
+    openInMaps: string;
+    openWhatsapp: string;
     getDirections: string;
     sendEyebrow: string;
     sendHeading: string;

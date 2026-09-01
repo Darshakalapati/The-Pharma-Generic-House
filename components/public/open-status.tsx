@@ -19,9 +19,13 @@ const REFRESH_MS = 60_000;
 export function OpenStatus({
   schedule,
   className,
+  compact = false,
 }: {
   schedule: Schedule;
   className?: string;
+  /** Laptop tier: shorten the label to keep the nav row on one line. The full
+   *  wording stays in the title attribute so nothing is lost. */
+  compact?: boolean;
 }) {
   const { dict } = useT();
   const [status, setStatus] = React.useState<ReturnType<typeof getOpenStatus> | null>(
@@ -37,6 +41,13 @@ export function OpenStatus({
 
   if (!status) return null;
 
+  // "Open now · closes 10 PM" -> "Open · 10 PM"; the other states drop their
+  // trailing detail entirely.
+  const compactLabel =
+    status.state === 'open'
+      ? status.label.replace(/^([^·]+)·\s*\S+\s*/, (_m, head) => `${head.trim().split(' ')[0]} · `)
+      : status.label.split('·')[0].trim();
+
   const dotClass =
     status.state === 'open'
       ? 'bg-teal'
@@ -46,6 +57,7 @@ export function OpenStatus({
 
   return (
     <span
+      title={status.label}
       className={cn(
         'inline-flex items-center gap-2 rounded-full border border-line',
         'px-2.5 py-1 text-[0.8125rem] font-medium text-ink-muted whitespace-nowrap',
@@ -53,7 +65,14 @@ export function OpenStatus({
       )}
     >
       <span aria-hidden className={cn('block h-2 w-2 rounded-full shrink-0', dotClass)} />
-      {status.label}
+      {compact ? (
+        <>
+          <span className="xl:hidden">{compactLabel}</span>
+          <span className="hidden xl:inline">{status.label}</span>
+        </>
+      ) : (
+        status.label
+      )}
     </span>
   );
 }

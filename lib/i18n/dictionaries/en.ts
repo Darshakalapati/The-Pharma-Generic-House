@@ -303,6 +303,8 @@ export const en = {
     tapToCall: 'Tap to call',
     chatOnWhatsapp: 'Chat on WhatsApp',
     openChat: 'Open chat',
+    openInMaps: 'Open in Google Maps',
+    openWhatsapp: 'Open WhatsApp',
     getDirections: 'Get directions',
     sendEyebrow: 'Send a message',
     sendHeading: 'Send us a message.',

@@ -3,7 +3,7 @@ import { ContactForm } from '@/components/public/contact-form';
 import { WhatsAppGlyph } from '@/components/public/whatsapp-glyph';
 import { getShopSettings, getSchedule } from '@/lib/settings';
 import { whatsappLink, telLink } from '@/lib/utils';
-import { SHOP_EMAIL, SHOP_ADDRESS_LINES } from '@/lib/constants';
+import { SHOP_EMAIL, SHOP_ADDRESS_LINES, getMapsUrl } from '@/lib/constants';
 import { formatHoursDetailed } from '@/lib/hours';
 import { OpenStatus } from '@/components/public/open-status';
 import { getDictionary, getLocale } from '@/lib/i18n';
@@ -18,9 +18,6 @@ export default async function ContactPage() {
   const dict = getDictionary(getLocale());
   const [settings, schedule] = await Promise.all([getShopSettings(), getSchedule()]);
   const hoursRows = formatHoursDetailed(schedule, dict);
-  const directionsUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(
-    settings.shop_address
-  )}`;
   const mapEmbedUrl = `https://www.google.com/maps?q=${encodeURIComponent(
     settings.shop_address
   )}&output=embed`;
@@ -64,7 +61,7 @@ export default async function ContactPage() {
             <span className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-teal-tint text-teal-deep">
               <WhatsAppGlyph className="h-5 w-5" />
             </span>
-            <p className="eyebrow eyebrow--teal mt-5">Message on WhatsApp</p>
+            <p className="eyebrow eyebrow--teal mt-5">{dict.contact.whatsappMsgEyebrow}</p>
             <p className="mt-2 font-serif font-medium text-[1.25rem] tracking-[-0.005em] break-all">
               {settings.shop_phone}
             </p>
@@ -75,9 +72,10 @@ export default async function ContactPage() {
           </a>
 
           <a
-            href={directionsUrl}
+            href={getMapsUrl(settings.shop_address)}
             target="_blank"
             rel="noopener noreferrer"
+            aria-label={dict.contact.openInMaps}
             className="card-soft p-7 group"
           >
             <span className="inline-flex h-11 w-11 items-center justify-center rounded-lg bg-plum-tint text-plum">
@@ -109,7 +107,7 @@ export default async function ContactPage() {
               {dict.contact.sendSub}
             </p>
 
-            <div className="mt-8">
+            <div id="hours" className="mt-8 scroll-mt-28">
               <div className="flex flex-wrap items-center gap-3">
                 <p className="inline-flex items-center gap-2 eyebrow">
                   <Clock className="h-4 w-4 text-plum" />

@@ -4,12 +4,12 @@ import { Phone, MessageCircle, MapPin, Clock } from 'lucide-react';
 import { FooterWordmark } from './logo';
 import { TiltCard } from './tilt-card';
 import { SectionCurve } from './motion/section-curve';
-import { SHOP_EMAIL, SHOP_ADDRESS_LINES } from '@/lib/constants';
+import { SHOP_EMAIL, SHOP_ADDRESS_LINES, getMapsUrl, PRESCRIPTION_WA_TEXT, PRESCRIPTION_WA_TEXT_TE } from '@/lib/constants';
 import { formatHoursSummary, type Schedule } from '@/lib/hours';
 import { OpenStatus } from './open-status';
-import { whatsappLink, telLink } from '@/lib/utils';
+import { whatsappLink, telLink, cn } from '@/lib/utils';
 import type { ShopSettings } from '@/lib/types';
-import type { Dictionary } from '@/lib/i18n/types';
+import type { Dictionary, Locale } from '@/lib/i18n/types';
 
 const COL_BROWSE: { key: keyof Dictionary['footer']['categories']; href: string }[] = [
   { key: 'general', href: '/products?cat=general' },
@@ -47,15 +47,40 @@ const WORDMARK_SIZE = 'clamp(1.75rem, 6vw, 8rem)';
  */
 const COLUMN_BOX = 'h-full rounded-xl p-7';
 
+/**
+ * Contact rows are whole-row links — the icon is part of the target, not just
+ * the text beside it. The underline is drawn on the text span only, so it
+ * tracks the words rather than the full row width.
+ */
+const CONTACT_ROW =
+  'group/row -mx-2 flex items-start gap-2.5 rounded-md px-2 py-1.5 cursor-pointer ' +
+  'transition-colors hover:text-bg focus-visible:outline-none ' +
+  'focus-visible:ring-2 focus-visible:ring-teal-soft focus-visible:ring-offset-2 ' +
+  'focus-visible:ring-offset-ink';
+
+const CONTACT_ICON =
+  'h-4 w-4 mt-0.5 shrink-0 text-teal-soft transition-colors duration-200 ' +
+  'group-hover/row:text-teal group-focus-visible/row:text-teal';
+
+/** Teal underline drawing in from the left, matching the site's link pattern. */
+const CONTACT_TEXT =
+  'relative inline-block min-w-0 after:absolute after:left-0 after:right-0 after:-bottom-0.5 ' +
+  "after:h-px after:bg-teal-soft after:origin-left after:scale-x-0 after:content-[''] " +
+  'after:transition-transform after:duration-[250ms] after:ease-[cubic-bezier(0,0,0.2,1)] ' +
+  'group-hover/row:after:scale-x-100 group-focus-visible/row:after:scale-x-100';
+
 export function SiteFooter({
   settings,
   schedule,
   dict,
+  locale = 'en',
 }: {
   settings: ShopSettings;
   schedule: Schedule;
   dict: Dictionary;
+  locale?: Locale;
 }) {
+  const rxText = locale === 'te' ? PRESCRIPTION_WA_TEXT_TE : PRESCRIPTION_WA_TEXT;
   return (
     // pb clears the fixed mobile action bar so footer content is never hidden behind it.
     <footer className="relative bg-ink text-bg pb-[72px] md:pb-0">
@@ -89,43 +114,60 @@ export function SiteFooter({
           {/* Shop column */}
           <TiltCard className={COLUMN_BOX}>
             <h3 className="eyebrow eyebrow--teal text-[0.7rem]">{dict.footer.shop}</h3>
-            <ul className="mt-5 space-y-3 text-[0.9375rem] text-bg/70">
-              <li className="flex items-start gap-2.5">
-                <MapPin className="h-4 w-4 mt-0.5 text-teal-soft shrink-0" />
-                <span>
-                  {SHOP_ADDRESS_LINES.map((line) => (
-                    <span key={line} className="block">
-                      {line}
-                    </span>
-                  ))}
-                </span>
-              </li>
+            <ul className="mt-5 space-y-1 text-[0.9375rem] text-bg/70">
               <li>
-                <a href={telLink(settings.shop_phone)} className="flex items-start gap-2.5 hover:text-bg transition-colors">
-                  <Phone className="h-4 w-4 mt-0.5 text-teal-soft shrink-0" />
-                  <span>{settings.shop_phone}</span>
+                <a
+                  href={getMapsUrl(settings.shop_address)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={dict.contact.openInMaps}
+                  className={CONTACT_ROW}
+                >
+                  <MapPin className={CONTACT_ICON} />
+                  <span className={CONTACT_TEXT}>
+                    {SHOP_ADDRESS_LINES.map((line) => (
+                      <span key={line} className="block">
+                        {line}
+                      </span>
+                    ))}
+                  </span>
                 </a>
               </li>
               <li>
                 <a
-                  href={whatsappLink(settings.shop_whatsapp)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-start gap-2.5 hover:text-bg transition-colors"
+                  href={telLink(settings.shop_phone)}
+                  aria-label={dict.footer.call}
+                  className={CONTACT_ROW}
                 >
-                  <MessageCircle className="h-4 w-4 mt-0.5 text-teal-soft shrink-0" />
-                  <span>{dict.footer.whatsappUs}</span>
+                  <Phone className={CONTACT_ICON} />
+                  <span className={CONTACT_TEXT}>{settings.shop_phone}</span>
                 </a>
               </li>
-              <li className="flex items-start gap-2.5">
-                <Clock className="h-4 w-4 mt-0.5 text-teal-soft shrink-0" />
-                <span>
-                  <span className="block">{formatHoursSummary(schedule, dict)}</span>
-                  <OpenStatus
-                    schedule={schedule}
-                    className="mt-2 border-bg/20 text-bg/70"
-                  />
-                </span>
+              <li>
+                <a
+                  href={whatsappLink(settings.shop_whatsapp, rxText)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={dict.contact.openWhatsapp}
+                  className={CONTACT_ROW}
+                >
+                  <MessageCircle className={CONTACT_ICON} />
+                  <span className={CONTACT_TEXT}>{dict.footer.whatsappUs}</span>
+                </a>
+              </li>
+              <li>
+                <Link href="/contact#hours" className={CONTACT_ROW}>
+                  <Clock className={CONTACT_ICON} />
+                  <span className="min-w-0">
+                    <span className={cn('block', CONTACT_TEXT)}>
+                      {formatHoursSummary(schedule, dict)}
+                    </span>
+                    <OpenStatus
+                      schedule={schedule}
+                      className="mt-2 border-bg/20 text-bg/70"
+                    />
+                  </span>
+                </Link>
               </li>
             </ul>
           </TiltCard>
