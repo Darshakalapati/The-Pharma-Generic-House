@@ -199,7 +199,7 @@ export const en = {
       "Samples collected at our shop are processed at ThyroCare — one of India's largest accredited diagnostic labs. Reports arrive on WhatsApp within 24–48 hours. If a specific test isn't listed, just ask — we can almost always arrange it.",
     none: 'No tests are listed at the moment.',
     testDay: 'Test day',
-    walkInFree: 'Walk-in / Free',
+    walkIn: 'Walk-in',
   },
 
   shelves: {

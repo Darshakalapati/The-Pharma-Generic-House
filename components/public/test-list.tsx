@@ -4,7 +4,6 @@ import * as React from 'react';
 import { useT } from './i18n/language-provider';
 import { FlaskConical, ArrowRight } from 'lucide-react';
 import { TestBookingDialog } from './test-booking-dialog';
-import { formatINR } from '@/lib/utils';
 import { StaggerGrid, StaggerGridItem } from '@/components/public/motion/scroll-reveal';
 import type { MedicalTest } from '@/lib/types';
 
@@ -54,18 +53,18 @@ export function TestList({
                 {t.description}
               </p>
             )}
+            <div className="flex-1" aria-hidden />
 
-            <div className="mt-6 pt-5 border-t border-line flex items-center justify-between">
-              {t.price != null && t.price > 0 ? (
-                <p className="font-serif font-medium text-[1.125rem] text-plum">
-                  {formatINR(t.price)}
-                </p>
-              ) : (
-                <span className="text-[0.875rem] text-ink-muted">{dict.diagnostics.walkInFree}</span>
+            {/* Prices are deliberately not shown publicly — the shop confirms
+                cost on WhatsApp. `mt-auto` pins this row to the card's bottom
+                so cards stay the same height without reserving a price line. */}
+            <div className="mt-auto pt-5 border-t border-line flex items-center gap-4">
+              {(t.price == null || t.price === 0) && (
+                <span className="text-[0.875rem] text-ink-muted">{dict.diagnostics.walkIn}</span>
               )}
               <button
                 onClick={() => setActive(t)}
-                className="inline-flex items-center gap-1 text-[0.95rem] font-medium text-plum hover:text-plum-deep transition-colors"
+                className="ml-auto inline-flex items-center gap-1 text-[0.95rem] font-medium text-plum hover:text-plum-deep transition-colors"
               >
                 {dict.diagnostics.bookTest}
                 <ArrowRight className="h-3.5 w-3.5" />

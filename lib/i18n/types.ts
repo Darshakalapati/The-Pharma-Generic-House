@@ -174,7 +174,7 @@ export interface Dictionary {
     thyroBody: string;
     none: string;
     testDay: string;
-    walkInFree: string;
+    walkIn: string;
   };
 
   shelves: {

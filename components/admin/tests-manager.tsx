@@ -72,7 +72,7 @@ export function TestsManager({ tests }: { tests: MedicalTest[] }) {
                 {t.price != null && t.price > 0 ? (
                   <Badge variant="accent">{formatINR(t.price)}</Badge>
                 ) : (
-                  <Badge variant="muted">Walk-in / Free</Badge>
+                  <Badge variant="muted">Walk-in</Badge>
                 )}
                 {!t.is_active && <Badge variant="destructive">Inactive</Badge>}
               </div>

@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 import { Store, Home } from 'lucide-react';
 import { BookingModal, FieldError } from './booking-modal';
 import { createClient } from '@/lib/supabase/client';
-import { isValidPhoneIN, formatDate, dayOfWeek, cn, formatINR } from '@/lib/utils';
+import { isValidPhoneIN, formatDate, dayOfWeek, cn } from '@/lib/utils';
 import type { MedicalTest } from '@/lib/types';
 
 const formSchema = z.object({
@@ -107,7 +107,9 @@ export function TestBookingDialog({
       onOpenChange={onOpenChange}
       eyebrow="Book a test"
       title={test.name}
-      subtitle={test.price != null && test.price > 0 ? formatINR(test.price) : 'Walk-in'}
+      subtitle={
+        test.price == null || test.price === 0 ? dict.diagnostics.walkIn : undefined
+      }
     >
       <form onSubmit={handleSubmit(submit)} className="space-y-4">
         {/* Collection toggle */}

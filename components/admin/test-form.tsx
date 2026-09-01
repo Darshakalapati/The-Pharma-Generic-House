@@ -131,7 +131,8 @@ export function TestForm({
               className="mt-1.5"
             />
             <p className="mt-1 text-xs text-brand-muted">
-              Leave blank for &quot;Walk-in / Free&quot;.
+              For your reference only — prices are not shown on the website. Leave
+              blank to show the &quot;Walk-in&quot; label on the test card.
             </p>
           </div>
           <div className="flex items-center justify-between rounded-xl border border-brand-line bg-brand-cream/40 px-4 py-3">
