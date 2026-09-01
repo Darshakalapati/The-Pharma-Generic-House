@@ -63,6 +63,8 @@ export function SettingsForm({
     settings.google_review_count != null ? String(settings.google_review_count) : ''
   );
   const [savingGoogle, setSavingGoogle] = React.useState(false);
+  const [replyNote, setReplyNote] = React.useState(settings.whatsapp_reply_note ?? '');
+  const [savingNote, setSavingNote] = React.useState(false);
 
   const parsedRating = googleRating.trim() === '' ? null : Number(googleRating);
   const parsedCount = googleCount.trim() === '' ? null : Number(googleCount);
@@ -90,6 +92,19 @@ export function SettingsForm({
       toast.error('Could not save hours. Have you run migration 0014 in Supabase?');
     } finally {
       setSavingHours(false);
+    }
+  };
+
+  const saveWhatsapp = async () => {
+    setSavingNote(true);
+    try {
+      await upsert('whatsapp_reply_note', replyNote.trim());
+      toast.success('WhatsApp note saved.');
+      router.refresh();
+    } catch {
+      toast.error('Could not save. Have you run migration 0016 in Supabase?');
+    } finally {
+      setSavingNote(false);
     }
   };
 
@@ -376,6 +391,32 @@ export function SettingsForm({
         <Button className="mt-5" disabled={savingPhotos} onClick={savePhotos}>
           <Save className="h-4 w-4" />
           {savingPhotos ? 'Saving...' : 'Save site photos'}
+        </Button>
+      </section>
+
+      {/* WhatsApp helper note. */}
+      <section className="surface-card p-6 sm:p-8">
+        <h2 className="font-serif text-xl font-semibold text-brand-ink">WhatsApp</h2>
+        <p className="mt-1 text-sm text-brand-muted">
+          The reassurance line shown in the WhatsApp helper card on the website.
+        </p>
+        <div className="mt-5">
+          <Label htmlFor="wa_note">Reply note</Label>
+          <Input
+            id="wa_note"
+            placeholder="We usually reply within 15 minutes."
+            value={replyNote}
+            onChange={(e) => setReplyNote(e.target.value)}
+            className="mt-1.5"
+          />
+          <p className="mt-1 text-xs text-brand-muted">
+            Leave blank to use the built-in wording, which is translated. Anything you
+            type here is shown as-is in both languages.
+          </p>
+        </div>
+        <Button className="mt-5" disabled={savingNote} onClick={saveWhatsapp}>
+          <Save className="h-4 w-4" />
+          {savingNote ? 'Saving...' : 'Save WhatsApp note'}
         </Button>
       </section>
 

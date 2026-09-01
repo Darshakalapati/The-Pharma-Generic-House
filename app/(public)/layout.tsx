@@ -1,8 +1,12 @@
 import { SiteNav } from '@/components/public/site-nav';
+import { UtilityBar } from '@/components/public/utility-bar';
 import { SiteFooter } from '@/components/public/site-footer';
 import { WhatsAppFloat } from '@/components/public/whatsapp-float';
 import { MobileActionBar } from '@/components/public/mobile-action-bar';
 import { PageWipe } from '@/components/public/motion/page-wipe';
+import { WhatsAppHelperProvider } from '@/components/public/whatsapp-helper';
+import { SearchProvider } from '@/components/public/search-modal';
+import { LanguagePrompt } from '@/components/public/language-prompt';
 import { AnnouncementBanner } from '@/components/public/announcement-banner';
 import { PublicMain } from '@/components/public/motion/public-main';
 import { getShopSettings, getSchedule } from '@/lib/settings';
@@ -41,8 +45,15 @@ export default async function PublicLayout({ children }: { children: React.React
     // `site-grain` lays a fixed paper-grain overlay over the public site only —
     // the admin panel uses its own root and stays clean.
     <LanguageProvider dict={dict} locale={locale}>
+      <WhatsAppHelperProvider
+        whatsapp={settings.shop_whatsapp}
+        schedule={schedule}
+        replyNote={settings.whatsapp_reply_note}
+      >
+      <SearchProvider>
       <div className={`site-grain bg-bg text-ink${locale === 'te' ? ' lang-te' : ''}`}>
         <AnnouncementBanner announcement={announcement} />
+        <UtilityBar schedule={schedule} dict={dict} />
         <SiteNav
           shopPhone={settings.shop_phone}
           shopWhatsApp={settings.shop_whatsapp}
@@ -50,10 +61,13 @@ export default async function PublicLayout({ children }: { children: React.React
         />
         <PublicMain>{children}</PublicMain>
         <SiteFooter settings={settings} schedule={schedule} dict={dict} locale={locale} />
-        <WhatsAppFloat phone={settings.shop_whatsapp} />
-        <MobileActionBar phone={settings.shop_phone} whatsapp={settings.shop_whatsapp} locale={locale} />
+        <WhatsAppFloat />
+        <MobileActionBar phone={settings.shop_phone} />
+        <LanguagePrompt />
         <PageWipe />
       </div>
+      </SearchProvider>
+      </WhatsAppHelperProvider>
     </LanguageProvider>
   );
 }

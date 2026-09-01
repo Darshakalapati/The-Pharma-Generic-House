@@ -19,7 +19,11 @@ export const metadata = {
     'Lab tests at the shop or at home — Sundays at the shop, with home collection on other days. Associated with ThyroCare.',
 };
 
-export default async function TestsPage() {
+export default async function TestsPage({
+  searchParams,
+}: {
+  searchParams?: { book?: string };
+}) {
   const dict = getDictionary(getLocale());
   const supabase = createClient();
   const { data } = await supabase
@@ -89,7 +93,7 @@ export default async function TestsPage() {
         </ScrollRevealItem>
 
         <ScrollRevealItem as="div" className="mt-10">
-          <TestList tests={tests} />
+          <TestList tests={tests} openTestId={searchParams?.book} />
         </ScrollRevealItem>
       </ScrollReveal>
 

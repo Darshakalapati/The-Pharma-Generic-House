@@ -175,11 +175,11 @@ export function SiteFooter({
           {/* Browse */}
           <TiltCard className={COLUMN_BOX}>
             <h3 className="eyebrow eyebrow--teal text-[0.7rem]">{dict.footer.browse}</h3>
-            <ul className="mt-5 space-y-2.5 text-[0.9375rem] text-bg/70">
+            <ul className="mt-5 space-y-1 text-[0.9375rem] text-bg/70">
               {COL_BROWSE.map((l) => (
                 <li key={l.key}>
-                  <Link href={l.href} className="hover:text-bg transition-colors">
-                    {dict.footer.categories[l.key]}
+                  <Link href={l.href} className={CONTACT_ROW}>
+                    <span className={CONTACT_TEXT}>{dict.footer.categories[l.key]}</span>
                   </Link>
                 </li>
               ))}
@@ -189,11 +189,11 @@ export function SiteFooter({
           {/* Services */}
           <TiltCard className={COLUMN_BOX}>
             <h3 className="eyebrow eyebrow--teal text-[0.7rem]">{dict.footer.services}</h3>
-            <ul className="mt-5 space-y-2.5 text-[0.9375rem] text-bg/70">
+            <ul className="mt-5 space-y-1 text-[0.9375rem] text-bg/70">
               {COL_SERVICES.map((l) => (
                 <li key={l.key}>
-                  <Link href={l.href} className="hover:text-bg transition-colors">
-                    {dict.nav[l.key]}
+                  <Link href={l.href} className={CONTACT_ROW}>
+                    <span className={CONTACT_TEXT}>{dict.nav[l.key]}</span>
                   </Link>
                 </li>
               ))}
@@ -203,30 +203,35 @@ export function SiteFooter({
           {/* Get in touch */}
           <TiltCard className={COLUMN_BOX}>
             <h3 className="eyebrow eyebrow--teal text-[0.7rem]">{dict.footer.getInTouch}</h3>
-            <ul className="mt-5 space-y-2.5 text-[0.9375rem] text-bg/70">
+            <ul className="mt-5 space-y-1 text-[0.9375rem] text-bg/70">
               <li>
-                <Link href="/contact" className="hover:text-bg transition-colors">
-                  {dict.footer.contactForm}
+                <Link href="/contact" className={CONTACT_ROW}>
+                  <span className={CONTACT_TEXT}>{dict.footer.contactForm}</span>
                 </Link>
               </li>
               <li>
                 <a
-                  href={whatsappLink(settings.shop_whatsapp)}
+                  href={whatsappLink(settings.shop_whatsapp, rxText)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-bg transition-colors"
+                  aria-label={dict.contact.openWhatsapp}
+                  className={CONTACT_ROW}
                 >
-                  {dict.nav.whatsapp}
+                  <span className={CONTACT_TEXT}>{dict.nav.whatsapp}</span>
                 </a>
               </li>
               <li>
-                <a href={telLink(settings.shop_phone)} className="hover:text-bg transition-colors">
-                  {dict.footer.call}
+                <a
+                  href={telLink(settings.shop_phone)}
+                  aria-label={dict.footer.call}
+                  className={CONTACT_ROW}
+                >
+                  <span className={CONTACT_TEXT}>{dict.footer.call}</span>
                 </a>
               </li>
               <li>
-                <a href={`mailto:${SHOP_EMAIL}`} className="hover:text-bg transition-colors break-words">
-                  {SHOP_EMAIL}
+                <a href={`mailto:${SHOP_EMAIL}`} className={CONTACT_ROW}>
+                  <span className={cn(CONTACT_TEXT, 'break-words')}>{SHOP_EMAIL}</span>
                 </a>
               </li>
             </ul>

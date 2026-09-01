@@ -10,6 +10,7 @@ import { cn, whatsappLink, telLink } from '@/lib/utils';
 import { SHOP_PHONE, SHOP_WHATSAPP } from '@/lib/constants';
 import { OpenStatus } from './open-status';
 import { LanguageToggle } from './language-toggle';
+import { SearchButton } from './search-button';
 import { useT } from './i18n/language-provider';
 import type { Schedule } from '@/lib/hours';
 
@@ -75,16 +76,11 @@ export function SiteNav({
         <div className="container-public flex h-[72px] items-center gap-4">
           {/* LEFT — brand */}
           <div className="shrink-0">
-            <Logo
-              tagline
-              mobileWordmark
-              taglineText={dict.hero.estTagline}
-              compact
-            />
+            <Logo mobileWordmark compact />
           </div>
 
           {/* CENTRE — links */}
-          <nav className="hidden lg:flex flex-1 min-w-0 items-center justify-center gap-5 xl:gap-8 2xl:gap-10">
+          <nav className="hidden lg:flex flex-1 min-w-0 items-center justify-center gap-6 xl:gap-8 2xl:gap-10">
             {NAV.map((item) => (
               <Link
                 key={item.href}
@@ -92,7 +88,7 @@ export function SiteNav({
                 data-active={isActive(item.href) || undefined}
                 className={cn(
                   'link-underline whitespace-nowrap font-medium transition-colors',
-                  'text-[0.875rem] xl:text-[0.9375rem]',
+                  'text-[0.9375rem]',
                   isActive(item.href) ? 'text-ink' : 'text-ink/80 hover:text-ink'
                 )}
               >
@@ -103,20 +99,10 @@ export function SiteNav({
 
           {/* RIGHT — controls */}
           <div className="hidden lg:flex shrink-0 items-center gap-2">
-            <LanguageToggle className="whitespace-nowrap" />
-            <OpenStatus schedule={schedule} compact />
-            {/* Icon-only below xl, where the row is tightest. */}
+            <SearchButton className="h-10 w-10" />
             <a
               href={telLink(shopPhone)}
-              aria-label={dict.nav.callUs}
-              title={dict.nav.callUs}
-              className="btn-plum-outline xl:hidden h-10 w-10 shrink-0 rounded-full p-0"
-            >
-              <Phone className="h-4 w-4" />
-            </a>
-            <a
-              href={telLink(shopPhone)}
-              className="btn-plum-outline hidden xl:inline-flex h-10 px-4 text-[0.875rem] whitespace-nowrap"
+              className="btn-plum-outline h-10 px-4 text-[0.875rem] whitespace-nowrap"
             >
               <Phone className="h-4 w-4" />
               {dict.nav.callUs}
@@ -125,11 +111,13 @@ export function SiteNav({
 
           {/* Hamburger takes over below lg, so tablets and small laptops get
               the overlay rather than a cramped row. */}
+          <SearchButton className="lg:hidden ml-auto h-11 w-11" />
+
           <button
             aria-label={open ? dict.nav.closeMenu : dict.nav.openMenu}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
-            className="lg:hidden ml-auto inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-ink hover:bg-sand transition-colors"
+            className="lg:hidden inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-ink hover:bg-sand transition-colors"
           >
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>

@@ -22,7 +22,7 @@ export const metadata = {
 export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams: { cat?: string };
+  searchParams: { cat?: string; item?: string };
 }) {
   const locale = getLocale();
   const dict = getDictionary(locale);
@@ -61,7 +61,11 @@ export default async function ProductsPage({
 
       <ScrollReveal as="section" className="container-public mt-6 sm:mt-10 pb-16">
         <ScrollRevealItem>
-          <ProductGrid products={products} initialCategory={initialCategory} />
+          <ProductGrid
+            products={products}
+            initialCategory={initialCategory}
+            openItemId={searchParams?.item}
+          />
         </ScrollRevealItem>
       </ScrollReveal>
 

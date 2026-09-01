@@ -1,9 +1,10 @@
+'use client';
+
 import { Phone } from 'lucide-react';
 import { WhatsAppGlyph } from './whatsapp-glyph';
-import { whatsappLink, telLink } from '@/lib/utils';
-import { PRESCRIPTION_WA_TEXT, PRESCRIPTION_WA_TEXT_TE } from '@/lib/constants';
-import { getDictionary } from '@/lib/i18n';
-import type { Locale } from '@/lib/i18n/types';
+import { telLink } from '@/lib/utils';
+import { useT } from './i18n/language-provider';
+import { useWhatsAppHelper } from './whatsapp-helper';
 
 /**
  * Fixed Call / WhatsApp bar, phones only.
@@ -16,17 +17,9 @@ import type { Locale } from '@/lib/i18n/types';
  * cart overlay (z-40) and every dialog (z-50), so an open drawer always covers
  * it rather than fighting it for taps.
  */
-export function MobileActionBar({
-  phone,
-  whatsapp,
-  locale,
-}: {
-  phone: string;
-  whatsapp: string;
-  locale: Locale;
-}) {
-  const dict = getDictionary(locale);
-  const rxText = locale === 'te' ? PRESCRIPTION_WA_TEXT_TE : PRESCRIPTION_WA_TEXT;
+export function MobileActionBar({ phone }: { phone: string }) {
+  const { dict } = useT();
+  const { open } = useWhatsAppHelper();
   return (
     <div
       className="md:hidden fixed inset-x-0 bottom-0 z-30 border-t border-line bg-bg-elevated"
@@ -40,17 +33,16 @@ export function MobileActionBar({
           <Phone className="h-[18px] w-[18px]" />
           {dict.nav.call}
         </a>
-        <a
-          href={whatsappLink(whatsapp, rxText)}
-          target="_blank"
-          rel="noopener noreferrer"
+        <button
+          type="button"
+          onClick={open}
           className="inline-flex h-14 items-center justify-center gap-2 bg-teal text-white text-[0.9375rem] font-semibold"
         >
           <span className="wa-pulse inline-flex rounded-full">
             <WhatsAppGlyph className="h-[18px] w-[18px]" />
           </span>
           {dict.nav.whatsapp}
-        </a>
+        </button>
       </div>
     </div>
   );

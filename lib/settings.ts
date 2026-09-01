@@ -14,6 +14,7 @@ const DEFAULTS: ShopSettings = {
   shop_address: SHOP_ADDRESS,
   diagnostics_photo_url: '',
   about_photo_url: '',
+  whatsapp_reply_note: '',
   google_rating: null,
   google_review_count: null,
 };
@@ -32,6 +33,7 @@ export async function getShopSettings(): Promise<ShopSettings> {
       shop_address: extractString(map.get('shop_address')) ?? DEFAULTS.shop_address,
       diagnostics_photo_url: extractString(map.get('diagnostics_photo_url')) ?? '',
       about_photo_url: extractString(map.get('about_photo_url')) ?? '',
+      whatsapp_reply_note: extractString(map.get('whatsapp_reply_note')) ?? '',
       google_rating: extractNumber(map.get('google_rating')),
       google_review_count: extractNumber(map.get('google_review_count')),
     };

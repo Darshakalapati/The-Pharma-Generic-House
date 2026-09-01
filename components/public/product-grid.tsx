@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Search, Plus, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useT } from './i18n/language-provider';
+import { ProductQuickView } from './product-quick-view';
 import { PRODUCT_CATEGORIES } from '@/lib/constants';
 import { useEnquiryCart } from './enquiry-cart-context';
 import { StaggerGrid, StaggerGridItem } from '@/components/public/motion/scroll-reveal';
@@ -28,13 +29,28 @@ const FILTERS = [
 export function ProductGrid({
   products,
   initialCategory = 'all',
+  openItemId,
 }: {
   products: Product[];
   initialCategory?: string;
+  /** From /products?item=<id> — opens the quick-view and scrolls the card in. */
+  openItemId?: string;
 }) {
   const { dict } = useT();
   /** Filter chips are UI, so they translate; product names never do. */
   const catLabel = (value: string) => productCategoryLabel(value, dict);
+  const [quickView, setQuickView] = React.useState<Product | null>(null);
+
+  React.useEffect(() => {
+    if (!openItemId) return;
+    const match = products.find((p) => p.id === openItemId);
+    if (!match) return;
+    setQuickView(match);
+    // Bring the matching card into view behind the drawer.
+    document
+      .getElementById(`product-${match.id}`)
+      ?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+  }, [openItemId, products]);
   const [category, setCategory] = React.useState<string>(initialCategory);
   const [query, setQuery] = React.useState('');
   const { items, add } = useEnquiryCart();
@@ -111,11 +127,14 @@ export function ProductGrid({
               product={p}
               added={inCart(p.id)}
               onAdd={() => add({ product_id: p.id, product_name: p.name })}
+              onOpen={() => setQuickView(p)}
             />
             </StaggerGridItem>
           ))}
         </StaggerGrid>
       )}
+
+      <ProductQuickView product={quickView} onClose={() => setQuickView(null)} />
     </div>
   );
 }
@@ -124,9 +143,11 @@ function ProductCard({
   product,
   added,
   onAdd,
+  onOpen,
 }: {
   product: Product;
   added: boolean;
+  onOpen: () => void;
   onAdd: () => void;
 }) {
   const { dict } = useT();
@@ -142,8 +163,17 @@ function ProductCard({
   const isDisabled = !product.in_stock || added;
 
   return (
-    <article className="card-soft tap-settle overflow-hidden flex flex-col h-full">
-      <div className="relative aspect-square bg-sand overflow-hidden">
+    <article
+      id={`product-${product.id}`}
+      className="card-soft tap-settle overflow-hidden flex flex-col h-full scroll-mt-28"
+    >
+      {/* Image and name both open the quick-view. */}
+      <button
+        type="button"
+        onClick={onOpen}
+        aria-label={product.name}
+        className="relative aspect-square bg-sand overflow-hidden text-left"
+      >
         {product.image_url ? (
           // Use plain img to allow any external host (picsum, supabase-stored uploads, unsplash)
           // eslint-disable-next-line @next/next/no-img-element
@@ -162,13 +192,15 @@ function ProductCard({
             {dict.products.outOfStock}
           </span>
         )}
-      </div>
+      </button>
       <div className="p-4 flex flex-col flex-1">
         <span className="eyebrow eyebrow--teal text-[0.7rem]">
-          {cat?.label ?? product.category}
+          {catName ?? product.category}
         </span>
         <h3 className="mt-2 font-serif font-medium text-[1.0625rem] leading-snug tracking-[-0.005em]">
-          {product.name}
+          <button type="button" onClick={onOpen} className="text-left hover:text-plum transition-colors">
+            {product.name}
+          </button>
         </h3>
         {product.description && (
           <p className="mt-1.5 text-[0.85rem] text-ink-muted leading-snug line-clamp-2">

@@ -12,6 +12,8 @@ import type { Dictionary } from '../types';
  * numbers, clock times, and ₹ amounts.
  */
 export const te = {
+  langPrompt: { question: 'తెలుగులో చూడాలా?', yes: 'అవును', no: 'English' },
+
   toggle: { switchTo: 'English', ariaLabel: 'ఇంగ్లీష్‌కు మార్చండి' },
 
   nav: {
@@ -73,6 +75,25 @@ export const te = {
     ],
   },
 
+  dock: {
+    heading: 'ఈరోజు మీకు ఏం కావాలి?',
+    tiles: [
+      { label: 'మందులు ఆర్డర్ చేయండి', helper: 'చూసి ఎంక్వైరీ పంపండి' },
+      { label: 'డాక్టర్ బుక్ చేయండి', helper: 'షాప్‌లో కన్సల్టేషన్' },
+      { label: 'ల్యాబ్ టెస్ట్ బుక్ చేయండి', helper: 'ఆదివారం షాప్‌లో, లేదా ఇంటి వద్ద' },
+      { label: 'ప్రశ్న అడగండి', helper: 'వాట్సాప్‌లో స్పందిస్తాం' },
+    ],
+  },
+
+  today: {
+    eyebrow: 'ఈరోజు షాప్‌లో',
+    noDoctors: 'ఈరోజు డాక్టర్ విజిట్లు లేవు',
+    testDayToday: 'ఈరోజే టెస్ట్ డే · 9 AM – 1 PM',
+    testDayTomorrow: 'రేపు టెస్ట్ డే',
+    testDayIn: 'ఆదివారం టెస్ట్ డే {n} రోజుల్లో',
+    book: 'బుక్ చేయండి →',
+  },
+
   stats: {
     eyebrow: 'సంఖ్యల్లో మేము',
     customersDaily: 'ప్రతిరోజూ కస్టమర్లు',
@@ -118,6 +139,7 @@ export const te = {
     whatsappFloat: 'వాట్సాప్‌లో మాతో మాట్లాడండి',
     availableTodayAt: 'ఈరోజు అందుబాటులో',
     nextAvailable: 'తర్వాత అందుబాటు',
+    suggestedNote: 'సూచించిన సమయం — వాట్సాప్‌లో నిర్ధారిస్తాం.',
     bookEyebrow: 'అపాయింట్‌మెంట్ బుక్ చేయండి',
     requestEyebrow: 'అపాయింట్‌మెంట్ అభ్యర్థించండి',
   },
@@ -263,6 +285,10 @@ export const te = {
     inStock: 'స్టాక్ ఉంది',
     none: 'ఇంకా ఉత్పత్తులు జోడించలేదు.',
     noneFiltered: 'మీ వెతుకులాటకు సరిపోయే ఉత్పత్తులు లేవు.',
+    outOfStockLong: 'ప్రస్తుతం స్టాక్‌లో లేదు',
+    askOnWhatsapp: 'దీని గురించి వాట్సాప్‌లో అడగండి',
+    askMessage: 'నమస్తే, {product} అందుబాటులో ఉందా? ధర ఎంత?',
+    quickViewClose: 'ఉత్పత్తి మూసివేయండి',
   },
 
   about: {
@@ -383,6 +409,32 @@ export const te = {
     whatsappIntro: 'నమస్తే, ఈ ఉత్పత్తుల అందుబాటు గురించి తెలుసుకోవాలనుకుంటున్నాను:',
   },
 
+  whatsappHelper: {
+    online: 'మేము ఆన్‌లైన్‌లో ఉన్నాం',
+    offlineAt: '{time}కి తెరిచాక స్పందిస్తాం',
+    greeting: 'నమస్తే 👋 సహాయం కావాలా?',
+    replyNoteDefault: 'సాధారణంగా 15 నిమిషాల్లో స్పందిస్తాం.',
+    chipOrder: 'మందులు ఆర్డర్ చేయండి',
+    chipTest: 'టెస్ట్ బుక్ చేయండి',
+    chipDoctor: 'డాక్టర్ గురించి అడగండి',
+    startChat: 'చాట్ ప్రారంభించండి →',
+    close: 'మూసివేయండి',
+    openHelper: 'వాట్సాప్‌లో మాతో మాట్లాడండి',
+    msgTest: 'నమస్తే, నేను ల్యాబ్ టెస్ట్ బుక్ చేయాలనుకుంటున్నాను.',
+    msgDoctor: 'నమస్తే, డాక్టర్ కన్సల్టేషన్ గురించి ప్రశ్న ఉంది.',
+    msgGeneric: 'నమస్తే, నాకు ఒక ప్రశ్న ఉంది.',
+  },
+
+  search: {
+    open: 'వెతకండి',
+    placeholder: 'మందులు, పరీక్షలు, డాక్టర్లు వెతకండి…',
+    products: 'ఉత్పత్తులు',
+    tests: 'పరీక్షలు',
+    doctors: 'డాక్టర్లు',
+    empty: 'ఫలితాలు లేవు. వాట్సాప్‌లో అడగండి →',
+    close: 'వెతుకులాట మూసివేయండి',
+  },
+
   banner: { dismiss: 'మూసివేయండి', regionLabel: 'సైట్ ప్రకటన' },
 
   status: {
@@ -397,6 +449,8 @@ export const te = {
   common: {
     bookATest: 'టెస్ట్ బుక్ చేయండి →',
     everyDay: 'ప్రతిరోజూ',
+    today: 'ఈరోజు',
+    suggestedTimes: 'సూచించిన సమయాలు',
     closedLabel: 'మూసి ఉంది',
     days: { mon: 'సోమ', tue: 'మంగళ', wed: 'బుధ', thu: 'గురు', fri: 'శుక్ర', sat: 'శని', sun: 'ఆది' },
     fullDays: {
@@ -405,6 +459,8 @@ export const te = {
     },
     specialties: { nadi: 'నాడి', physiotherapy: 'ఫిజియోథెరపీ', homeopathy: 'హోమియోపతి' },
   },
+
+  faq: { eyebrow: 'ప్రశ్నలు', heading: 'ప్రజలు మమ్మల్ని అడిగేవి.' },
 
   legal: {
     teNotice: 'ఈ పేజీ ప్రస్తుతం ఇంగ్లీష్‌లో అందుబాటులో ఉంది.',

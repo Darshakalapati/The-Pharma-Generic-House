@@ -15,6 +15,12 @@ export const LOCALES: Locale[] = ['en', 'te'];
 export const DEFAULT_LOCALE: Locale = 'en';
 
 export interface Dictionary {
+  langPrompt: {
+    question: string;
+    yes: string;
+    no: string;
+  };
+
   toggle: {
     /** Label shown on the pill — the language it switches TO. */
     switchTo: string;
@@ -61,6 +67,20 @@ export interface Dictionary {
     cards: { title: string; body: string }[];
   };
 
+  dock: {
+    heading: string;
+    tiles: { label: string; helper: string }[];
+  };
+
+  today: {
+    eyebrow: string;
+    noDoctors: string;
+    testDayToday: string;
+    testDayTomorrow: string;
+    testDayIn: string;
+    book: string;
+  };
+
   stats: {
     eyebrow: string;
     customersDaily: string;
@@ -105,6 +125,7 @@ export interface Dictionary {
     whatsappFloat: string;
     availableTodayAt: string;
     nextAvailable: string;
+    suggestedNote: string;
     bookEyebrow: string;
     requestEyebrow: string;
   };
@@ -210,6 +231,10 @@ export interface Dictionary {
     inStock: string;
     none: string;
     noneFiltered: string;
+    outOfStockLong: string;
+    askOnWhatsapp: string;
+    askMessage: string;
+    quickViewClose: string;
   };
 
   about: {
@@ -315,6 +340,32 @@ export interface Dictionary {
     whatsappIntro: string;
   };
 
+  whatsappHelper: {
+    online: string;
+    offlineAt: string;
+    greeting: string;
+    replyNoteDefault: string;
+    chipOrder: string;
+    chipTest: string;
+    chipDoctor: string;
+    startChat: string;
+    close: string;
+    openHelper: string;
+    msgTest: string;
+    msgDoctor: string;
+    msgGeneric: string;
+  };
+
+  search: {
+    open: string;
+    placeholder: string;
+    products: string;
+    tests: string;
+    doctors: string;
+    empty: string;
+    close: string;
+  };
+
   banner: {
     dismiss: string;
     regionLabel: string;
@@ -332,6 +383,8 @@ export interface Dictionary {
   common: {
     bookATest: string;
     everyDay: string;
+    today: string;
+    suggestedTimes: string;
     closedLabel: string;
     days: { mon: string; tue: string; wed: string; thu: string; fri: string; sat: string; sun: string };
     fullDays: {
@@ -339,6 +392,11 @@ export interface Dictionary {
       friday: string; saturday: string; sunday: string;
     };
     specialties: { nadi: string; physiotherapy: string; homeopathy: string };
+  };
+
+  faq: {
+    eyebrow: string;
+    heading: string;
   };
 
   legal: {

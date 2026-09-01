@@ -23,6 +23,9 @@ import { PromoBanners } from '@/components/public/promo-banners';
 import { HomeHero } from '@/components/public/home-hero';
 import { DoctorsCarousel } from '@/components/public/doctors-carousel';
 import { HomeStats } from '@/components/public/home-stats';
+import { QuickActionDock } from '@/components/public/quick-action-dock';
+import { FaqSection } from '@/components/public/faq-section';
+import { SectionDots } from '@/components/public/section-dots';
 import { FamilyStory } from '@/components/public/family-story';
 import { MortarPestleAccent } from '@/components/public/botanical-accents';
 import { SectionCurve } from '@/components/public/motion/section-curve';
@@ -64,7 +67,8 @@ const PRODUCT_TILES = [
 
 export default async function HomePage() {
   const supabase = createClient();
-  const dict = getDictionary(getLocale());
+  const locale = getLocale();
+  const dict = getDictionary(locale);
   const [settings, schedule] = await Promise.all([getShopSettings(), getSchedule()]);
   const hoursSummary = formatHoursSummary(schedule, dict);
 
@@ -126,12 +130,21 @@ export default async function HomePage() {
 
   return (
     <>
+      <SectionDots />
+
       {/* SECTION 1 — HERO ─────────────────────────────────────────── */}
-      <HomeHero
+      <div id="hero">
+        <HomeHero
         photos={heroSlides}
         googleRating={settings.google_rating}
         googleReviewCount={settings.google_review_count}
-      />
+        />
+      </div>
+
+      {/* SECTION 1.5 — QUICK ACTIONS + TODAY ─────────────────────── */}
+      <div id="today">
+        <QuickActionDock doctors={docs} schedule={schedule} dict={dict} />
+      </div>
 
       {/* Hero settles into the trust bar on a shallow curve. */}
       <SectionCurve variant="valley" color="var(--sand)" className="h-6 md:h-10 -mb-px" />
@@ -153,7 +166,7 @@ export default async function HomePage() {
       </ScrollReveal>
 
       {/* SECTION 2 — WHAT WE OFFER ────────────────────────────────── */}
-      <ScrollReveal as="section" className="container-public relative mt-20 sm:mt-28">
+      <ScrollReveal as="section" id="offer" className="container-public relative mt-20 sm:mt-28">
         <MortarPestleAccent className="left-0 -bottom-10" />
 
         <ScrollRevealItem as="div" className="max-w-2xl">
@@ -186,14 +199,18 @@ export default async function HomePage() {
       <PromoBanners />
 
       {/* SECTION 2.6 — BY THE NUMBERS ─────────────────────────────── */}
-      <HomeStats />
+      <div id="numbers">
+        <HomeStats />
+      </div>
 
       {/* SECTION 2.7 — OUR STORY / THE PERSON BEHIND THE SHOP ─────── */}
-      <FamilyStory member={featuredMember} dict={dict} />
+      <div id="story">
+        <FamilyStory member={featuredMember} dict={dict} />
+      </div>
 
       {/* SECTION 3 — DOCTORS ──────────────────────────────────────── */}
       {docs.length > 0 && (
-        <ScrollReveal as="section" className="container-public mt-20 sm:mt-28">
+        <ScrollReveal as="section" id="doctors" className="container-public mt-20 sm:mt-28">
           <ScrollRevealItem as="div" className="max-w-2xl">
             <span className="eyebrow">{dict.doctors.eyebrow}</span>
             <h2 className="h-section mt-4">{dict.doctors.heading}</h2>
@@ -215,7 +232,7 @@ export default async function HomePage() {
       <CustomerReviews />
 
       {/* SECTION 4 — SUNDAY DIAGNOSTICS ──────────────────────────── */}
-      <ScrollReveal as="section" className="mt-24 sm:mt-32 bg-sand border-y border-line">
+      <ScrollReveal as="section" id="diagnostics" className="mt-24 sm:mt-32 bg-sand border-y border-line">
         <div className="container-public py-16 sm:py-24">
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
             <div>
@@ -357,6 +374,9 @@ export default async function HomePage() {
           </ScrollRevealItem>
         </div>
       </ScrollReveal>
+
+      {/* SECTION 6.5 — QUESTIONS ─────────────────────────────────── */}
+      <FaqSection />
 
       {/* SECTION 7 — CONTACT CTA ─────────────────────────────────── */}
       <ScrollReveal as="section" className="mt-24 sm:mt-32 bg-plum text-white">

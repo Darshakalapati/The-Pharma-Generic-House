@@ -7,6 +7,8 @@ import type { Dictionary } from '../types';
  * mode renders exactly as it did before the i18n layer existed.
  */
 export const en = {
+  langPrompt: { question: 'తెలుగులో చూడాలా?', yes: 'అవును', no: 'English' },
+
   toggle: { switchTo: 'తెలుగు', ariaLabel: 'Switch to Telugu' },
 
   nav: {
@@ -68,6 +70,25 @@ export const en = {
     ],
   },
 
+  dock: {
+    heading: 'What do you need today?',
+    tiles: [
+      { label: 'Order medicines', helper: 'Browse and send an enquiry' },
+      { label: 'Book a doctor', helper: 'In-shop consultations' },
+      { label: 'Book a lab test', helper: 'Sunday at the shop, or at home' },
+      { label: 'Ask a question', helper: 'We reply on WhatsApp' },
+    ],
+  },
+
+  today: {
+    eyebrow: 'Today at the shop',
+    noDoctors: 'No doctor visits today',
+    testDayToday: 'Today is Test Day · 9 AM – 1 PM',
+    testDayTomorrow: 'Test Day tomorrow',
+    testDayIn: 'Sunday Test Day in {n} days',
+    book: 'Book →',
+  },
+
   stats: {
     eyebrow: 'By the numbers',
     customersDaily: 'customers every day',
@@ -113,6 +134,7 @@ export const en = {
     whatsappFloat: 'Chat with us on WhatsApp',
     availableTodayAt: 'Available today',
     nextAvailable: 'Next available',
+    suggestedNote: 'Suggested time — we confirm on WhatsApp.',
     bookEyebrow: 'Book appointment',
     requestEyebrow: 'Request appointment',
   },
@@ -258,6 +280,10 @@ export const en = {
     inStock: 'In stock',
     none: 'No products listed yet.',
     noneFiltered: 'No products match your search.',
+    outOfStockLong: 'Currently out of stock',
+    askOnWhatsapp: 'Ask about this on WhatsApp',
+    askMessage: 'Hi, is {product} available? What is the price?',
+    quickViewClose: 'Close product',
   },
 
   about: {
@@ -379,6 +405,32 @@ export const en = {
       "Hello, I'd like to enquire about the following from The Pharma Generic House:",
   },
 
+  whatsappHelper: {
+    online: "We're online",
+    offlineAt: 'We reply when we open at {time}',
+    greeting: 'Hi 👋 Need help?',
+    replyNoteDefault: 'We usually reply within 15 minutes.',
+    chipOrder: 'Order medicines',
+    chipTest: 'Book a test',
+    chipDoctor: 'Ask about a doctor',
+    startChat: 'Start a chat →',
+    close: 'Close',
+    openHelper: 'Chat with us on WhatsApp',
+    msgTest: "Hi, I'd like to book a lab test.",
+    msgDoctor: 'Hi, I have a question about doctor consultations.',
+    msgGeneric: 'Hello, I have a question.',
+  },
+
+  search: {
+    open: 'Search',
+    placeholder: 'Search medicines, tests, doctors…',
+    products: 'Products',
+    tests: 'Tests',
+    doctors: 'Doctors',
+    empty: 'No results. Ask us on WhatsApp →',
+    close: 'Close search',
+  },
+
   banner: { dismiss: 'Dismiss announcement', regionLabel: 'Site announcement' },
 
   status: {
@@ -393,6 +445,8 @@ export const en = {
   common: {
     bookATest: 'Book a test →',
     everyDay: 'Every day',
+    today: 'Today',
+    suggestedTimes: 'Suggested times',
     closedLabel: 'Closed',
     days: { mon: 'Mon', tue: 'Tue', wed: 'Wed', thu: 'Thu', fri: 'Fri', sat: 'Sat', sun: 'Sun' },
     fullDays: {
@@ -401,6 +455,8 @@ export const en = {
     },
     specialties: { nadi: 'Nadi', physiotherapy: 'Physiotherapy', homeopathy: 'Homeopathy' },
   },
+
+  faq: { eyebrow: 'Questions', heading: 'Things people ask us.' },
 
   legal: {
     teNotice: '',

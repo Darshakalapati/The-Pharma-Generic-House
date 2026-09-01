@@ -8,9 +8,22 @@ import { formatINR } from '@/lib/utils';
 import { StaggerGrid, StaggerGridItem } from '@/components/public/motion/scroll-reveal';
 import type { MedicalTest } from '@/lib/types';
 
-export function TestList({ tests }: { tests: MedicalTest[] }) {
+export function TestList({
+  tests,
+  openTestId,
+}: {
+  tests: MedicalTest[];
+  /** From /tests?book=<id> — used by search results to jump straight in. */
+  openTestId?: string;
+}) {
   const { dict } = useT();
   const [active, setActive] = React.useState<MedicalTest | null>(null);
+
+  React.useEffect(() => {
+    if (!openTestId) return;
+    const match = tests.find((t) => t.id === openTestId);
+    if (match) setActive(match);
+  }, [openTestId, tests]);
 
   if (tests.length === 0) {
     return (

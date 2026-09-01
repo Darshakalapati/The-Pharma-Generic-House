@@ -114,6 +114,8 @@ export interface ShopSettings {
   /** Admin-uploaded section photos; empty string falls back to the bundled image. */
   diagnostics_photo_url: string;
   about_photo_url: string;
+  /** Admin-editable note in the WhatsApp helper; empty falls back to the dictionary. */
+  whatsapp_reply_note: string;
   /** Copied from the Google Business Profile. Null until an admin fills them in;
    *  the rating badge renders only when both are present. */
   google_rating: number | null;
@@ -186,6 +188,18 @@ export interface FamilyMember {
   display_order: number;
   is_active: boolean;
   is_featured_quote: boolean;
+  created_at: string;
+}
+
+/** A question from the home page accordion. Telugu fields are optional. */
+export interface Faq {
+  id: string;
+  question: string;
+  answer: string;
+  question_te: string | null;
+  answer_te: string | null;
+  display_order: number;
+  is_active: boolean;
   created_at: string;
 }
 

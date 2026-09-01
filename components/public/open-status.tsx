@@ -20,12 +20,14 @@ export function OpenStatus({
   schedule,
   className,
   compact = false,
+  compactBelow = 'xl',
 }: {
   schedule: Schedule;
   className?: string;
-  /** Laptop tier: shorten the label to keep the nav row on one line. The full
-   *  wording stays in the title attribute so nothing is lost. */
+  /** Shorten the label below `compactBelow` to keep a tight row on one line.
+   *  The full wording stays in the title attribute so nothing is lost. */
   compact?: boolean;
+  compactBelow?: 'md' | 'xl';
 }) {
   const { dict } = useT();
   const [status, setStatus] = React.useState<ReturnType<typeof getOpenStatus> | null>(
@@ -67,8 +69,12 @@ export function OpenStatus({
       <span aria-hidden className={cn('block h-2 w-2 rounded-full shrink-0', dotClass)} />
       {compact ? (
         <>
-          <span className="xl:hidden">{compactLabel}</span>
-          <span className="hidden xl:inline">{status.label}</span>
+          <span className={compactBelow === 'md' ? 'md:hidden' : 'xl:hidden'}>
+            {compactLabel}
+          </span>
+          <span className={compactBelow === 'md' ? 'hidden md:inline' : 'hidden xl:inline'}>
+            {status.label}
+          </span>
         </>
       ) : (
         status.label

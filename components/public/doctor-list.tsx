@@ -7,6 +7,8 @@ import { AppointmentDialog } from './appointment-dialog';
 import { resolveDoctorPhoto } from '@/lib/images';
 import { DoctorAvailabilityBadge } from './doctor-availability-badge';
 import { useT } from './i18n/language-provider';
+import { DoctorSlots } from './doctor-slots';
+import type { Slot } from '@/lib/slots';
 import { formatINR, formatTime12, formatSpecialty, formatDays } from '@/lib/utils';
 import { StaggerGrid, StaggerGridItem } from '@/components/public/motion/scroll-reveal';
 import type { Doctor } from '@/lib/types';
@@ -14,12 +16,30 @@ import type { Doctor } from '@/lib/types';
 export function DoctorList({
   doctors,
   whatsappNumber,
+  openDoctorId,
+  openDate,
+  openTime,
 }: {
   doctors: Doctor[];
   whatsappNumber: string;
+  /** From /doctors?book=<id>&date=&time= — opens that doctor prefilled. */
+  openDoctorId?: string;
+  openDate?: string;
+  openTime?: string;
 }) {
   const { dict } = useT();
   const [active, setActive] = React.useState<Doctor | null>(null);
+  const [preset, setPreset] = React.useState<Slot | null>(null);
+
+  React.useEffect(() => {
+    if (!openDoctorId) return;
+    const match = doctors.find((d) => d.id === openDoctorId);
+    if (!match) return;
+    setActive(match);
+    if (openDate && openTime) {
+      setPreset({ date: openDate, time: openTime, label: '' });
+    }
+  }, [openDoctorId, openDate, openTime, doctors]);
 
   if (doctors.length === 0) {
     return (
@@ -34,7 +54,17 @@ export function DoctorList({
       <StaggerGrid inherit className="space-y-6 sm:space-y-7" stagger={0.08}>
         {doctors.map((d) => (
           <StaggerGridItem key={d.id}>
-            <DoctorCard doctor={d} onBook={() => setActive(d)} />
+            <DoctorCard
+              doctor={d}
+              onBook={() => {
+                setPreset(null);
+                setActive(d);
+              }}
+              onPickSlot={(slot) => {
+                setPreset(slot);
+                setActive(d);
+              }}
+            />
           </StaggerGridItem>
         ))}
       </StaggerGrid>
@@ -43,7 +73,13 @@ export function DoctorList({
         <AppointmentDialog
           doctor={active}
           open={!!active}
-          onOpenChange={(v) => !v && setActive(null)}
+          onOpenChange={(v) => {
+            if (!v) {
+              setActive(null);
+              setPreset(null);
+            }
+          }}
+          presetSlot={preset}
           whatsappNumber={whatsappNumber}
         />
       )}
@@ -51,7 +87,15 @@ export function DoctorList({
   );
 }
 
-function DoctorCard({ doctor, onBook }: { doctor: Doctor; onBook: () => void }) {
+function DoctorCard({
+  doctor,
+  onBook,
+  onPickSlot,
+}: {
+  doctor: Doctor;
+  onBook: () => void;
+  onPickSlot: (slot: Slot) => void;
+}) {
   const { dict } = useT();
   const specialty = formatSpecialty(doctor.specialty, dict);
   const photo = resolveDoctorPhoto(doctor.photo_url, doctor.name);
@@ -130,7 +174,9 @@ function DoctorCard({ doctor, onBook }: { doctor: Doctor; onBook: () => void }) 
             )}
           </div>
 
-          <div className="mt-6">
+          <DoctorSlots doctor={doctor} onPick={onPickSlot} />
+
+          <div className="mt-4">
             <button onClick={onBook} className="btn-plum">
               {doctor.is_on_request ? dict.doctors.request : dict.doctors.book}
               <ArrowRight className="h-4 w-4" />

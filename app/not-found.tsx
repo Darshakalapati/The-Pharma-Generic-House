@@ -6,6 +6,9 @@ import { WhatsAppGlyph } from '@/components/public/whatsapp-glyph';
 import { getShopSettings, getSchedule } from '@/lib/settings';
 import { getDictionary, getLocale } from '@/lib/i18n';
 import { LanguageProvider } from '@/components/public/i18n/language-provider';
+import { WhatsAppHelperProvider } from '@/components/public/whatsapp-helper';
+import { SearchProvider } from '@/components/public/search-modal';
+import { UtilityBar } from '@/components/public/utility-bar';
 import { whatsappLink } from '@/lib/utils';
 
 export const metadata = { title: 'Page not found' };
@@ -27,7 +30,17 @@ export default async function NotFound() {
 
   return (
     <LanguageProvider dict={dict} locale={locale}>
+      {/* The 404 renders its own chrome, so it needs the same providers the
+          public layout supplies — the nav's search button and the footer's
+          WhatsApp row both read from them. */}
+      <WhatsAppHelperProvider
+        whatsapp={settings.shop_whatsapp}
+        schedule={schedule}
+        replyNote={settings.whatsapp_reply_note}
+      >
+      <SearchProvider>
       <div className={`site-grain bg-bg text-ink${locale === 'te' ? ' lang-te' : ''}`}>
+      <UtilityBar schedule={schedule} dict={dict} />
       <SiteNav
         shopPhone={settings.shop_phone}
         shopWhatsApp={settings.shop_whatsapp}
@@ -75,6 +88,8 @@ export default async function NotFound() {
 
       <SiteFooter settings={settings} schedule={schedule} dict={dict} locale={locale} />
       </div>
+      </SearchProvider>
+      </WhatsAppHelperProvider>
     </LanguageProvider>
   );
 }

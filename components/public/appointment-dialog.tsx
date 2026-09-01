@@ -42,9 +42,17 @@ interface Props {
   open: boolean;
   onOpenChange: (v: boolean) => void;
   whatsappNumber: string;
+  /** Chosen from a suggested-time chip; prefills date and time. */
+  presetSlot?: { date: string; time: string } | null;
 }
 
-export function AppointmentDialog({ doctor, open, onOpenChange, whatsappNumber }: Props) {
+export function AppointmentDialog({
+  doctor,
+  open,
+  onOpenChange,
+  whatsappNumber,
+  presetSlot = null,
+}: Props) {
   const { dict } = useT();
   const [submitting, setSubmitting] = React.useState(false);
   // Resolved after mount for the same reason as the card badge: "today" must
@@ -101,15 +109,21 @@ export function AppointmentDialog({ doctor, open, onOpenChange, whatsappNumber }
     if (!open) reset();
   }, [open, reset]);
 
-  // When the doctor consults today, start the date picker on today — but only
-  // if today is genuinely selectable under the existing rules.
+  // A suggested-time chip wins over the default; otherwise start the picker on
+  // today when the doctor genuinely consults today.
   React.useEffect(() => {
-    if (!open || availability?.state !== 'today') return;
+    if (!open) return;
+    if (presetSlot) {
+      setValue('preferred_date', presetSlot.date);
+      setValue('preferred_time', presetSlot.time);
+      return;
+    }
+    if (availability?.state !== 'today') return;
     const today = upcomingDates[0];
     if (today && !today.disabled) {
       setValue('preferred_date', today.value);
     }
-  }, [open, availability, upcomingDates, setValue]);
+  }, [open, presetSlot, availability, upcomingDates, setValue]);
 
   const submit = async (data: FormValues, andWhatsApp = false) => {
     setSubmitting(true);
@@ -163,6 +177,9 @@ export function AppointmentDialog({ doctor, open, onOpenChange, whatsappNumber }
           : `${specialty} · ${formatDays(doctor.available_days, dict)}`
       }
     >
+      {presetSlot && (
+        <p className="mb-4 text-[0.875rem] text-ink-muted">{dict.doctors.suggestedNote}</p>
+      )}
       {availability && availability.state !== 'on_request' && (
         <p
           className={

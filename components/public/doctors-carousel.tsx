@@ -9,6 +9,8 @@ import { formatINR, formatTime12, formatSpecialty, formatDays } from '@/lib/util
 import { resolveDoctorPhoto } from '@/lib/images';
 import { DoctorAvailabilityBadge } from './doctor-availability-badge';
 import { useT } from './i18n/language-provider';
+import { DoctorSlots } from './doctor-slots';
+import { useRouter } from 'next/navigation';
 import type { Doctor } from '@/lib/types';
 
 /** Matches the `gap-6` on the track. Used to compute one arrow-click step. */
@@ -25,6 +27,7 @@ const GAP_PX = 24;
  */
 export function DoctorsCarousel({ doctors }: { doctors: Doctor[] }) {
   const { dict } = useT();
+  const router = useRouter();
   const trackRef = React.useRef<HTMLDivElement | null>(null);
   const reduced = useReducedMotion();
 
@@ -145,9 +148,18 @@ export function DoctorsCarousel({ doctors }: { doctors: Doctor[] }) {
                     )}
                   </div>
 
+                  <DoctorSlots
+                    doctor={d}
+                    onPick={(slot) =>
+                      router.push(
+                        `/doctors?book=${d.id}&date=${slot.date}&time=${encodeURIComponent(slot.time)}`
+                      )
+                    }
+                  />
+
                   <Link
                     href="/doctors"
-                    className="mt-5 inline-flex items-center gap-1 text-[0.9375rem] font-medium text-plum hover:text-plum-deep self-start"
+                    className="mt-4 inline-flex items-center gap-1 text-[0.9375rem] font-medium text-plum hover:text-plum-deep self-start"
                   >
                     {d.is_on_request ? dict.doctors.request : dict.doctors.book}
                     <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
