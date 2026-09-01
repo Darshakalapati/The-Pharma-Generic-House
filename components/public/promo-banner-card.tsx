@@ -73,26 +73,15 @@ function ImageBanner({
           />
         )}
 
-        {hasButton && (
-          <>
-            {/* Overlaid button on tablet+ only — on phones it would cover too
-                much of a small banner, so it moves below the artwork instead. */}
-            <span
-              aria-hidden
-              className="hidden md:block absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/45 via-black/15 to-transparent"
-            />
-            <span className="hidden md:block absolute bottom-6 left-6 sm:bottom-8 sm:left-8">
-              <span className="inline-flex items-center justify-center h-10 px-5 rounded-md border border-plum bg-bg-elevated text-plum text-[0.9375rem] font-medium transition-colors group-hover:bg-plum group-hover:text-white">
-                {banner.button_label}
-              </span>
-            </span>
-          </>
-        )}
       </span>
 
+      {/* The button lives below the artwork at every width — no gradient and
+          no overlay, so the uploaded design is never covered. */}
       {hasButton && (
-        <span className="md:hidden mt-2 flex h-12 w-full items-center justify-center rounded-md border border-plum bg-bg-elevated text-plum text-[0.9375rem] font-medium">
-          {banner.button_label}
+        <span className="mt-3 flex md:justify-end">
+          <span className="inline-flex h-12 w-full md:h-10 md:w-auto items-center justify-center rounded-md border border-plum bg-bg-elevated px-5 text-[0.9375rem] font-medium text-plum transition-colors group-hover:bg-plum group-hover:text-white">
+            {banner.button_label}
+          </span>
         </span>
       )}
     </Surface>

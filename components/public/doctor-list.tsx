@@ -104,8 +104,8 @@ function DoctorCard({
     <article className="card-soft tap-settle overflow-hidden">
       <div className="grid md:grid-cols-12">
         {/* Photo */}
+        {/* Photo only — nothing is layered over it. */}
         <div className="relative md:col-span-4 aspect-[4/3] md:aspect-auto md:min-h-[280px] bg-sand">
-          <DoctorAvailabilityBadge doctor={doctor} />
           {photo && (
             <Image
               src={photo}
@@ -119,6 +119,7 @@ function DoctorCard({
 
         {/* Info */}
         <div className="md:col-span-8 p-6 sm:p-8 flex flex-col">
+          <DoctorAvailabilityBadge doctor={doctor} />
           <span className="eyebrow eyebrow--teal">
             {doctor.is_on_request ? dict.doctors.byRequest : specialty}
           </span>

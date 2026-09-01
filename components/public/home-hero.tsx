@@ -5,7 +5,6 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { ScrollReveal, ScrollRevealItem } from '@/components/public/motion/scroll-reveal';
 import { KenBurnsPhoto, type KenBurnsSlide } from '@/components/public/ken-burns-photo';
-import { LeafAccent } from '@/components/public/botanical-accents';
 import { GoogleRatingPill } from '@/components/public/google-rating';
 import { Magnetic } from '@/components/public/motion/magnetic';
 import { WhatsAppGlyph } from '@/components/public/whatsapp-glyph';
@@ -46,8 +45,6 @@ export function HomeHero({
 
   return (
     <ScrollReveal as="section" className="container-public relative pt-12 sm:pt-16 pb-10 sm:pb-16">
-      <LeafAccent className="right-4 top-2 xl:right-8" />
-
       <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
         <div>
           {googleRating != null && googleReviewCount != null && (
@@ -107,13 +104,6 @@ export function HomeHero({
               sizes="(max-width: 1024px) 100vw, 50vw"
               priority
             />
-          </div>
-          {/* Tiny floating accent — small teal cross */}
-          <div
-            aria-hidden
-            className="absolute -bottom-3 -left-3 h-12 w-12 rounded-full bg-teal/10 border border-teal/20 hidden sm:flex items-center justify-center"
-          >
-            <span className="block h-2 w-2 rounded-full bg-teal" />
           </div>
         </motion.div>
       </div>

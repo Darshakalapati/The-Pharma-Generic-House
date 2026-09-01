@@ -187,16 +187,19 @@ function ProductCard({
             No image
           </div>
         )}
-        {!product.in_stock && (
-          <span className="absolute top-2 left-2 inline-flex items-center px-2 py-1 rounded-md bg-bg-elevated/95 backdrop-blur border border-line text-[0.7rem] font-medium text-ink-muted">
-            {dict.products.outOfStock}
-          </span>
-        )}
       </button>
       <div className="p-4 flex flex-col flex-1">
-        <span className="eyebrow eyebrow--teal text-[0.7rem]">
-          {catName ?? product.category}
-        </span>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="eyebrow eyebrow--teal text-[0.7rem]">
+            {catName ?? product.category}
+          </span>
+          {/* Stock state lives beside the category, never over the photo. */}
+          {!product.in_stock && (
+            <span className="inline-flex items-center rounded-md border border-line bg-sand px-2 py-0.5 text-[0.7rem] font-medium text-ink-muted">
+              {dict.products.outOfStock}
+            </span>
+          )}
+        </div>
         <h3 className="mt-2 font-serif font-medium text-[1.0625rem] leading-snug tracking-[-0.005em]">
           <button type="button" onClick={onOpen} className="text-left hover:text-plum transition-colors">
             {product.name}

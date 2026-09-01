@@ -100,8 +100,8 @@ export function DoctorsCarousel({ doctors }: { doctors: Doctor[] }) {
               className="snap-start shrink-0 w-[85vw] max-w-[340px]"
             >
               <article className="card-soft tap-settle overflow-hidden flex flex-col group h-full">
+                {/* Photo only — nothing is layered over it. */}
                 <div className="relative aspect-[4/3] md:aspect-[4/3] bg-sand overflow-hidden">
-                  <DoctorAvailabilityBadge doctor={d} />
                   {photo && (
                     <Image
                       src={photo}
@@ -113,6 +113,7 @@ export function DoctorsCarousel({ doctors }: { doctors: Doctor[] }) {
                   )}
                 </div>
                 <div className="p-6 flex flex-col flex-1">
+                  <DoctorAvailabilityBadge doctor={d} />
                   <span className="eyebrow eyebrow--teal">
                     {d.is_on_request ? dict.doctors.byRequest : formatSpecialty(d.specialty, dict)}
                   </span>
@@ -205,10 +206,12 @@ function CarouselArrow({
       onClick={onClick}
       aria-label={direction === 'left' ? labels.prev : labels.next}
       className={[
-        'absolute top-1/2 -translate-y-1/2 z-10 hidden md:inline-flex h-10 w-10 items-center justify-center',
+        'absolute top-1/2 -translate-y-1/2 z-10 hidden lg:inline-flex h-10 w-10 items-center justify-center',
         'rounded-full border border-line bg-bg-elevated text-plum shadow-soft',
         'transition-colors hover:bg-plum hover:text-white hover:border-plum',
-        direction === 'left' ? '-left-5' : '-right-5',
+        direction === 'left'
+          ? 'left-0 -translate-x-[calc(100%+0.5rem)]'
+          : 'right-0 translate-x-[calc(100%+0.5rem)]',
       ].join(' ')}
     >
       <Icon className="h-5 w-5" />

@@ -12,8 +12,8 @@ const TILE_ICONS = [Pill, Stethoscope, FlaskConical, MessageCircle];
  * The four things people actually come here to do, surfaced immediately under
  * the hero so nobody has to hunt through the page for them.
  *
- * Lifted 48px over the hero's bottom edge, which is what makes it read as a
- * panel resting on the page rather than another band in the stack.
+ * Sits below the hero with normal section spacing — nothing is layered over
+ * the hero photograph.
  */
 const TILE_CLASS =
   'group flex min-h-[72px] items-center gap-3 rounded-xl border border-line ' +
@@ -32,7 +32,7 @@ export function QuickActionDock({
   const hrefs = ['/products', '/doctors', '/tests'];
 
   return (
-    <section className="container-public relative z-10 -mt-12">
+    <section className="container-public mt-10">
       <div className="rounded-2xl border border-line bg-bg-elevated p-6 shadow-card">
         <div className="grid gap-6 lg:grid-cols-12 lg:gap-8">
           <div className="lg:col-span-8">

@@ -96,7 +96,7 @@ export function PromoBannerCarousel({ banners }: { banners: PromoBanner[] }) {
           type="button"
           aria-label={dict.doctors.prevBanner}
           onClick={prev}
-          className="hidden lg:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 z-10 h-10 w-10 items-center justify-center rounded-full border border-line bg-bg-elevated shadow-soft hover:border-plum hover:text-plum transition-colors"
+          className="hidden lg:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-[calc(100%+0.5rem)] z-10 h-10 w-10 items-center justify-center rounded-full border border-line bg-bg-elevated shadow-soft hover:border-plum hover:text-plum transition-colors"
         >
           <ChevronLeft className="h-4 w-4" />
         </button>
@@ -104,7 +104,7 @@ export function PromoBannerCarousel({ banners }: { banners: PromoBanner[] }) {
           type="button"
           aria-label={dict.doctors.nextBanner}
           onClick={next}
-          className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 z-10 h-10 w-10 items-center justify-center rounded-full border border-line bg-bg-elevated shadow-soft hover:border-plum hover:text-plum transition-colors"
+          className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-[calc(100%+0.5rem)] z-10 h-10 w-10 items-center justify-center rounded-full border border-line bg-bg-elevated shadow-soft hover:border-plum hover:text-plum transition-colors"
         >
           <ChevronRight className="h-4 w-4" />
         </button>

@@ -72,14 +72,17 @@ export function ProductQuickView({
           'sm:inset-y-0 sm:left-auto sm:right-0 sm:max-h-none sm:w-[440px] sm:rounded-none sm:border-l sm:border-line'
         )}
       >
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label={dict.products.quickViewClose}
-          className="absolute right-4 top-4 z-10 grid h-9 w-9 place-items-center rounded-full bg-bg-elevated/90 text-ink shadow-soft hover:bg-sand"
-        >
-          <X className="h-4 w-4" />
-        </button>
+        {/* Close sits in its own bar above the image rather than on top of it. */}
+        <div className="flex shrink-0 justify-end border-b border-line px-3 py-2">
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label={dict.products.quickViewClose}
+            className="grid h-9 w-9 place-items-center rounded-full text-ink-muted hover:bg-sand hover:text-ink"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
 
         <div className="aspect-square w-full shrink-0 bg-sand">
           {product.image_url && (

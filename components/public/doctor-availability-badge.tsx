@@ -2,19 +2,22 @@
 
 import * as React from 'react';
 import { getDoctorAvailability, cn } from '@/lib/utils';
-import type { Doctor } from '@/lib/types';
 import { useT } from './i18n/language-provider';
+import type { Doctor } from '@/lib/types';
 
 /**
- * "Available today" / "Next: Wed" marker, overlaid on a doctor's photo.
+ * "Available today" / "Next: Wed" pill, rendered as the first row of a doctor
+ * card's body.
  *
- * Resolved in an effect rather than during render: the home page can be
- * statically cached, so a weekday computed on the server would be baked in and
- * go stale. Rendering nothing until mount also keeps the server and client
- * markup identical, so there is no hydration mismatch.
+ * Deliberately NOT over the photograph — a badge pinned to the image covers
+ * faces, which is the one thing the photo is there for. It sits in the card
+ * body instead, above the specialty eyebrow.
  *
- * It is absolutely positioned over the photo, so it adds no height and cannot
- * disturb the equal card heights in the carousel.
+ * The row keeps a fixed height whatever it contains, including before mount
+ * and for on-request doctors, so cards in a carousel or grid stay aligned.
+ *
+ * Availability is resolved in an effect because the page can be cached, and a
+ * weekday computed on the server would go stale and trip hydration.
  */
 export function DoctorAvailabilityBadge({
   doctor,
@@ -32,30 +35,49 @@ export function DoctorAvailabilityBadge({
     setAvailability(getDoctorAvailability(doctor, new Date(), dict));
   }, [doctor, dict]);
 
-  if (!availability || availability.state === 'on_request') return null;
+  // 28px pill + 8px gap, reserved even while empty.
+  const row = cn('flex h-7 items-center mb-2', className);
 
-  const { state, day, timeRange } = availability;
-  const isToday = state === 'today';
+  const pill =
+    'inline-flex max-w-full items-center gap-1.5 rounded-full px-2.5 py-1 ' +
+    'text-[0.75rem] font-medium leading-none whitespace-nowrap';
+
+  if (doctor.is_on_request) {
+    return (
+      <div className={row}>
+        <span className={cn(pill, 'border border-line bg-bg-elevated text-ink-muted')}>
+          {dict.doctors.byRequest}
+        </span>
+      </div>
+    );
+  }
+
+  if (!availability || availability.state === 'on_request') {
+    return <div className={row} aria-hidden />;
+  }
+
+  const isToday = availability.state === 'today';
 
   return (
-    <span
-      className={cn(
-        'absolute left-3 top-3 z-10 inline-flex max-w-[calc(100%-1.5rem)] items-center gap-1.5',
-        'rounded-full px-2.5 py-1 text-[0.75rem] font-medium leading-none whitespace-nowrap',
-        isToday
-          ? 'bg-teal text-white'
-          : 'border border-line bg-bg-elevated text-ink-muted',
-        className
-      )}
-    >
-      {isToday && (
-        <span aria-hidden className="block h-2 w-2 shrink-0 rounded-full bg-white" />
-      )}
-      <span className="truncate">
-        {isToday ? dict.doctors.availableToday : `${dict.doctors.next}: ${day}`}
-        {/* The time range is the first thing to go on a narrow card. */}
-        {timeRange && <span className="hidden sm:inline"> · {timeRange}</span>}
+    <div className={row}>
+      <span
+        className={cn(
+          pill,
+          isToday
+            ? 'bg-teal text-white'
+            : 'border border-line bg-bg-elevated text-ink-muted'
+        )}
+      >
+        {isToday && (
+          <span aria-hidden className="block h-2 w-2 shrink-0 rounded-full bg-white" />
+        )}
+        <span className="truncate">
+          {isToday ? dict.doctors.availableToday : `${dict.doctors.next}: ${availability.day}`}
+          {availability.timeRange && (
+            <span className="hidden sm:inline"> · {availability.timeRange}</span>
+          )}
+        </span>
       </span>
-    </span>
+    </div>
   );
 }

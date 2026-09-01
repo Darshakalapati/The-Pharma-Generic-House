@@ -82,7 +82,7 @@ export function VideoCarousel({ videos }: { videos: Video[] }) {
         onClick={() => scrollBy(-1)}
         disabled={!canScrollLeft}
         className={cn(
-          'hidden lg:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 h-10 w-10 items-center justify-center rounded-full border border-line bg-bg-elevated shadow-soft transition-all',
+          'hidden lg:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-[calc(100%+0.5rem)] z-10 h-10 w-10 items-center justify-center rounded-full border border-line bg-bg-elevated shadow-soft transition-all',
           canScrollLeft
             ? 'opacity-100 hover:border-plum hover:text-plum'
             : 'opacity-0 pointer-events-none'
@@ -96,7 +96,7 @@ export function VideoCarousel({ videos }: { videos: Video[] }) {
         onClick={() => scrollBy(1)}
         disabled={!canScrollRight}
         className={cn(
-          'hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 h-10 w-10 items-center justify-center rounded-full border border-line bg-bg-elevated shadow-soft transition-all',
+          'hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-[calc(100%+0.5rem)] z-10 h-10 w-10 items-center justify-center rounded-full border border-line bg-bg-elevated shadow-soft transition-all',
           canScrollRight
             ? 'opacity-100 hover:border-plum hover:text-plum'
             : 'opacity-0 pointer-events-none'
@@ -150,12 +150,11 @@ function VideoCard({ video, onPlay }: { video: Video; onPlay: () => void }) {
             <Play className="h-10 w-10" />
           </div>
         )}
-        <span
-          aria-hidden
-          className="absolute inset-0 grid place-items-center bg-gradient-to-t from-black/40 to-transparent"
-        >
-          <span className="grid h-14 w-14 place-items-center rounded-full bg-plum text-white shadow-elevated transition-transform duration-200 group-hover:scale-110">
-            <Play className="h-5 w-5 translate-x-[1px]" fill="currentColor" />
+        {/* The only thing allowed over an image anywhere on the site: the play
+            control. No gradient, no text — just a 44px target in the centre. */}
+        <span aria-hidden className="absolute inset-0 grid place-items-center">
+          <span className="grid h-11 w-11 place-items-center rounded-full bg-plum text-white shadow-elevated transition-transform duration-200 group-hover:scale-110">
+            <Play className="h-4 w-4 translate-x-[1px]" fill="currentColor" />
           </span>
         </span>
       </button>
