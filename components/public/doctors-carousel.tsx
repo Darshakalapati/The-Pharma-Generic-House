@@ -107,7 +107,7 @@ export function DoctorsCarousel({ doctors }: { doctors: Doctor[] }) {
                       src={photo}
                       alt={d.name}
                       fill
-                      sizes="(max-width: 640px) 85vw, 340px"
+                      sizes="(max-width: 768px) 85vw, 340px"
                       className="object-cover img-soft-color"
                     />
                   )}

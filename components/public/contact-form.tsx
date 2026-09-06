@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import { Send } from 'lucide-react';
 import { Magnetic } from '@/components/public/motion/magnetic';
 import { useT } from './i18n/language-provider';
-import { createClient } from '@/lib/supabase/client';
+import { submitContactMessage } from '@/app/(public)/actions';
 import { isValidPhoneIN } from '@/lib/utils';
 
 const formSchema = z.object({
@@ -35,15 +35,13 @@ export function ContactForm() {
   const submit = async (data: FormValues) => {
     setSubmitting(true);
     try {
-      const supabase = createClient();
-      const { error } = await supabase.from('contact_messages').insert({
+      const res = await submitContactMessage({
         name: data.name.trim(),
         phone: data.phone.trim(),
         email: data.email?.trim() || null,
         message: data.message.trim(),
-        status: 'new',
       });
-      if (error) throw error;
+      if (!res.ok) throw new Error(res.error);
       toast.success("Thank you. We'll be in touch shortly.");
       reset();
     } catch {

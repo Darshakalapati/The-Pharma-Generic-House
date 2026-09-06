@@ -7,12 +7,15 @@ import { SHOP_EMAIL, SHOP_ADDRESS_LINES, getMapsUrl } from '@/lib/constants';
 import { formatHoursDetailed } from '@/lib/hours';
 import { OpenStatus } from '@/components/public/open-status';
 import { getDictionary, getLocale } from '@/lib/i18n';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Contact',
+export const metadata = pageMetadata({
+  title:
+    'Contact & Directions — Governerpeta, Vijayawada | The Pharma Generic House',
   description:
-    'Reach The Pharma Generic House by phone, WhatsApp, or visit our shop in Vijayawada.',
-};
+    'Call, WhatsApp or visit us opposite Golden Pavilion, Governerpeta, Vijayawada. Opening hours, directions and a message form.',
+  path: '/contact',
+});
 
 export default async function ContactPage() {
   const dict = getDictionary(getLocale());

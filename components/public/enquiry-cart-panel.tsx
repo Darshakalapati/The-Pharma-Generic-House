@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import { X, ShoppingBag, Send, Package, Plus, Minus } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useEnquiryCart } from './enquiry-cart-context';
-import { createClient } from '@/lib/supabase/client';
+import { submitEnquiry } from '@/app/(public)/actions';
 import { whatsappLink, isValidPhoneIN, cn } from '@/lib/utils';
 import { WhatsAppGlyph } from './whatsapp-glyph';
 import { useT } from './i18n/language-provider';
@@ -78,8 +78,7 @@ export function EnquiryCartPanel({ whatsappNumber, reservationEnabled }: Props) 
     if (items.length === 0) return;
     setSubmitting(true);
     try {
-      const supabase = createClient();
-      const { error } = await supabase.from('enquiries').insert({
+      const res = await submitEnquiry({
         customer_name: data.name.trim(),
         customer_phone: data.phone.trim(),
         items: items.map((i) => ({
@@ -87,10 +86,9 @@ export function EnquiryCartPanel({ whatsappNumber, reservationEnabled }: Props) 
           product_name: i.product_name,
           quantity: i.quantity,
         })),
-        status: 'new',
         notes: submitMode === 'reserve' ? 'Reservation for pickup' : null,
       });
-      if (error) throw error;
+      if (!res.ok) throw new Error(res.error);
       toast.success(
         submitMode === 'reserve'
           ? "Items reserved. We'll WhatsApp to confirm pickup."

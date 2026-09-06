@@ -1,11 +1,13 @@
 import { SHOP_EMAIL, SHOP_PHONE } from '@/lib/constants';
 import { getDictionary, getLocale } from '@/lib/i18n';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Terms',
+export const metadata = pageMetadata({
+  title: 'Terms of Use | The Pharma Generic House',
   description:
-    'The terms on which The Pharma Generic House provides this website, enquiries, appointments, and lab test bookings.',
-};
+    'The terms on which The Pharma Generic House provides this website, product enquiries, doctor appointments and lab test bookings.',
+  path: '/terms',
+});
 
 const UPDATED = '17 August 2026';
 

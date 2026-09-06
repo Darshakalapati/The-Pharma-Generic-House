@@ -12,12 +12,15 @@ import {
 import { IMG } from '@/lib/images';
 import { getDictionary, getLocale } from '@/lib/i18n';
 import type { MedicalTest } from '@/lib/types';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Diagnostics',
+export const metadata = pageMetadata({
+  title:
+    'Lab Tests in Vijayawada — Sunday Walk-ins & Home Collection (ThyroCare associate) | The Pharma Generic House',
   description:
-    'Lab tests at the shop or at home — Sundays at the shop, with home collection on other days. Associated with ThyroCare.',
-};
+    'Lab tests at our Governerpeta shop or collected at your home. Sunday is test day for walk-ins; home collection runs the rest of the week. Associated with ThyroCare.',
+  path: '/tests',
+});
 
 export default async function TestsPage({
   searchParams,
@@ -72,7 +75,7 @@ export default async function TestsPage({
               src={IMG.diagnostics.bloodTest}
               alt="Lab samples being processed"
               fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
+              sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"
             />
           </ScrollRevealItem>

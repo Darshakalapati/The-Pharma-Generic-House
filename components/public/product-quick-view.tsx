@@ -90,6 +90,7 @@ export function ProductQuickView({
             <img
               src={product.image_url}
               alt={product.name}
+              decoding="async"
               className="h-full w-full object-cover"
             />
           )}

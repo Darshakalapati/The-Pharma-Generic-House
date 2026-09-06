@@ -70,7 +70,7 @@ export function FamilyStory({
                 cycleMs={PORTRAIT_CYCLE_MS}
                 zoomScale={PORTRAIT_ZOOM}
                 fallbackAlt={name}
-                sizes="(max-width: 1024px) 100vw, 40vw"
+                sizes="(max-width: 768px) 100vw, 40vw"
               />
             </div>
           ) : (

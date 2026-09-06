@@ -2,8 +2,11 @@ import type { Metadata } from 'next';
 import { Fraunces, Inter, Noto_Serif_Telugu, Noto_Sans_Telugu } from 'next/font/google';
 import { getLocale } from '@/lib/i18n';
 import { Toaster } from 'sonner';
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
 import { SHOP_NAME, SHOP_TAGLINE } from '@/lib/constants';
+import { SITE_URL } from '@/lib/seo';
 
 const fraunces = Fraunces({
   subsets: ['latin'],
@@ -45,7 +48,7 @@ export const metadata: Metadata = {
   },
   description:
     'Trusted pharmacy in Vijayawada. Medicines, ayurvedic remedies, cosmetics, doctor consultations and lab tests — with WhatsApp support.',
-  metadataBase: new URL('https://www.pharmagenerichouse.com'),
+  metadataBase: new URL(SITE_URL),
   openGraph: {
     type: 'website',
     siteName: SHOP_NAME,
@@ -94,6 +97,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             },
           }}
         />
+        {/* Cookieless, so no consent banner is required. Mounted at the root
+            so it covers the admin panel too — harmless, and it means one
+            place to look. */}
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

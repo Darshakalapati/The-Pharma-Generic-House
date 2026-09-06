@@ -12,12 +12,15 @@ import { WhatsAppGlyph } from '@/components/public/whatsapp-glyph';
 import { whatsappLink } from '@/lib/utils';
 import { SHOP_WHATSAPP, PRESCRIPTION_WA_TEXT, PRESCRIPTION_WA_TEXT_TE } from '@/lib/constants';
 import type { Product } from '@/lib/types';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Products',
+export const metadata = pageMetadata({
+  title:
+    'Medicines & Personal Care in Vijayawada — Browse Our Shelves | The Pharma Generic House',
   description:
-    'Browse general medicines, prescription pharma, Ayurvedic preparations, and personal care from The Pharma Generic House.',
-};
+    'Browse general medicines, prescription pharma, Ayurvedic preparations and personal care at our Governerpeta shop. Send your prescription on WhatsApp and we will confirm availability.',
+  path: '/products',
+});
 
 export default async function ProductsPage({
   searchParams,

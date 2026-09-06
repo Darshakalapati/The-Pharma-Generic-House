@@ -4,7 +4,16 @@ import * as React from 'react';
 import { Search, Plus, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useT } from './i18n/language-provider';
-import { ProductQuickView } from './product-quick-view';
+import dynamic from 'next/dynamic';
+
+/**
+ * Only reachable by tapping a card, and it already rendered nothing until
+ * then — so it loads on first open rather than with the grid.
+ */
+const ProductQuickView = dynamic(
+  () => import('./product-quick-view').then((m) => m.ProductQuickView),
+  { ssr: false, loading: () => null }
+);
 import { PRODUCT_CATEGORIES } from '@/lib/constants';
 import { useEnquiryCart } from './enquiry-cart-context';
 import { StaggerGrid, StaggerGridItem } from '@/components/public/motion/scroll-reveal';
@@ -134,7 +143,9 @@ export function ProductGrid({
         </StaggerGrid>
       )}
 
-      <ProductQuickView product={quickView} onClose={() => setQuickView(null)} />
+      {quickView && (
+        <ProductQuickView product={quickView} onClose={() => setQuickView(null)} />
+      )}
     </div>
   );
 }
@@ -180,6 +191,8 @@ function ProductCard({
           <img
             src={product.image_url}
             alt={product.name}
+            loading="lazy"
+            decoding="async"
             className="h-full w-full object-cover transition-transform duration-500 ease-smooth hover:scale-[1.04]"
           />
         ) : (

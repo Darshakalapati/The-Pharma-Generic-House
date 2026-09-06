@@ -7,12 +7,15 @@ import {
   ScrollRevealItem,
 } from '@/components/public/motion/scroll-reveal';
 import type { Doctor } from '@/lib/types';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Doctors',
+export const metadata = pageMetadata({
+  title:
+    'Doctor Consultations in Vijayawada — Physician, Physiotherapy, Homeopathy, Nadi | The Pharma Generic House',
   description:
-    'Book consultations with our resident Nadi specialist, physiotherapist, or homeopath at The Pharma Generic House.',
-};
+    'Book a consultation at our Governerpeta pharmacy — general physician, physiotherapy, homeopathy and Nadi. Pick a slot online or confirm on WhatsApp.',
+  path: '/doctors',
+});
 
 export default async function DoctorsPage({
   searchParams,

@@ -69,6 +69,8 @@ function ImageBanner({
           <img
             src={banner.image_url}
             alt={imageAlt}
+            loading="lazy"
+            decoding="async"
             className="block h-auto w-full"
           />
         )}

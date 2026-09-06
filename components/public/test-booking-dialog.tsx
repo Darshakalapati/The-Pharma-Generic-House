@@ -9,7 +9,7 @@ import { z } from 'zod';
 import { toast } from 'sonner';
 import { Store, Home } from 'lucide-react';
 import { BookingModal, FieldError } from './booking-modal';
-import { createClient } from '@/lib/supabase/client';
+import { submitTestBooking } from '@/app/(public)/actions';
 import { isValidPhoneIN, formatDate, dayOfWeek, cn } from '@/lib/utils';
 import type { MedicalTest } from '@/lib/types';
 
@@ -77,18 +77,16 @@ export function TestBookingDialog({
     }
     setSubmitting(true);
     try {
-      const supabase = createClient();
-      const { error } = await supabase.from('test_bookings').insert({
+      const res = await submitTestBooking({
         test_id: test.id,
         patient_name: data.patient_name.trim(),
         patient_phone: data.patient_phone.trim(),
         patient_address: data.patient_address?.trim() || null,
         preferred_date: data.preferred_date,
         collection_type: data.collection_type,
-        status: 'pending',
         notes: data.notes || null,
       });
-      if (error) throw error;
+      if (!res.ok) throw new Error(res.error);
       toast.success("Test booking received. We'll confirm by WhatsApp.");
       reset();
       onOpenChange(false);

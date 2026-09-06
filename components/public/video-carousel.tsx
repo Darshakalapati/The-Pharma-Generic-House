@@ -3,7 +3,17 @@
 import * as React from 'react';
 import { ChevronLeft, ChevronRight, Play } from 'lucide-react';
 import { cn, extractYouTubeId, youtubeThumbnailUrl, formatTitle } from '@/lib/utils';
-import { VideoPlayerModal } from './video-player-modal';
+import dynamic from 'next/dynamic';
+
+/**
+ * Split out of the first-load bundle. Left permanently rendered rather than
+ * gated on `active`: the modal fades itself out on close, and unmounting it
+ * would replace that with a hard cut.
+ */
+const VideoPlayerModal = dynamic(
+  () => import('./video-player-modal').then((m) => m.VideoPlayerModal),
+  { ssr: false, loading: () => null }
+);
 import { useT } from './i18n/language-provider';
 import { StaggerGrid, StaggerGridItem } from '@/components/public/motion/scroll-reveal';
 import type { Video } from '@/lib/types';
@@ -143,6 +153,8 @@ function VideoCard({ video, onPlay }: { video: Video; onPlay: () => void }) {
           <img
             src={thumb}
             alt={video.title}
+            loading="lazy"
+            decoding="async"
             className="h-full w-full object-cover transition-transform duration-500 ease-smooth group-hover:scale-[1.03]"
           />
         ) : (

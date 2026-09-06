@@ -3,12 +3,15 @@ import Link from 'next/link';
 import { ShieldCheck, HeartHandshake, MapPin, ArrowRight } from 'lucide-react';
 import { IMG } from '@/lib/images';
 import { getDictionary, getLocale } from '@/lib/i18n';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata = {
-  title: 'About',
+export const metadata = pageMetadata({
+  title:
+    'Our Story — A Neighbourhood Pharmacy in Governerpeta | The Pharma Generic House',
   description:
-    'A trusted pharmacy in Vijayawada, with you for the long term. Trusted medicines, honest advice, and quality healthcare.',
-};
+    'How The Pharma Generic House came to serve Governerpeta, Vijayawada — genuine medicines, honest advice, and the same faces behind the counter.',
+  path: '/about',
+});
 
 
 export default function AboutPage() {

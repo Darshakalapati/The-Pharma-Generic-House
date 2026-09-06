@@ -111,7 +111,7 @@ function DoctorCard({
               src={photo}
               alt={doctor.name}
               fill
-              sizes="(max-width: 768px) 100vw, 33vw"
+              sizes="(max-width: 768px) 85vw, 340px"
               className="object-cover"
             />
           )}

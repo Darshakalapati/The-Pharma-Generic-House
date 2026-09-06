@@ -28,6 +28,8 @@ import { FaqSection } from '@/components/public/faq-section';
 import { SectionDots } from '@/components/public/section-dots';
 import { FamilyStory } from '@/components/public/family-story';
 import { MortarPestleAccent } from '@/components/public/botanical-accents';
+import { ShopJsonLd } from '@/components/public/shop-json-ld';
+import { pageMetadata } from '@/lib/seo';
 import { SectionCurve } from '@/components/public/motion/section-curve';
 import { Magnetic } from '@/components/public/motion/magnetic';
 import {
@@ -64,6 +66,14 @@ const PRODUCT_TILES = [
   { image: IMG.categories.ayurvedic, href: '/products?cat=ayurvedic' },
   { image: IMG.categories.cosmetic, href: '/products?cat=cosmetic' },
 ];
+
+export const metadata = pageMetadata({
+  title:
+    'The Pharma Generic House — Pharmacy in Vijayawada | Medicines, Doctors, Lab Tests',
+  description:
+    'Neighbourhood pharmacy opposite Golden Pavilion, Governerpeta, Vijayawada. Genuine medicines ordered over WhatsApp, doctor consultations, and Sunday ThyroCare lab tests with home collection.',
+  path: '/',
+});
 
 export default async function HomePage() {
   const supabase = createClient();
@@ -130,6 +140,7 @@ export default async function HomePage() {
 
   return (
     <>
+      <ShopJsonLd schedule={schedule} />
       <SectionDots />
 
       {/* SECTION 1 — HERO ─────────────────────────────────────────── */}
@@ -260,7 +271,7 @@ export default async function HomePage() {
                 src={settings.diagnostics_photo_url || IMG.diagnostics.labEquipment}
                 alt="Lab equipment for diagnostic tests"
                 fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
+                sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover"
               />
             </ScrollRevealItem>
@@ -319,7 +330,7 @@ export default async function HomePage() {
                   src={tile.image}
                   alt={dict.shelves.tiles[i].title}
                   fill
-                  sizes="(max-width: 768px) 100vw, 25vw"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                   className="object-cover img-hover-zoom"
                 />
               </div>
@@ -368,7 +379,7 @@ export default async function HomePage() {
               src={settings.about_photo_url || IMG.pharmacy.interior}
               alt={dict.aboutTeaser.photoAlt}
               fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
+              sizes="(max-width: 768px) 100vw, 50vw"
               className="object-cover"
             />
           </ScrollRevealItem>

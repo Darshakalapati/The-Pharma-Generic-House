@@ -4,7 +4,16 @@ import * as React from 'react';
 import { Upload, X, ImageIcon, Crop } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { ImageCropper } from './image-cropper';
+import dynamic from 'next/dynamic';
+
+/**
+ * Pulls in react-easy-crop, which is only needed once someone actually picks
+ * a file to crop.
+ */
+const ImageCropper = dynamic(
+  () => import('./image-cropper').then((m) => m.ImageCropper),
+  { ssr: false, loading: () => null }
+);
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
 
@@ -44,6 +53,13 @@ export function ImageUpload({
   const [uploading, setUploading] = React.useState(false);
   const [pendingFile, setPendingFile] = React.useState<File | null>(null);
   const [cropperOpen, setCropperOpen] = React.useState(false);
+  // Latched, not derived: once the cropper has been opened it stays mounted,
+  // so Radix still plays the dialog's exit animation on close. Before the
+  // first open the chunk is never fetched.
+  const [cropperUsed, setCropperUsed] = React.useState(false);
+  React.useEffect(() => {
+    if (cropperOpen) setCropperUsed(true);
+  }, [cropperOpen]);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const clearInput = () => {
@@ -196,7 +212,7 @@ export function ImageUpload({
         </div>
       </div>
 
-      {aspectRatio && (
+      {aspectRatio && cropperUsed && (
         <ImageCropper
           imageFile={pendingFile}
           aspectRatio={aspectRatio}

@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { BookingModal, FieldError } from './booking-modal';
-import { createClient } from '@/lib/supabase/client';
+import { submitAppointment } from '@/app/(public)/actions';
 import {
   isValidPhoneIN,
   generateTimeSlots,
@@ -128,8 +128,7 @@ export function AppointmentDialog({
   const submit = async (data: FormValues, andWhatsApp = false) => {
     setSubmitting(true);
     try {
-      const supabase = createClient();
-      const { error } = await supabase.from('appointments').insert({
+      const res = await submitAppointment({
         doctor_id: doctor.id,
         patient_name: data.patient_name.trim(),
         patient_phone: data.patient_phone.trim(),
@@ -137,9 +136,8 @@ export function AppointmentDialog({
         preferred_date: data.preferred_date,
         preferred_time: data.preferred_time,
         notes: data.notes || null,
-        status: 'pending',
       });
-      if (error) throw error;
+      if (!res.ok) throw new Error(res.error);
 
       toast.success(dict.forms.successAppointment);
 

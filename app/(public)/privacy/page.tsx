@@ -1,11 +1,13 @@
 import { SHOP_EMAIL, SHOP_PHONE } from '@/lib/constants';
 import { getDictionary, getLocale } from '@/lib/i18n';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata = {
-  title: 'Privacy',
+export const metadata = pageMetadata({
+  title: 'Privacy Policy | The Pharma Generic House',
   description:
-    'What The Pharma Generic House collects, why, and how to have your information removed.',
-};
+    'What The Pharma Generic House collects when you book an appointment, a lab test or send an enquiry — why we hold it, and how to have it removed.',
+  path: '/privacy',
+});
 
 const UPDATED = '17 August 2026';
 
