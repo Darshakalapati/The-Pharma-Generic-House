@@ -5,7 +5,7 @@ import { FooterWordmark } from './logo';
 import { TiltCard } from './tilt-card';
 import { SectionCurve } from './motion/section-curve';
 import { SHOP_EMAIL, SHOP_ADDRESS_LINES, getMapsUrl, PRESCRIPTION_WA_TEXT, PRESCRIPTION_WA_TEXT_TE } from '@/lib/constants';
-import { formatHoursSummary, type Schedule } from '@/lib/hours';
+import { formatHoursSegments, type Schedule } from '@/lib/hours';
 import { OpenStatus } from './open-status';
 import { whatsappLink, telLink, cn } from '@/lib/utils';
 import type { ShopSettings } from '@/lib/types';
@@ -159,8 +159,17 @@ export function SiteFooter({
                 <Link href="/contact#hours" className={CONTACT_ROW}>
                   <Clock className={CONTACT_ICON} />
                   <span className="min-w-0">
+                    {/* One line per day-range. The column is ~250px at 375px,
+                        so a middot-joined string wrapped mid-range and left an
+                        orphan "AM –" hanging. Each line is nowrap, and the
+                        range itself is nowrap again inside it. */}
                     <span className={cn('block', CONTACT_TEXT)}>
-                      {formatHoursSummary(schedule, dict)}
+                      {formatHoursSegments(schedule, dict).map((seg) => (
+                        <span key={seg.label} className="block whitespace-nowrap">
+                          {seg.label}:{' '}
+                          <span className="whitespace-nowrap">{seg.hours}</span>
+                        </span>
+                      ))}
                     </span>
                     <OpenStatus
                       schedule={schedule}

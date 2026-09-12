@@ -13,7 +13,7 @@ import {
 import { createClient } from '@/lib/supabase/server';
 import { getShopSettings, getSchedule } from '@/lib/settings';
 import { getDictionary, getLocale, t } from '@/lib/i18n';
-import { formatHoursSummary } from '@/lib/hours';
+import { formatHoursSegments } from '@/lib/hours';
 import { whatsappLink, telLink } from '@/lib/utils';
 import { IMG } from '@/lib/images';
 import { WhatsAppGlyph } from '@/components/public/whatsapp-glyph';
@@ -67,6 +67,40 @@ const PRODUCT_TILES = [
   { image: IMG.categories.cosmetic, href: '/products?cat=cosmetic' },
 ];
 
+/**
+ * Opening hours for the wide, single-line contexts (trust bar, contact CTA).
+ *
+ * Still one middot-joined line, but each "Mon–Sat 9:30 AM – 9:30 PM" segment
+ * is nowrap, so a wrap can only ever land between segments — never after the
+ * en dash inside a range.
+ *
+ * `flow` emits the middots as siblings, for a flex parent that supplies its
+ * own gap; `inline` spaces them itself, for an ordinary paragraph.
+ */
+function hoursNodes(
+  segments: { label: string; hours: string }[],
+  variant: 'flow' | 'inline'
+) {
+  return segments.flatMap((seg, i) => {
+    const separator =
+      variant === 'flow' ? (
+        <span key={`${seg.label}-sep`} aria-hidden className="text-ink-faint">
+          ·
+        </span>
+      ) : (
+        <span key={`${seg.label}-sep`} aria-hidden>
+          {' · '}
+        </span>
+      );
+    const segment = (
+      <span key={seg.label} className="whitespace-nowrap">
+        {seg.label} {seg.hours}
+      </span>
+    );
+    return i === 0 ? [segment] : [separator, segment];
+  });
+}
+
 export const metadata = pageMetadata({
   title:
     'The Pharma Generic House — Pharmacy in Vijayawada | Medicines, Doctors, Lab Tests',
@@ -80,7 +114,7 @@ export default async function HomePage() {
   const locale = getLocale();
   const dict = getDictionary(locale);
   const [settings, schedule] = await Promise.all([getShopSettings(), getSchedule()]);
-  const hoursSummary = formatHoursSummary(schedule, dict);
+  const hoursSegments = formatHoursSegments(schedule, dict);
 
   // hero_photos and family_members arrive with migrations 0009 / 0010. Until
   // those are applied the queries just return an error and `data` is null, and
@@ -171,7 +205,7 @@ export default async function HomePage() {
             <span aria-hidden className="text-ink-faint">·</span>
             <span>{dict.trustbar.homeCollection}</span>
             <span aria-hidden className="text-ink-faint">·</span>
-            <span>{hoursSummary}</span>
+            {hoursNodes(hoursSegments, 'flow')}
           </p>
         </ScrollRevealItem>
       </ScrollReveal>
@@ -192,8 +226,8 @@ export default async function HomePage() {
               <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-plum-tint text-plum">
                 <o.icon className="h-5 w-5" />
               </span>
-              <h3 className="h-card mt-5">{dict.offer.cards[i].title}</h3>
-              <p className="mt-2 text-[0.95rem] text-ink-muted leading-[1.6] flex-1">
+              <h3 className="h-card mt-5 min-h-[2.7em]">{dict.offer.cards[i].title}</h3>
+              <p className="mt-2 text-[0.95rem] text-ink-muted leading-[1.6] min-h-[4.8em] flex-1">
                 {dict.offer.cards[i].body}
               </p>
               <span className="mt-auto pt-5 inline-flex items-center gap-1 text-[0.875rem] font-medium text-plum">
@@ -321,11 +355,13 @@ export default async function HomePage() {
           </p>
         </ScrollRevealItem>
 
-        <StaggerGrid inherit className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5" stagger={0.06}>
+        <StaggerGrid inherit className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 items-stretch" stagger={0.06}>
           {PRODUCT_TILES.map((tile, i) => (
-            <StaggerGridItem key={tile.href}>
-            <Link href={tile.href} className="card-soft overflow-hidden block group">
-              <div className="relative aspect-[4/3] bg-sand overflow-hidden">
+            <StaggerGridItem key={tile.href} className="h-full">
+            <Link href={tile.href} className="card-soft overflow-hidden flex flex-col h-full group">
+              {/* shrink-0 so the fixed 4:3 frame survives the card being
+                  stretched to match its tallest sibling. */}
+              <div className="relative aspect-[4/3] shrink-0 bg-sand overflow-hidden">
                 <Image
                   src={tile.image}
                   alt={dict.shelves.tiles[i].title}
@@ -334,12 +370,17 @@ export default async function HomePage() {
                   className="object-cover img-hover-zoom"
                 />
               </div>
-              <div className="p-6">
-                <h3 className="h-card">{dict.shelves.tiles[i].title}</h3>
-                <p className="mt-2 text-[0.9375rem] text-ink-muted leading-[1.6]">
+              <div className="p-6 flex flex-1 flex-col">
+                {/* Two lines reserved. "Ayurvedic" is one line and "Cosmetic &
+                    Personal Care" is two, so without this their descriptions
+                    start at different heights. 2.7em covers two lines at the
+                    Telugu heading line-height (1.35) as well as the Latin one
+                    (1.25), which keeps the row aligned in both languages. */}
+                <h3 className="h-card min-h-[2.7em]">{dict.shelves.tiles[i].title}</h3>
+                <p className="mt-2 text-[0.9375rem] text-ink-muted leading-[1.6] min-h-[4.8em] flex-1">
                   {dict.shelves.tiles[i].body}
                 </p>
-                <span className="mt-4 inline-flex items-center gap-1 text-[0.875rem] font-medium text-plum">
+                <span className="mt-auto pt-4 inline-flex items-center gap-1 text-[0.875rem] font-medium text-plum">
                   <span className="link-underline">{dict.shelves.browseLink}</span>
                   <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-1" />
                 </span>
@@ -420,7 +461,7 @@ export default async function HomePage() {
           </ScrollRevealItem>
 
           <ScrollRevealItem as="p" className="mt-8 text-[0.875rem] text-white/70">
-            {hoursSummary}
+            {hoursNodes(hoursSegments, 'inline')}
           </ScrollRevealItem>
         </div>
       </ScrollReveal>

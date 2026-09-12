@@ -100,11 +100,23 @@ export function coerceSchedule(raw: unknown): Schedule {
   return out;
 }
 
+export interface HoursSegment {
+  /** "Mon–Sat", or a single day's label when its hours stand alone. */
+  label: string;
+  /** "9:30 AM – 9:30 PM", or the closed label. */
+  hours: string;
+}
+
 /**
- * "Mon–Sat 9 AM – 10 PM · Sun 9 AM – 2 PM".
- * Consecutive days sharing identical hours collapse into one range.
+ * The week collapsed into runs of days that share the same hours, kept as
+ * separate label/hours pairs.
+ *
+ * Callers render these rather than a pre-joined string so they can hold each
+ * time range together: "9:30 AM – 9:30 PM" contains two spaces the browser is
+ * free to break at, which used to strand an orphan "AM –" at the end of a
+ * line in the footer's narrow column.
  */
-export function formatHoursSummary(schedule: Schedule, dict?: Dictionary): string {
+export function formatHoursSegments(schedule: Schedule, dict?: Dictionary): HoursSegment[] {
   const runs: { days: DayKey[]; text: string }[] = [];
   for (const key of DAY_ORDER) {
     const day = schedule[key];
@@ -113,14 +125,26 @@ export function formatHoursSummary(schedule: Schedule, dict?: Dictionary): strin
     if (last && last.text === text) last.days.push(key);
     else runs.push({ days: [key], text });
   }
-  return runs
-    .map(({ days, text }) => {
-      const label =
-        days.length === 1
-          ? shortLabel(days[0], dict)
-          : `${shortLabel(days[0], dict)}–${shortLabel(days[days.length - 1], dict)}`;
-      return `${label} ${text}`;
-    })
+  return runs.map(({ days, text }) => ({
+    label:
+      days.length === 1
+        ? shortLabel(days[0], dict)
+        : `${shortLabel(days[0], dict)}–${shortLabel(days[days.length - 1], dict)}`,
+    hours: text,
+  }));
+}
+
+/**
+ * "Mon–Sat 9 AM – 10 PM · Sun 9 AM – 2 PM".
+ * Consecutive days sharing identical hours collapse into one range.
+ *
+ * The flat string form, for contexts that need plain text (the admin settings
+ * preview). Anything rendering to the page should use formatHoursSegments so
+ * the ranges can be kept unbreakable.
+ */
+export function formatHoursSummary(schedule: Schedule, dict?: Dictionary): string {
+  return formatHoursSegments(schedule, dict)
+    .map(({ label, hours }) => `${label} ${hours}`)
     .join(' · ');
 }
 

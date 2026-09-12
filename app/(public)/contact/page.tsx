@@ -143,8 +143,8 @@ export default async function ContactPage() {
                       <dd
                         className={
                           isSunday
-                            ? 'text-[0.95rem] font-medium text-teal-deep'
-                            : 'text-[0.95rem] text-ink-muted'
+                            ? 'text-[0.95rem] font-medium text-teal-deep whitespace-nowrap'
+                            : 'text-[0.95rem] text-ink-muted whitespace-nowrap'
                         }
                       >
                         {row.hours}
