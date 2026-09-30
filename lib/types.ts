@@ -16,6 +16,8 @@ export interface Product {
   description: string | null;
   image_url: string | null;
   in_stock: boolean;
+  /** Shows the "our own brand" badge on the card and in the quick-view. */
+  is_own_brand: boolean;
   created_at: string;
 }
 

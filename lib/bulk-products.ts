@@ -14,6 +14,7 @@ export const BULK_HEADERS = [
   'description',
   'image_url',
   'in_stock',
+  'is_own_brand',
 ] as const;
 
 const CATEGORY_VALUES = PRODUCT_CATEGORIES.map((c) => c.value) as ProductCategory[];
@@ -32,6 +33,7 @@ export interface BulkProductRow {
   description: string | null;
   image_url: string | null;
   in_stock: boolean;
+  is_own_brand: boolean;
 }
 
 export interface BulkRowError {
@@ -61,6 +63,7 @@ export function buildTemplateCsv(): string {
     'Paracetamol tablet for fever and pain',
     'https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=600',
     'true',
+    'false',
   ];
   return `${BULK_HEADERS.join(',')}\n${example.map(csvCell).join(',')}\n`;
 }
@@ -123,9 +126,19 @@ export function normalizeBulkRows(raw: Record<string, unknown>[]): BulkParseResu
     const description = asText(row.description);
     const imageUrl = asText(row.image_url);
     const inStock = parseBool(row.in_stock);
+    // Optional column: blank means false, so existing sheets keep working.
+    const ownBrandRaw = asText(row.is_own_brand);
+    const ownBrand = ownBrandRaw === '' ? false : parseBool(row.is_own_brand);
 
     // Skip fully blank rows — trailing empty lines are common in exported sheets.
-    if (!name && !categoryText && !description && !imageUrl && asText(row.in_stock) === '') {
+    if (
+      !name &&
+      !categoryText &&
+      !description &&
+      !imageUrl &&
+      asText(row.in_stock) === '' &&
+      ownBrandRaw === ''
+    ) {
       return;
     }
 
@@ -147,6 +160,10 @@ export function normalizeBulkRows(raw: Record<string, unknown>[]): BulkParseResu
       fail(`"${asText(row.in_stock)}" is not a valid in_stock value. Use true or false.`);
       return;
     }
+    if (ownBrand === null) {
+      fail(`"${ownBrandRaw}" is not a valid is_own_brand value. Use true or false, or leave it blank.`);
+      return;
+    }
     if (imageUrl && !/^https?:\/\//i.test(imageUrl)) {
       fail('image_url must start with http:// or https:// (or be left blank).');
       return;
@@ -166,6 +183,7 @@ export function normalizeBulkRows(raw: Record<string, unknown>[]): BulkParseResu
       description: description || null,
       image_url: imageUrl || null,
       in_stock: inStock,
+      is_own_brand: ownBrand,
     });
   });
 
@@ -180,5 +198,6 @@ export function toProductPayload(row: BulkProductRow) {
     description: row.description,
     image_url: row.image_url,
     in_stock: row.in_stock,
+    is_own_brand: row.is_own_brand,
   };
 }

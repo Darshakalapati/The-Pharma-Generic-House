@@ -5,6 +5,7 @@ import { X, Plus, Check } from 'lucide-react';
 import { WhatsAppGlyph } from './whatsapp-glyph';
 import { useT } from './i18n/language-provider';
 import { useEnquiryCart } from './enquiry-cart-context';
+import { OwnBrandBadge } from './own-brand-badge';
 import { whatsappLink, cn } from '@/lib/utils';
 import { PRODUCT_CATEGORIES, SHOP_WHATSAPP } from '@/lib/constants';
 import type { Product } from '@/lib/types';
@@ -98,7 +99,17 @@ export function ProductQuickView({
 
         <div className="flex flex-1 flex-col p-6">
           {catLabel && <span className="eyebrow">{catLabel}</span>}
-          <h2 className="mt-2 font-serif font-medium text-[1.5rem] leading-tight tracking-[-0.015em]">
+          {product.is_own_brand && (
+            <span className="mt-2 block">
+              <OwnBrandBadge dict={dict} />
+            </span>
+          )}
+          <h2
+            className={cn(
+              'font-serif font-medium text-[1.5rem] leading-tight tracking-[-0.015em]',
+              product.is_own_brand ? 'mt-1' : 'mt-2'
+            )}
+          >
             {product.name}
           </h2>
 

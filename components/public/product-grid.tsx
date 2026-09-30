@@ -17,6 +17,7 @@ const ProductQuickView = dynamic(
 import { PRODUCT_CATEGORIES } from '@/lib/constants';
 import { useEnquiryCart } from './enquiry-cart-context';
 import { StaggerGrid, StaggerGridItem } from '@/components/public/motion/scroll-reveal';
+import { OwnBrandBadge } from './own-brand-badge';
 import type { Product } from '@/lib/types';
 import type { Dictionary } from '@/lib/i18n/types';
 
@@ -213,7 +214,19 @@ function ProductCard({
             </span>
           )}
         </div>
-        <h3 className="mt-2 font-serif font-medium text-[1.0625rem] leading-snug tracking-[-0.005em]">
+        {/* Sits above the name, and only exists when the flag is set — a
+            plain product keeps its original spacing exactly. */}
+        {product.is_own_brand && (
+          <span className="mt-2 block">
+            <OwnBrandBadge dict={dict} />
+          </span>
+        )}
+        <h3
+          className={cn(
+            'font-serif font-medium text-[1.0625rem] leading-snug tracking-[-0.005em]',
+            product.is_own_brand ? 'mt-1' : 'mt-2'
+          )}
+        >
           <button type="button" onClick={onOpen} className="text-left hover:text-plum transition-colors">
             {product.name}
           </button>

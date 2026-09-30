@@ -182,6 +182,10 @@ export function BulkUploadProducts({
                 <code className="text-brand-ink">image_url</code> can be blank
               </li>
               <li>
+                <code className="text-brand-ink">is_own_brand</code> is optional — true only for
+                your own brands (blank counts as false)
+              </li>
+              <li>
                 If a product with the same name already exists, it will be updated. Otherwise, a
                 new one is added.
               </li>
@@ -289,6 +293,7 @@ export function BulkUploadProducts({
                               {r.image_url ?? '—'}
                             </td>
                             <td className="px-3 py-2">{String(r.in_stock)}</td>
+                            <td className="px-3 py-2">{String(r.is_own_brand)}</td>
                             <td className="px-3 py-2">
                               <span
                                 className={cn(

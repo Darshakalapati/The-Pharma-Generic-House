@@ -305,6 +305,7 @@ export const en = {
     askOnWhatsapp: 'Ask about this on WhatsApp',
     askMessage: 'Hi, is {product} available? What is the price?',
     quickViewClose: 'Close product',
+    ownBrand: 'Our own brand',
   },
 
   about: {

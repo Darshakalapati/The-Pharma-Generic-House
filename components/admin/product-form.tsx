@@ -37,6 +37,7 @@ const formSchema = z.object({
   category: z.enum(['general', 'pharma', 'ayurvedic', 'cosmetic']),
   description: z.string().optional(),
   in_stock: z.boolean(),
+  is_own_brand: z.boolean(),
 });
 type FormValues = z.infer<typeof formSchema>;
 
@@ -67,6 +68,7 @@ export function ProductForm({
       category: (product?.category as ProductCategory) ?? 'general',
       description: product?.description ?? '',
       in_stock: product?.in_stock ?? true,
+      is_own_brand: product?.is_own_brand ?? false,
     },
   });
 
@@ -77,6 +79,7 @@ export function ProductForm({
         category: (product?.category as ProductCategory) ?? 'general',
         description: product?.description ?? '',
         in_stock: product?.in_stock ?? true,
+        is_own_brand: product?.is_own_brand ?? false,
       });
       setImageUrl(product?.image_url ?? null);
     }
@@ -92,6 +95,7 @@ export function ProductForm({
         description: data.description?.trim() || null,
         image_url: imageUrl,
         in_stock: data.in_stock,
+        is_own_brand: data.is_own_brand,
       };
       if (product) {
         const { error } = await supabase.from('products').update(payload).eq('id', product.id);
@@ -194,6 +198,20 @@ export function ProductForm({
               id="in_stock"
               checked={watch('in_stock')}
               onCheckedChange={(v) => setValue('in_stock', v)}
+            />
+          </div>
+
+          <div className="flex items-center justify-between rounded-xl border border-brand-line bg-brand-cream/40 px-4 py-3">
+            <div>
+              <Label htmlFor="is_own_brand">Our own brand</Label>
+              <p className="text-xs text-brand-muted">
+                Shows a &quot;Our own brand&quot; badge on the website.
+              </p>
+            </div>
+            <Switch
+              id="is_own_brand"
+              checked={watch('is_own_brand')}
+              onCheckedChange={(v) => setValue('is_own_brand', v)}
             />
           </div>
 

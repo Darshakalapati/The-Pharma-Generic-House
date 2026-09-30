@@ -8,17 +8,23 @@ export function StatCard({
   href,
   icon: Icon,
   tone = 'purple',
+  accent = false,
 }: {
   title: string;
   count: number;
   href: string;
   icon: LucideIcon;
   tone?: 'purple' | 'teal';
+  /** Plum border for the one card that means somebody is waiting on us. */
+  accent?: boolean;
 }) {
   return (
     <Link
       href={href}
-      className="surface-card p-5 sm:p-6 hover:shadow-card transition-shadow flex flex-col"
+      className={cn(
+        'surface-card p-5 sm:p-6 hover:shadow-card transition-shadow flex flex-col',
+        accent && 'border-brand-purple'
+      )}
     >
       <div className="flex items-center justify-between">
         <span

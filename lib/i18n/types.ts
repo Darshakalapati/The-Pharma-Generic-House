@@ -258,6 +258,7 @@ export interface Dictionary {
     askOnWhatsapp: string;
     askMessage: string;
     quickViewClose: string;
+    ownBrand: string;
   };
 
   about: {

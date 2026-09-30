@@ -310,6 +310,7 @@ export const te = {
     askOnWhatsapp: 'దీని గురించి వాట్సాప్‌లో అడగండి',
     askMessage: 'నమస్తే, {product} అందుబాటులో ఉందా? ధర ఎంత?',
     quickViewClose: 'ఉత్పత్తి మూసివేయండి',
+    ownBrand: 'మా సొంత బ్రాండ్',
   },
 
   about: {
