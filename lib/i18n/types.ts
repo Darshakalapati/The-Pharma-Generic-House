@@ -95,6 +95,27 @@ export interface Dictionary {
     heading: string;
     subhead: string;
     photoComingSoon: string;
+    closingLine: string;
+  };
+
+  contrast: {
+    line1: string;
+    line2: string;
+  };
+
+  rx: {
+    eyebrow: string;
+    forLabel: string;
+    forValue: string;
+    fromLabel: string;
+    fromValue: string;
+    directionsLabel: string;
+    /** Sits ahead of the live hours summary on the Directions row. */
+    visitAnyDay: string;
+    refillsLabel: string;
+    refillsValue: string;
+    signature: string;
+    founderLabel: string;
   };
 
   doctors: {
@@ -152,6 +173,8 @@ export interface Dictionary {
   };
 
   diagnostics: {
+    /** Scene-setting line above the eyebrow on the diagnostics sections. */
+    sceneOpener: string;
     eyebrow: string;
     heading: string;
     body: string;

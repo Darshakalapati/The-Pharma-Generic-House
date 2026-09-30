@@ -96,6 +96,11 @@ export function FamilyStory({
               </figcaption>
             </figure>
           )}
+
+          {/* Closes the section on the shop's own terms, at the bio's width. */}
+          <p className="mt-8 text-[1.0625rem] text-ink-muted leading-[1.7] max-w-[55ch]">
+            {dict.founder.closingLine}
+          </p>
         </ScrollRevealItem>
       </div>
     </ScrollReveal>

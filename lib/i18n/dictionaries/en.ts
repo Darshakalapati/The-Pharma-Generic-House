@@ -31,7 +31,7 @@ export const en = {
     eyebrow: 'Vijayawada · Trusted Neighbourhood Pharmacy',
     headline: 'Medicines, doctors, and lab tests — under one trusted roof.',
     subhead:
-      'From everyday medicines to Ayurvedic care, doctor consultations, and Sunday lab tests — The Pharma Generic House has served Vijayawada since 2018.',
+      'Everyday medicines, Ayurvedic care, doctor consultations, Sunday lab tests. Vijayawada, since 2018.',
     sendRx: 'Send prescription on WhatsApp',
     rxHelper:
       "Photograph your prescription, tap the button, and attach it in WhatsApp — we'll reply with availability and price.",
@@ -48,7 +48,7 @@ export const en = {
 
   offer: {
     eyebrow: 'What we offer',
-    heading: 'Four ways we help you stay well.',
+    heading: 'One counter. Four kinds of care.',
     learnMore: 'Learn more',
     cards: [
       {
@@ -104,6 +104,26 @@ export const en = {
     subhead:
       'Uma Shankar Alapati brings 27 years of medical experience to Vijayawada — one prescription, one honest conversation at a time.',
     photoComingSoon: 'Photograph coming soon',
+    closingLine: 'One prescription. One honest conversation. Every day since 2018.',
+  },
+
+  contrast: {
+    line1: "At a chain pharmacy, you're a bill number.",
+    line2: "Here, the person at the counter knows your family's prescriptions.",
+  },
+
+  rx: {
+    eyebrow: 'Prescription',
+    forLabel: 'For',
+    forValue: 'You and your family',
+    fromLabel: 'From',
+    fromValue: 'The Pharma Generic House, Governerpeta',
+    directionsLabel: 'Directions',
+    visitAnyDay: 'Visit any day',
+    refillsLabel: 'Refills',
+    refillsValue: 'Always',
+    signature: 'Uma Shankar Alapati',
+    founderLabel: 'Founder',
   },
 
   doctors: {
@@ -161,6 +181,7 @@ export const en = {
   },
 
   diagnostics: {
+    sceneOpener: 'Sunday, 9 AM.',
     eyebrow: 'Diagnostics · Associated with ThyroCare',
     heading: 'Lab tests, every Sunday at our shop.',
     body:

@@ -44,7 +44,12 @@ export default async function TestsPage({
       {/* Hero */}
       <ScrollReveal as="section" className="container-public pt-12 sm:pt-16 pb-8">
         <ScrollRevealItem as="div" className="max-w-2xl">
-          <span className="eyebrow eyebrow--teal">{dict.diagnostics.eyebrow}</span>
+          <p className="font-serif italic text-[1.125rem] text-plum">
+            {dict.diagnostics.sceneOpener}
+          </p>
+          <span className="eyebrow eyebrow--teal mt-2 block">
+            {dict.diagnostics.eyebrow}
+          </span>
           <h1 className="h-hero mt-4 text-balance">
             {dict.diagnostics.pageHeading}
           </h1>

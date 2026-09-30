@@ -30,6 +30,8 @@ import { FamilyStory } from '@/components/public/family-story';
 import { MortarPestleAccent } from '@/components/public/botanical-accents';
 import { ShopJsonLd } from '@/components/public/shop-json-ld';
 import { CallbackBand } from '@/components/public/callback-band';
+import { ContrastBand } from '@/components/public/contrast-band';
+import { RxCard } from '@/components/public/rx-card';
 import { CallbackSlideIn } from '@/components/public/callback-slidein';
 import { pageMetadata } from '@/lib/seo';
 import { SectionCurve } from '@/components/public/motion/section-curve';
@@ -250,6 +252,9 @@ export default async function HomePage() {
         <HomeStats />
       </div>
 
+      {/* SECTION 2.65 — CONTRAST STATEMENT ────────────────────────── */}
+      <ContrastBand dict={dict} />
+
       {/* SECTION 2.7 — OUR STORY / THE PERSON BEHIND THE SHOP ─────── */}
       <div id="story">
         <FamilyStory member={featuredMember} dict={dict} />
@@ -283,7 +288,10 @@ export default async function HomePage() {
         <div className="container-public py-16 sm:py-24">
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
             <div>
-              <ScrollRevealItem as="span" className="eyebrow eyebrow--teal block">
+              <ScrollRevealItem as="p" className="font-serif italic text-[1.125rem] text-plum">
+                {dict.diagnostics.sceneOpener}
+              </ScrollRevealItem>
+              <ScrollRevealItem as="span" className="eyebrow eyebrow--teal mt-2 block">
                 {dict.diagnostics.eyebrow}
               </ScrollRevealItem>
               <ScrollRevealItem as="h2" className="h-section mt-4 text-balance">
@@ -431,6 +439,11 @@ export default async function HomePage() {
 
       {/* SECTION 6.5 — QUESTIONS ─────────────────────────────────── */}
       <FaqSection />
+
+      {/* SECTION 6.55 — PRESCRIPTION SLIP ────────────────────────── */}
+      <div className="mt-20 sm:mt-28">
+        <RxCard dict={dict} schedule={schedule} />
+      </div>
 
       {/* SECTION 6.6 — ORDER ON CALL ─────────────────────────────── */}
       <CallbackBand
