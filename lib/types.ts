@@ -132,6 +132,12 @@ export interface ShopSettings {
    *  the rating badge renders only when both are present. */
   google_rating: number | null;
   google_review_count: number | null;
+  /** Home-page highlight statement, per language. Empty means "use the
+   *  built-in wording for this language" — see ContrastBand for the rule. */
+  contrast_line1_en: string;
+  contrast_line2_en: string;
+  contrast_line1_te: string;
+  contrast_line2_te: string;
 }
 
 export type AnnouncementColor = 'plum' | 'teal';

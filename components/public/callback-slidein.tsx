@@ -8,17 +8,46 @@ import { useT } from './i18n/language-provider';
 import { telLink } from '@/lib/utils';
 import type { Schedule } from '@/lib/hours';
 
-const SEEN_KEY = 'callback_prompt_seen';
-const SEEN_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+/**
+ * sessionStorage, not localStorage: the offer is suppressed for the rest of
+ * this visit only. A new session sees it again, so the session itself is the
+ * expiry and there is no timestamp to reason about. Any value left behind by
+ * the old localStorage key is never read.
+ */
+const DISMISSED_KEY = 'callback_prompt_dismissed';
 const TIME_TRIGGER_MS = 15_000;
 const SCROLL_TRIGGER = 0.5;
 /** How often to re-check once something is covering the screen. */
 const RETRY_MS = 800;
 const SUCCESS_CLOSE_MS = 3000;
+/** ?preview_callback=1 — lets the owner see the prompt without incognito. */
+const PREVIEW_PARAM = 'preview_callback';
+const PREVIEW_DELAY_MS = 1000;
 
-/** True while a modal, sheet, search palette or mobile menu is on screen. */
+/**
+ * True while a modal, sheet, search palette or mobile menu is on screen.
+ *
+ * Presence of `[role="dialog"]` is NOT enough. BookingModal and
+ * VideoPlayerModal both stay mounted when closed so they can animate out, and
+ * mark themselves `aria-hidden="true"` with opacity 0 instead of unmounting.
+ * Matching on the role alone meant the home page always looked "busy" and this
+ * card could never appear — so each candidate has to be checked for whether it
+ * is actually being presented.
+ */
 function somethingIsOpen(): boolean {
-  if (document.querySelector('[role="dialog"]')) return true;
+  const dialogs = document.querySelectorAll('[role="dialog"]');
+  for (let i = 0; i < dialogs.length; i++) {
+    const el = dialogs[i] as HTMLElement;
+    // Hidden from the accessibility tree — mounted, but not presented.
+    if (el.getAttribute('aria-hidden') === 'true') continue;
+    // display:none, or detached from the layout entirely.
+    if (el.getClientRects().length === 0) continue;
+    const style = window.getComputedStyle(el);
+    if (style.visibility === 'hidden' || style.display === 'none') continue;
+    // Faded out rather than unmounted.
+    if (Number(style.opacity) === 0) continue;
+    return true;
+  }
   // The enquiry cart and the mobile nav lock the page instead of using a
   // dialog role, so scroll-lock is the second tell.
   return document.body.style.overflow === 'hidden';
@@ -42,37 +71,59 @@ export function CallbackSlideIn({
   const reduced = useReducedMotion();
   const [open, setOpen] = React.useState(false);
   const settled = React.useRef(false);
+  // Set during the first effect, before anything can be dismissed, so the
+  // dismiss handler knows whether it is allowed to write to storage.
+  const preview = React.useRef(false);
 
   const remember = React.useCallback(() => {
+    // Preview mode is for looking at the thing; recording that it was seen
+    // would hide it from the visitor it was actually meant for.
+    if (preview.current) return;
     try {
-      localStorage.setItem(SEEN_KEY, String(Date.now()));
+      sessionStorage.setItem(DISMISSED_KEY, '1');
     } catch {
-      // Storage blocked — nothing to remember, and we've already shown once
-      // this page view, so it won't reappear until a reload.
+      // Storage blocked — it stays hidden for this page view regardless, and
+      // reappearing on the next navigation is a far smaller cost than never
+      // showing at all.
     }
   }, []);
 
   React.useEffect(() => {
-    let seen = false;
-    try {
-      const raw = localStorage.getItem(SEEN_KEY);
-      // Same expiry shape as the announcement banner: a stored timestamp that
-      // lapses, so the offer can come back after a week rather than never.
-      seen = !!raw && Date.now() - Number(raw) < SEEN_TTL_MS;
-    } catch {
-      // Treat unreadable storage as seen: better silent than nagging.
-      seen = true;
+    // Read from location rather than useSearchParams: this is a one-off check
+    // that belongs in an effect anyway, and it keeps the page off the
+    // client-rendering bailout that hook forces.
+    const isPreview =
+      new URLSearchParams(window.location.search).get(PREVIEW_PARAM) === '1';
+    preview.current = isPreview;
+
+    if (!isPreview) {
+      let dismissed = false;
+      try {
+        dismissed = sessionStorage.getItem(DISMISSED_KEY) === '1';
+      } catch {
+        // Fail open. Treating blocked storage as "already dismissed" is how a
+        // prompt silently never appears for a whole class of visitor, and the
+        // worst case the other way is showing it once more this session.
+        dismissed = false;
+      }
+      if (dismissed) return;
     }
-    if (seen) return;
 
     let timer: number | undefined;
     let retry: number | undefined;
 
     const reveal = () => {
       if (settled.current) return;
-      // Wait out whatever is on top rather than stacking on it.
+      // Wait out whatever is on top rather than stacking on it. One pending
+      // retry at a time: while suppressed, every scroll event would otherwise
+      // start its own chain of timers.
       if (somethingIsOpen()) {
-        retry = window.setTimeout(reveal, RETRY_MS);
+        if (retry === undefined) {
+          retry = window.setTimeout(() => {
+            retry = undefined;
+            reveal();
+          }, RETRY_MS);
+        }
         return;
       }
       settled.current = true;
@@ -92,8 +143,14 @@ export function CallbackSlideIn({
       if (timer) window.clearTimeout(timer);
     }
 
-    window.addEventListener('scroll', onScroll, { passive: true });
-    timer = window.setTimeout(reveal, TIME_TRIGGER_MS);
+    if (isPreview) {
+      // No scroll or dwell requirement — just a beat, so the page has painted
+      // before it slides in. Suppression still gates it inside reveal().
+      timer = window.setTimeout(reveal, PREVIEW_DELAY_MS);
+    } else {
+      window.addEventListener('scroll', onScroll, { passive: true });
+      timer = window.setTimeout(reveal, TIME_TRIGGER_MS);
+    }
 
     return () => {
       cleanup();

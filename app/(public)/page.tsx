@@ -253,7 +253,7 @@ export default async function HomePage() {
       </div>
 
       {/* SECTION 2.65 — CONTRAST STATEMENT ────────────────────────── */}
-      <ContrastBand dict={dict} />
+      <ContrastBand dict={dict} locale={locale} settings={settings} />
 
       {/* SECTION 2.7 — OUR STORY / THE PERSON BEHIND THE SHOP ─────── */}
       <div id="story">

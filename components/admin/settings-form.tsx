@@ -14,6 +14,12 @@ import { Switch } from '@/components/ui/switch';
 import { createClient } from '@/lib/supabase/client';
 import { ImageUpload } from './image-upload';
 import { GoogleRatingPill } from '@/components/public/google-rating';
+import { resolveContrast } from '@/lib/contrast';
+// Imported straight from the dictionary modules: lib/i18n pulls in
+// next/headers, which a client component cannot touch.
+import { en as EN_DICT } from '@/lib/i18n/dictionaries/en';
+import { te as TE_DICT } from '@/lib/i18n/dictionaries/te';
+import type { Locale } from '@/lib/i18n/types';
 import { ASPECT } from '@/lib/image-crop';
 import {
   DAY_ORDER,
@@ -23,6 +29,10 @@ import {
   type Schedule,
 } from '@/lib/hours';
 import type { ShopSettings } from '@/lib/types';
+
+/** Placeholders, so the admin can see the wording they'd be replacing. */
+const EN_DEFAULTS = EN_DICT.contrast;
+const TE_DEFAULTS = TE_DICT.contrast;
 
 const DAY_LABEL: Record<DayKey, string> = {
   mon: 'Monday', tue: 'Tuesday', wed: 'Wednesday', thu: 'Thursday',
@@ -65,6 +75,13 @@ export function SettingsForm({
   const [savingGoogle, setSavingGoogle] = React.useState(false);
   const [replyNote, setReplyNote] = React.useState(settings.whatsapp_reply_note ?? '');
   const [savingNote, setSavingNote] = React.useState(false);
+  const [contrast, setContrast] = React.useState({
+    line1_en: settings.contrast_line1_en ?? '',
+    line2_en: settings.contrast_line2_en ?? '',
+    line1_te: settings.contrast_line1_te ?? '',
+    line2_te: settings.contrast_line2_te ?? '',
+  });
+  const [savingContrast, setSavingContrast] = React.useState(false);
 
   const parsedRating = googleRating.trim() === '' ? null : Number(googleRating);
   const parsedCount = googleCount.trim() === '' ? null : Number(googleCount);
@@ -127,6 +144,24 @@ export function SettingsForm({
       toast.error('Could not save. Have you run migration 0015 in Supabase?');
     } finally {
       setSavingGoogle(false);
+    }
+  };
+
+  const saveContrast = async () => {
+    setSavingContrast(true);
+    try {
+      await Promise.all([
+        upsert('contrast_line1_en', contrast.line1_en.trim()),
+        upsert('contrast_line2_en', contrast.line2_en.trim()),
+        upsert('contrast_line1_te', contrast.line1_te.trim()),
+        upsert('contrast_line2_te', contrast.line2_te.trim()),
+      ]);
+      toast.success('Highlight statement saved.');
+      router.refresh();
+    } catch {
+      toast.error('Could not save. Have you run migration 0018 in Supabase?');
+    } finally {
+      setSavingContrast(false);
     }
   };
 
@@ -476,6 +511,149 @@ export function SettingsForm({
           {savingGoogle ? 'Saving...' : 'Save Google rating'}
         </Button>
       </section>
+
+      {/* Highlight statement — the two-line band on the home page. */}
+      <section className="surface-card p-6 sm:p-8">
+        <h2 className="font-serif text-xl font-semibold text-brand-ink">
+          Highlight statement
+        </h2>
+        <p className="mt-1 text-sm text-brand-muted">
+          Shown on the home page between the numbers and the founder story. Leave a
+          language&apos;s pair blank to use the built-in wording for that language —
+          blank Telugu falls back to the built-in Telugu, never to English.
+        </p>
+
+        <div className="mt-5 grid gap-5 sm:grid-cols-2">
+          <ContrastField
+            id="contrast_line1_en"
+            label="Small line (English)"
+            value={contrast.line1_en}
+            placeholder={EN_DEFAULTS.line1}
+            onChange={(v) => setContrast((c) => ({ ...c, line1_en: v }))}
+          />
+          <ContrastField
+            id="contrast_line2_en"
+            label="Main line (English)"
+            value={contrast.line2_en}
+            placeholder={EN_DEFAULTS.line2}
+            counted
+            onChange={(v) => setContrast((c) => ({ ...c, line2_en: v }))}
+          />
+          <ContrastField
+            id="contrast_line1_te"
+            label="Small line (Telugu)"
+            value={contrast.line1_te}
+            placeholder={TE_DEFAULTS.line1}
+            onChange={(v) => setContrast((c) => ({ ...c, line1_te: v }))}
+          />
+          <ContrastField
+            id="contrast_line2_te"
+            label="Main line (Telugu)"
+            value={contrast.line2_te}
+            placeholder={TE_DEFAULTS.line2}
+            counted
+            onChange={(v) => setContrast((c) => ({ ...c, line2_te: v }))}
+          />
+        </div>
+
+        {/* Preview uses the same resolver the website does, so what is shown
+            here is exactly what a visitor gets — including the fallbacks and
+            the hidden state. */}
+        <div className="mt-6 space-y-4">
+          <ContrastPreview label="English preview" locale="en" values={contrast} />
+          <ContrastPreview label="Telugu preview" locale="te" values={contrast} />
+        </div>
+
+        <Button className="mt-5" disabled={savingContrast} onClick={saveContrast}>
+          <Save className="h-4 w-4" />
+          {savingContrast ? 'Saving...' : 'Save highlight statement'}
+        </Button>
+      </section>
+    </div>
+  );
+}
+
+const MAIN_LINE_GUIDE = 90;
+
+function ContrastField({
+  id,
+  label,
+  value,
+  placeholder,
+  counted = false,
+  onChange,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  placeholder: string;
+  /** Show the soft character guide. Advisory only — nothing is enforced. */
+  counted?: boolean;
+  onChange: (v: string) => void;
+}) {
+  const over = counted && value.trim().length > MAIN_LINE_GUIDE;
+  return (
+    <div>
+      <Label htmlFor={id}>{label}</Label>
+      <Input
+        id={id}
+        value={value}
+        placeholder={placeholder}
+        onChange={(e) => onChange(e.target.value)}
+        className="mt-1.5"
+      />
+      {counted && (
+        <p className={`mt-1 text-xs ${over ? 'text-brand-purple' : 'text-brand-muted'}`}>
+          {value.trim().length}/{MAIN_LINE_GUIDE} characters
+          {over ? ' — long lines wrap to three rows on a phone.' : ''}
+        </p>
+      )}
+    </div>
+  );
+}
+
+function ContrastPreview({
+  label,
+  locale,
+  values,
+}: {
+  label: string;
+  locale: Locale;
+  values: { line1_en: string; line2_en: string; line1_te: string; line2_te: string };
+}) {
+  const { line1, line2 } = resolveContrast(locale === 'te' ? TE_DICT : EN_DICT, locale, {
+    contrast_line1_en: values.line1_en,
+    contrast_line2_en: values.line2_en,
+    contrast_line1_te: values.line1_te,
+    contrast_line2_te: values.line2_te,
+  });
+
+  return (
+    <div>
+      <p className="mb-2 text-[0.7rem] font-medium uppercase tracking-[0.12em] text-brand-muted">
+        {label}
+      </p>
+      {line2 ? (
+        <div
+          className={`rounded-xl border border-brand-line bg-white px-5 py-7 text-center${
+            locale === 'te' ? ' lang-te' : ''
+          }`}
+        >
+          <div className="mx-auto max-w-[46ch]">
+            {line1 && (
+              <p className="text-[1.0625rem] leading-[1.6] text-ink-muted">{line1}</p>
+            )}
+            <p className="mt-3 font-serif font-medium text-[clamp(1.5rem,3vw,2.25rem)] leading-[1.25] tracking-[-0.015em] text-ink">
+              {line2}
+            </p>
+          </div>
+        </div>
+      ) : (
+        <p className="rounded-xl border border-dashed border-brand-line px-5 py-6 text-xs text-brand-muted">
+          The section is hidden on the website: this language has a small line but no
+          main line. Clear both to bring the built-in wording back.
+        </p>
+      )}
     </div>
   );
 }

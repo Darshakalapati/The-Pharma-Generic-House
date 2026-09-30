@@ -2,14 +2,29 @@ import {
   ScrollReveal,
   ScrollRevealItem,
 } from '@/components/public/motion/scroll-reveal';
-import type { Dictionary } from '@/lib/i18n/types';
+import { resolveContrast } from '@/lib/contrast';
+import type { Dictionary, Locale } from '@/lib/i18n/types';
+import type { ShopSettings } from '@/lib/types';
 
 /**
  * Two lines, no chrome. The whole point is the beat between them, so it gets
  * air rather than a background, a border or a button — anything else would
  * read as another card and the contrast would stop landing.
  */
-export function ContrastBand({ dict }: { dict: Dictionary }) {
+export function ContrastBand({
+  dict,
+  locale,
+  settings,
+}: {
+  dict: Dictionary;
+  locale: Locale;
+  settings: ShopSettings;
+}) {
+  const { line1, line2 } = resolveContrast(dict, locale, settings);
+
+  // The big line carries the section. Without it there is nothing to show.
+  if (!line2) return null;
+
   return (
     <ScrollReveal
       as="section"
@@ -18,14 +33,16 @@ export function ContrastBand({ dict }: { dict: Dictionary }) {
       stagger={0.12}
     >
       <div className="mx-auto max-w-[46ch] text-center">
-        <ScrollRevealItem as="p" className="text-[1.0625rem] text-ink-muted leading-[1.6]">
-          {dict.contrast.line1}
-        </ScrollRevealItem>
+        {line1 && (
+          <ScrollRevealItem as="p" className="text-[1.0625rem] text-ink-muted leading-[1.6]">
+            {line1}
+          </ScrollRevealItem>
+        )}
         <ScrollRevealItem
           as="p"
           className="mt-3 font-serif font-medium text-[clamp(1.5rem,3vw,2.25rem)] leading-[1.25] tracking-[-0.015em] text-ink text-balance"
         >
-          {dict.contrast.line2}
+          {line2}
         </ScrollRevealItem>
       </div>
     </ScrollReveal>

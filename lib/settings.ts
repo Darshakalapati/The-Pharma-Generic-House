@@ -17,6 +17,10 @@ const DEFAULTS: ShopSettings = {
   whatsapp_reply_note: '',
   google_rating: null,
   google_review_count: null,
+  contrast_line1_en: '',
+  contrast_line2_en: '',
+  contrast_line1_te: '',
+  contrast_line2_te: '',
 };
 
 export async function getShopSettings(): Promise<ShopSettings> {
@@ -36,6 +40,10 @@ export async function getShopSettings(): Promise<ShopSettings> {
       whatsapp_reply_note: extractString(map.get('whatsapp_reply_note')) ?? '',
       google_rating: extractNumber(map.get('google_rating')),
       google_review_count: extractNumber(map.get('google_review_count')),
+      contrast_line1_en: extractString(map.get('contrast_line1_en')) ?? '',
+      contrast_line2_en: extractString(map.get('contrast_line2_en')) ?? '',
+      contrast_line1_te: extractString(map.get('contrast_line1_te')) ?? '',
+      contrast_line2_te: extractString(map.get('contrast_line2_te')) ?? '',
     };
   } catch {
     return DEFAULTS;
