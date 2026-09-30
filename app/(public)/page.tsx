@@ -29,6 +29,8 @@ import { SectionDots } from '@/components/public/section-dots';
 import { FamilyStory } from '@/components/public/family-story';
 import { MortarPestleAccent } from '@/components/public/botanical-accents';
 import { ShopJsonLd } from '@/components/public/shop-json-ld';
+import { CallbackBand } from '@/components/public/callback-band';
+import { CallbackSlideIn } from '@/components/public/callback-slidein';
 import { pageMetadata } from '@/lib/seo';
 import { SectionCurve } from '@/components/public/motion/section-curve';
 import { Magnetic } from '@/components/public/motion/magnetic';
@@ -430,6 +432,13 @@ export default async function HomePage() {
       {/* SECTION 6.5 — QUESTIONS ─────────────────────────────────── */}
       <FaqSection />
 
+      {/* SECTION 6.6 — ORDER ON CALL ─────────────────────────────── */}
+      <CallbackBand
+        phone={settings.shop_phone}
+        schedule={schedule}
+        className="mt-20 sm:mt-28"
+      />
+
       {/* SECTION 7 — CONTACT CTA ─────────────────────────────────── */}
       <ScrollReveal as="section" className="mt-24 sm:mt-32 bg-plum text-white">
         <div className="container-public py-16 sm:py-20 text-center">
@@ -465,6 +474,8 @@ export default async function HomePage() {
           </ScrollRevealItem>
         </div>
       </ScrollReveal>
+
+      <CallbackSlideIn phone={settings.shop_phone} schedule={schedule} />
     </>
   );
 }

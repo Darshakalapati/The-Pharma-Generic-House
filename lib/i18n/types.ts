@@ -394,6 +394,23 @@ export interface Dictionary {
     specialties: { nadi: string; physiotherapy: string; homeopathy: string };
   };
 
+  callback: {
+    heading: string;
+    /** Contains {phone}; the placeholder becomes a tel: link. */
+    sub: string;
+    placeholder: string;
+    submit: string;
+    submitting: string;
+    invalid: string;
+    successOpen: string;
+    /** Contains {time} — the clock time the shop next opens. */
+    successClosed: string;
+    slideHeading: string;
+    /** Contains {phone}. */
+    slideSub: string;
+    dismiss: string;
+  };
+
   faq: {
     eyebrow: string;
     heading: string;

@@ -4,6 +4,8 @@ export type DoctorSpecialty = 'nadi' | 'physiotherapy' | 'homeopathy';
 export type AppointmentStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled';
 export type TestBookingStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled';
 export type EnquiryStatus = 'new' | 'contacted' | 'completed';
+export type CallbackStatus = 'pending' | 'called' | 'closed';
+export type CallbackSource = 'band' | 'slidein';
 export type MessageStatus = 'new' | 'read' | 'replied';
 export type CollectionType = 'shop' | 'home';
 
@@ -87,6 +89,16 @@ export interface Enquiry {
   items: EnquiryItem[];
   status: EnquiryStatus;
   notes: string | null;
+  created_at: string;
+}
+
+export interface CallbackRequest {
+  id: string;
+  /** Ten bare digits, no country code — see migration 0017. */
+  phone: string;
+  source: CallbackSource | string;
+  status: CallbackStatus;
+  note: string | null;
   created_at: string;
 }
 

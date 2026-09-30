@@ -15,6 +15,7 @@
 
 import { z } from 'zod';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { sendNotification } from '@/lib/notify';
 import { isValidPhoneIN } from '@/lib/utils';
 
@@ -247,6 +248,80 @@ export async function submitContactMessage(
       email: data.email || null,
       message: data.message,
     },
+  });
+
+  return { ok: true };
+}
+
+/* ------------------------------------------------------------------ */
+/* Callback requests                                                   */
+/* ------------------------------------------------------------------ */
+
+/** How long a repeat submission from the same number is treated as a dupe. */
+const CALLBACK_DEDUPE_MS = 10 * 60 * 1000;
+
+/**
+ * Reduce anything a visitor might type to the ten digits we store.
+ *
+ * Length-driven rather than prefix-driven on purpose: stripping a leading "91"
+ * by pattern would mangle a genuine ten-digit number that happens to start
+ * 91xxxxxxxx. Returns null when the result isn't a real Indian mobile.
+ */
+function toTenDigits(raw: string): string | null {
+  const digits = String(raw ?? '').replace(/\D/g, '');
+  let ten = digits;
+  if (ten.length === 13 && ten.startsWith('091')) ten = ten.slice(3);
+  else if (ten.length === 12 && ten.startsWith('91')) ten = ten.slice(2);
+  else if (ten.length === 11 && ten.startsWith('0')) ten = ten.slice(1);
+  // Same rule as isValidPhoneIN: Indian mobile numbers all begin 6-9.
+  return /^[6-9]\d{9}$/.test(ten) ? ten : null;
+}
+
+/**
+ * Record a "call me back" request.
+ *
+ * Writes with the service-role client: migration 0017 gives this table no
+ * public policy at all, so unlike the other four forms nothing reachable from
+ * a browser can read or write it.
+ *
+ * `honeypot` is a field hidden from real users. A bot that fills it gets a
+ * successful-looking result and no row — telling it that it was caught would
+ * only help it try again.
+ */
+export async function submitCallbackRequest(
+  phone: string,
+  source: 'band' | 'slidein',
+  honeypot?: string
+): Promise<SubmitResult> {
+  if (honeypot && honeypot.trim() !== '') return { ok: true };
+
+  const ten = toTenDigits(phone);
+  if (!ten) return { ok: false, error: 'invalidPhone' };
+
+  const resolvedSource = source === 'slidein' ? 'slidein' : 'band';
+  const admin = createAdminClient();
+
+  // A visitor who taps twice, or fills both the band and the slide-in, should
+  // not produce two rows the shop has to reconcile.
+  const since = new Date(Date.now() - CALLBACK_DEDUPE_MS).toISOString();
+  const { data: recent } = await admin
+    .from('callback_requests')
+    .select('id')
+    .eq('phone', ten)
+    .gte('created_at', since)
+    .limit(1);
+  if (recent && recent.length > 0) return { ok: true };
+
+  const { error } = await admin.from('callback_requests').insert({
+    phone: ten,
+    source: resolvedSource,
+    status: 'pending',
+  });
+  if (error) return { ok: false, error: error.message };
+
+  await notifyQuietly({
+    kind: 'callback',
+    payload: { phone: ten, source: resolvedSource },
   });
 
   return { ok: true };

@@ -7,6 +7,8 @@ const MAP: Record<string, BadgeProps['variant']> = {
   confirmed: 'info',
   contacted: 'info',
   read: 'info',
+  called: 'info',
+  closed: 'success',
   completed: 'success',
   replied: 'success',
   cancelled: 'destructive',

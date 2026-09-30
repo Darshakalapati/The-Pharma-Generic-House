@@ -19,11 +19,12 @@ export default async function AdminDashboardLayout({
     redirect('/admin/login');
   }
 
-  const [appts, tests, enquiries, msgs] = await Promise.all([
+  const [appts, tests, enquiries, msgs, callbacks] = await Promise.all([
     supabase.from('appointments').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
     supabase.from('test_bookings').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
     supabase.from('enquiries').select('id', { count: 'exact', head: true }).eq('status', 'new'),
     supabase.from('contact_messages').select('id', { count: 'exact', head: true }).eq('status', 'new'),
+    supabase.from('callback_requests').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
   ]);
 
   const counts: Record<string, number> = {
@@ -31,12 +32,14 @@ export default async function AdminDashboardLayout({
     '/admin/test-bookings': tests.count ?? 0,
     '/admin/enquiries': enquiries.count ?? 0,
     '/admin/messages': msgs.count ?? 0,
+    '/admin/callbacks': callbacks.count ?? 0,
   };
   const newTotal =
     counts['/admin/appointments'] +
     counts['/admin/test-bookings'] +
     counts['/admin/enquiries'] +
-    counts['/admin/messages'];
+    counts['/admin/messages'] +
+    counts['/admin/callbacks'];
 
   return (
     <div className="min-h-screen bg-brand-cream lg:flex">

@@ -176,6 +176,27 @@ export function hoursSpecification(schedule: Schedule) {
   }));
 }
 
+/**
+ * The clock time the shop next opens ("9 AM"), or null if the schedule is
+ * closed all week.
+ *
+ * Today only counts when its opening time is still ahead of us in shop time —
+ * otherwise a visitor at 11 PM would be told we open at 9 AM, naming a time
+ * that has already passed.
+ */
+export function nextOpeningClock(schedule: Schedule, now: Date = new Date()): string | null {
+  const { dayIndex, minutes } = istParts(now);
+  for (let step = 0; step <= 7; step++) {
+    const day = schedule[DAY_ORDER[(dayIndex + step) % 7]];
+    if (isClosed(day)) continue;
+    const open = toMinutes(day.open!);
+    if (open === null) continue;
+    if (step === 0 && minutes >= open) continue;
+    return formatClock(day.open!);
+  }
+  return null;
+}
+
 export interface OpenStatus {
   state: 'open' | 'closing-soon' | 'closed';
   label: string;

@@ -456,6 +456,20 @@ export const en = {
     specialties: { nadi: 'Nadi', physiotherapy: 'Physiotherapy', homeopathy: 'Homeopathy' },
   },
 
+  callback: {
+    heading: 'Order medicines on call',
+    sub: "Call us at {phone}, or drop your number — we'll call you back.",
+    placeholder: 'Enter phone number',
+    submit: 'Get a callback',
+    submitting: 'Sending…',
+    invalid: 'Please enter a valid 10-digit mobile number.',
+    successOpen: "Thanks! We'll call you shortly.",
+    successClosed: "Thanks! We'll call you when we open at {time}.",
+    slideHeading: 'Want to order medicines?',
+    slideSub: 'Call {phone} or get a callback.',
+    dismiss: 'Dismiss',
+  },
+
   faq: { eyebrow: 'Questions', heading: 'Things people ask us.' },
 
   legal: {

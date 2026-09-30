@@ -58,11 +58,18 @@ export interface ContactPayload {
   message: string;
 }
 
+export interface CallbackPayload {
+  /** Ten bare digits, as stored. */
+  phone: string;
+  source: string;
+}
+
 export type NotificationInput =
   | { kind: 'appointment'; payload: AppointmentPayload }
   | { kind: 'test_booking'; payload: TestBookingPayload }
   | { kind: 'enquiry'; payload: EnquiryPayload }
-  | { kind: 'contact'; payload: ContactPayload };
+  | { kind: 'contact'; payload: ContactPayload }
+  | { kind: 'callback'; payload: CallbackPayload };
 
 /* ------------------------------------------------------------------ */
 /* Helpers                                                             */
@@ -140,11 +147,14 @@ function wrap({
   name,
   phone,
   body,
+  showCall = false,
 }: {
   heading: string;
   name: string;
   phone: string;
   body: string;
+  /** Adds a tel: button ahead of WhatsApp — for a request to be phoned back. */
+  showCall?: boolean;
 }): string {
   return `<!doctype html>
 <html>
@@ -157,6 +167,11 @@ function wrap({
       ${body}
 
       <div style="margin-top:24px;">
+        ${
+          showCall
+            ? `<a href="tel:+${waNumber(phone)}" style="display:inline-block;padding:11px 20px;margin:0 8px 8px 0;background:${PLUM};color:#ffffff;font-size:14px;font-weight:500;text-decoration:none;border-radius:6px;">Call ${esc(name)}</a>`
+            : ''
+        }
         <a href="https://wa.me/${waNumber(phone)}" style="display:inline-block;padding:11px 20px;margin:0 8px 8px 0;background:${TEAL};color:#ffffff;font-size:14px;font-weight:500;text-decoration:none;border-radius:6px;">WhatsApp ${esc(name)}</a>
         <a href="${ADMIN_URL}" style="display:inline-block;padding:11px 20px;margin:0 8px 8px 0;background:#ffffff;color:${PLUM};font-size:14px;font-weight:500;text-decoration:none;border:1px solid ${PLUM};border-radius:6px;">Open admin</a>
       </div>
@@ -235,7 +250,24 @@ export function buildNotification(input: NotificationInput): {
         }),
       };
     }
-    case 'contact': {
+    case 'callback': {
+      const p = input.payload;
+      const display = `+91 ${p.phone}`;
+      return {
+        subject: `New callback request — ${display}`,
+        html: wrap({
+          heading: 'New callback request',
+          name: display,
+          phone: p.phone,
+          showCall: true,
+          body: fieldTable([
+            ['Phone', display],
+            ['From', p.source === 'slidein' ? 'Slide-in prompt' : 'Callback band'],
+          ]),
+        }),
+      };
+    }
+        case 'contact': {
       const p = input.payload;
       return {
         subject: `New message — ${p.name}`,

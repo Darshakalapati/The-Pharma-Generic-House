@@ -6,6 +6,7 @@ import { whatsappLink, telLink } from '@/lib/utils';
 import { SHOP_EMAIL, SHOP_ADDRESS_LINES, getMapsUrl } from '@/lib/constants';
 import { formatHoursDetailed } from '@/lib/hours';
 import { OpenStatus } from '@/components/public/open-status';
+import { CallbackBand } from '@/components/public/callback-band';
 import { getDictionary, getLocale } from '@/lib/i18n';
 import { pageMetadata } from '@/lib/seo';
 
@@ -99,6 +100,13 @@ export default async function ContactPage() {
           </a>
         </div>
       </section>
+
+      {/* Order on call */}
+      <CallbackBand
+        phone={settings.shop_phone}
+        schedule={schedule}
+        className="mt-16 sm:mt-20"
+      />
 
       {/* Contact form */}
       <section className="container-public mt-20 sm:mt-24">

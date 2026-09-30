@@ -1,9 +1,10 @@
 import { createClient } from '@/lib/supabase/server';
-import { getShopSettings } from '@/lib/settings';
+import { getShopSettings, getSchedule } from '@/lib/settings';
 import { getDictionary, getLocale } from '@/lib/i18n';
 import { ProductGrid } from '@/components/public/product-grid';
 import { EnquiryCartProvider } from '@/components/public/enquiry-cart-context';
 import { EnquiryCartPanel } from '@/components/public/enquiry-cart-panel';
+import { CallbackSlideIn } from '@/components/public/callback-slidein';
 import {
   ScrollReveal,
   ScrollRevealItem,
@@ -31,7 +32,7 @@ export default async function ProductsPage({
   const dict = getDictionary(locale);
   const rxText = locale === 'te' ? PRESCRIPTION_WA_TEXT_TE : PRESCRIPTION_WA_TEXT;
   const supabase = createClient();
-  const settings = await getShopSettings();
+  const [settings, schedule] = await Promise.all([getShopSettings(), getSchedule()]);
 
   const { data } = await supabase
     .from('products')
@@ -76,6 +77,8 @@ export default async function ProductsPage({
         whatsappNumber={settings.shop_whatsapp}
         reservationEnabled={settings.reservation_pickup_enabled}
       />
+
+      <CallbackSlideIn phone={settings.shop_phone} schedule={schedule} />
     </EnquiryCartProvider>
   );
 }
