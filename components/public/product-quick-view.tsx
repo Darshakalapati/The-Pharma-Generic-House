@@ -85,17 +85,20 @@ export function ProductQuickView({
           </button>
         </div>
 
-        <div className="aspect-square w-full shrink-0 bg-sand">
-          {product.image_url && (
-            // eslint-disable-next-line @next/next/no-img-element
+        {/* Directory rows carry no image, so the frame is omitted rather than
+            left as an empty sand square — the drawer opens straight onto the
+            name and the actions. */}
+        {product.image_url && (
+          <div className="aspect-square w-full shrink-0 bg-sand">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={product.image_url}
               alt={product.name}
               decoding="async"
               className="h-full w-full object-cover"
             />
-          )}
-        </div>
+          </div>
+        )}
 
         <div className="flex flex-1 flex-col p-6">
           {catLabel && <span className="eyebrow">{catLabel}</span>}

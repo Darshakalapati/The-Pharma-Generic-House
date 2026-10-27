@@ -278,6 +278,17 @@
     }
   }
 
+  /* Medicine directory letter groups.
+     `content-visibility: auto` lets the browser skip layout and paint for the
+     groups that are off screen — which is what makes a ~4,000-row list behave
+     like a short one. `contain-intrinsic-size` is set per group inline from the
+     row count, so the scrollbar stays the right length; this is the fallback
+     for anything that has not been measured yet. */
+  .dir-group {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 600px;
+  }
+
   /* Diagnostics page — CSS fallback while 3D background loads */
   .diagnostics-bg-fallback {
     background:

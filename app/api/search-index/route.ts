@@ -5,24 +5,30 @@ import { createClient } from '@/lib/supabase/server';
 export const revalidate = 300;
 
 export interface SearchIndex {
-  products: { id: string; name: string; category: string }[];
+  /** Both layers. `listing_type` decides which tab a hit links to. */
+  products: { id: string; name: string; category: string; listing_type: string }[];
   tests: { id: string; name: string; description: string | null }[];
   doctors: { id: string; name: string; specialty: string }[];
 }
 
 /**
- * One small payload backing the search palette.
+ * One payload backing the search palette.
  *
- * The whole active catalogue is a few hundred rows at most, so shipping it
- * once and filtering on the client is faster and simpler than a query per
- * keystroke — and it keeps typing responsive with no debounce machinery.
+ * Shipped once and filtered on the client, which keeps typing responsive with
+ * no debounce machinery and no request per keystroke. Since migration 0020
+ * this includes the ~4,000-row salt directory, so products are deliberately
+ * three short columns and nothing more.
  */
 export async function GET() {
   const empty: SearchIndex = { products: [], tests: [], doctors: [] };
   try {
     const supabase = createClient();
     const [products, tests, doctors] = await Promise.all([
-      supabase.from('products').select('id, name, category').eq('in_stock', true),
+      supabase
+        .from('products')
+        .select('id, name, category, listing_type')
+        .eq('in_stock', true)
+        .order('name', { ascending: true }),
       supabase.from('tests').select('id, name, description').eq('is_active', true),
       supabase.from('doctors').select('id, name, specialty').eq('is_active', true),
     ]);

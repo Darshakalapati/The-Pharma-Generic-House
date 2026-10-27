@@ -17,7 +17,7 @@ interface Hit {
   href: string;
 }
 
-const MAX_PER_GROUP = 5;
+const MAX_PER_GROUP = 8;
 
 /**
  * Ranks a candidate against the query.
@@ -85,7 +85,14 @@ export function SearchPalette() {
 
     return [
       ...take(index.products, (p) => p.name, (p) => ({
-        group: 'products', id: p.id, label: p.name, href: `/products?item=${p.id}`,
+        group: 'products',
+        id: p.id,
+        label: p.name,
+        // Land on the tab that actually owns the item.
+        href:
+          p.listing_type === 'directory'
+            ? `/products?tab=directory&item=${p.id}`
+            : `/products?tab=featured&item=${p.id}`,
       })),
       ...take(index.tests, (t) => t.name, (t) => ({
         group: 'tests', id: t.id, label: t.name, href: `/tests?book=${t.id}`,

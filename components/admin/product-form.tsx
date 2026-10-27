@@ -27,17 +27,24 @@ import {
 } from '@/components/ui/select';
 import { ImageUpload } from './image-upload';
 import { ASPECT } from '@/lib/image-crop';
-import { PRODUCT_CATEGORIES } from '@/lib/constants';
+import { PRODUCT_CATEGORIES, DIRECTORY_CATEGORIES } from '@/lib/constants';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
-import type { Product, ProductCategory } from '@/lib/types';
+import type { ListingType, Product, ProductCategory } from '@/lib/types';
+
+const CATEGORY_VALUES = [
+  ...PRODUCT_CATEGORIES.map((c) => c.value),
+  ...DIRECTORY_CATEGORIES.map((c) => c.value),
+] as [string, ...string[]];
 
 const formSchema = z.object({
   name: z.string().min(2, 'Name is required'),
-  category: z.enum(['general', 'pharma', 'ayurvedic', 'cosmetic']),
+  // Both layers' values, since the select's options depend on the listing.
+  category: z.enum(CATEGORY_VALUES),
   description: z.string().optional(),
   in_stock: z.boolean(),
   is_own_brand: z.boolean(),
+  listing_type: z.enum(['featured', 'directory']),
 });
 type FormValues = z.infer<typeof formSchema>;
 
@@ -45,10 +52,13 @@ export function ProductForm({
   product,
   open,
   onOpenChange,
+  defaultListingType = 'featured',
 }: {
   product: Product | null;
   open: boolean;
   onOpenChange: (v: boolean) => void;
+  /** Which layer a brand-new product starts in — follows the active tab. */
+  defaultListingType?: ListingType;
 }) {
   const router = useRouter();
   const [submitting, setSubmitting] = React.useState(false);
@@ -69,6 +79,7 @@ export function ProductForm({
       description: product?.description ?? '',
       in_stock: product?.in_stock ?? true,
       is_own_brand: product?.is_own_brand ?? false,
+      listing_type: product?.listing_type ?? defaultListingType,
     },
   });
 
@@ -80,22 +91,27 @@ export function ProductForm({
         description: product?.description ?? '',
         in_stock: product?.in_stock ?? true,
         is_own_brand: product?.is_own_brand ?? false,
+        listing_type: product?.listing_type ?? defaultListingType,
       });
       setImageUrl(product?.image_url ?? null);
     }
-  }, [open, product, reset]);
+  }, [open, product, reset, defaultListingType]);
 
   const submit = async (data: FormValues) => {
     setSubmitting(true);
     try {
       const supabase = createClient();
+      const toDirectory = data.listing_type === 'directory';
       const payload = {
         name: data.name.trim(),
         category: data.category,
         description: data.description?.trim() || null,
-        image_url: imageUrl,
+        // Directory rows carry neither, and the form hides both — so never
+        // write a stale image or badge onto one.
+        image_url: toDirectory ? null : imageUrl,
         in_stock: data.in_stock,
-        is_own_brand: data.is_own_brand,
+        is_own_brand: toDirectory ? false : data.is_own_brand,
+        listing_type: data.listing_type,
       };
       if (product) {
         const { error } = await supabase.from('products').update(payload).eq('id', product.id);
@@ -116,6 +132,8 @@ export function ProductForm({
     }
   };
 
+  const isDirectory = watch('listing_type') === 'directory';
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-2xl">
@@ -130,16 +148,50 @@ export function ProductForm({
 
         <form onSubmit={handleSubmit(submit)} className="space-y-4">
           <div>
-            <Label>Image</Label>
+            <Label>Listing</Label>
             <div className="mt-1.5">
-              <ImageUpload
-                value={imageUrl}
-                onChange={setImageUrl}
-                folder="products"
-                aspectRatio={ASPECT.productPhoto}
-              />
+              <Select
+                value={watch('listing_type')}
+                onValueChange={(v) => {
+                  const next = v as ListingType;
+                  setValue('listing_type', next);
+                  // Keep the category valid for the layer it just moved to.
+                  const allowed = (
+                    next === 'directory' ? DIRECTORY_CATEGORIES : PRODUCT_CATEGORIES
+                  ).map((c) => c.value as string);
+                  if (!allowed.includes(watch('category'))) {
+                    setValue('category', next === 'directory' ? 'medicine' : 'general');
+                  }
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="featured">Featured shelf</SelectItem>
+                  <SelectItem value="directory">Medicines directory</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
+            <p className="mt-1 text-xs text-brand-muted">
+              The featured shelf shows photo cards. The directory is the searchable
+              salt-name list — no photo, no badge.
+            </p>
           </div>
+
+          {!isDirectory && (
+            <div>
+              <Label>Image</Label>
+              <div className="mt-1.5">
+                <ImageUpload
+                  value={imageUrl}
+                  onChange={setImageUrl}
+                  folder="products"
+                  aspectRatio={ASPECT.productPhoto}
+                />
+              </div>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
@@ -165,7 +217,7 @@ export function ProductForm({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {PRODUCT_CATEGORIES.map((c) => (
+                    {(isDirectory ? DIRECTORY_CATEGORIES : PRODUCT_CATEGORIES).map((c) => (
                       <SelectItem key={c.value} value={c.value}>
                         {c.label}
                       </SelectItem>
@@ -201,19 +253,21 @@ export function ProductForm({
             />
           </div>
 
-          <div className="flex items-center justify-between rounded-xl border border-brand-line bg-brand-cream/40 px-4 py-3">
-            <div>
-              <Label htmlFor="is_own_brand">Our own brand</Label>
-              <p className="text-xs text-brand-muted">
-                Shows a &quot;Our own brand&quot; badge on the website.
-              </p>
+          {!isDirectory && (
+            <div className="flex items-center justify-between rounded-xl border border-brand-line bg-brand-cream/40 px-4 py-3">
+              <div>
+                <Label htmlFor="is_own_brand">Our own brand</Label>
+                <p className="text-xs text-brand-muted">
+                  Shows a &quot;Our own brand&quot; badge on the website.
+                </p>
+              </div>
+              <Switch
+                id="is_own_brand"
+                checked={watch('is_own_brand')}
+                onCheckedChange={(v) => setValue('is_own_brand', v)}
+              />
             </div>
-            <Switch
-              id="is_own_brand"
-              checked={watch('is_own_brand')}
-              onCheckedChange={(v) => setValue('is_own_brand', v)}
-            />
-          </div>
+          )}
 
           <div className="flex flex-col-reverse sm:flex-row gap-2 pt-2">
             <Button

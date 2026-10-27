@@ -22,18 +22,29 @@ import {
   type BulkRowError,
   type BulkUploadResponse,
 } from '@/lib/bulk-products';
-import { PRODUCT_CATEGORIES } from '@/lib/constants';
-import type { Product } from '@/lib/types';
+import { ALL_CATEGORY_VALUES, DIRECTORY_CATEGORIES } from '@/lib/constants';
+import type { ListingType } from '@/lib/types';
 
 const PREVIEW_LIMIT = 5;
+/**
+ * Rows per request. The server upserts in one go per batch; sending the file in
+ * batches is what makes a 4,000-row import both progress-reportable and immune
+ * to a single long-running request timing out.
+ */
+const BATCH_SIZE = 500;
+const DIRECTORY_CATEGORY_LIST = DIRECTORY_CATEGORIES.map((c) => c.value).join('/');
 
 export function BulkUploadProducts({
-  products,
+  existingNames: existingNameList,
   open,
   onOpenChange,
 }: {
-  /** Existing products, used to say how many rows are new vs updates. */
-  products: Product[];
+  /**
+   * Every product name already in the table, across BOTH layers — an import
+   * upserts on `name`, so a row matching a featured product updates it even
+   * when the directory is the chosen target.
+   */
+  existingNames: string[];
   open: boolean;
   onOpenChange: (v: boolean) => void;
 }) {
@@ -46,10 +57,13 @@ export function BulkUploadProducts({
   const [errors, setErrors] = React.useState<BulkRowError[]>([]);
   const [rawRows, setRawRows] = React.useState<Record<string, unknown>[]>([]);
   const [saving, setSaving] = React.useState(false);
+  const [listingType, setListingType] = React.useState<ListingType>('featured');
+  /** Rows accepted so far, for the "1,500 / 4,046" line. */
+  const [progress, setProgress] = React.useState(0);
 
   const existingNames = React.useMemo(
-    () => new Set(products.map((p) => p.name.trim().toLowerCase())),
-    [products]
+    () => new Set(existingNameList.map((n) => n.trim().toLowerCase())),
+    [existingNameList]
   );
 
   const newCount = rows.filter((r) => !existingNames.has(r.name.toLowerCase())).length;
@@ -62,6 +76,7 @@ export function BulkUploadProducts({
     setRawRows([]);
     setParsing(false);
     setSaving(false);
+    setProgress(0);
     if (inputRef.current) inputRef.current.value = '';
   }, []);
 
@@ -114,30 +129,53 @@ export function BulkUploadProducts({
   const saveAll = async () => {
     if (rows.length === 0 || errors.length > 0) return;
     setSaving(true);
-    try {
-      const res = await fetch('/api/admin/products/bulk', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rows: rawRows }),
-      });
-      const data = (await res.json()) as BulkUploadResponse;
+    setProgress(0);
 
-      if (!res.ok) {
-        if (data.failures?.length) setErrors(data.failures);
-        toast.error(data.error ?? 'Upload failed.');
-        return;
+    // Batches go out one after another, never in parallel: each one upserts on
+    // `name`, and two concurrent batches touching the same name would have
+    // Postgres reject the whole statement.
+    let saved = 0;
+    const failures: BulkRowError[] = [];
+    try {
+      for (let i = 0; i < rawRows.length; i += BATCH_SIZE) {
+        const batch = rawRows.slice(i, i + BATCH_SIZE);
+        const res = await fetch('/api/admin/products/bulk', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ rows: batch, listingType }),
+        });
+        const data = (await res.json()) as BulkUploadResponse;
+
+        if (!res.ok) {
+          if (data.failures?.length) setErrors(data.failures);
+          toast.error(
+            saved > 0
+              ? `${data.error ?? 'Upload failed.'} ${saved} row(s) were already saved.`
+              : (data.error ?? 'Upload failed.')
+          );
+          if (saved > 0) router.refresh();
+          return;
+        }
+
+        saved += data.saved ?? 0;
+        if (data.failures?.length) failures.push(...data.failures);
+        setProgress(saved + failures.length);
       }
 
-      if (data.failures?.length) {
-        setErrors(data.failures);
+      if (failures.length > 0) {
+        setErrors(failures);
         toast.error(
-          `Saved ${data.saved} of ${data.total}. ${data.failures.length} row(s) failed — see the list.`
+          `Saved ${saved} of ${rows.length}. ${failures.length} row(s) failed — see the list.`
         );
         router.refresh();
         return;
       }
 
-      toast.success(`Uploaded ${data.saved} product${data.saved === 1 ? '' : 's'} successfully`);
+      toast.success(
+        `Uploaded ${saved.toLocaleString()} product${saved === 1 ? '' : 's'} to the ${
+          listingType === 'directory' ? 'medicines directory' : 'featured shelf'
+        }`
+      );
       router.refresh();
       onOpenChange(false);
     } catch (e) {
@@ -163,7 +201,38 @@ export function BulkUploadProducts({
         <div className="space-y-6">
           {/* 1 — Template */}
           <section>
-            <Label>1. Download the template</Label>
+            <Label>1. Import as</Label>
+            <div className="mt-2 inline-flex rounded-lg border border-brand-line p-1">
+              {([
+                ['featured', 'Featured shelf'],
+                ['directory', 'Medicines directory'],
+              ] as const).map(([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  disabled={saving}
+                  onClick={() => setListingType(value)}
+                  aria-pressed={listingType === value}
+                  className={cn(
+                    'rounded-md px-3 py-1.5 text-sm font-medium transition-colors disabled:opacity-50',
+                    listingType === value
+                      ? 'bg-brand-purple text-brand-cream'
+                      : 'text-brand-ink hover:bg-brand-cream-warm'
+                  )}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <p className="mt-2 text-xs text-brand-muted">
+              {listingType === 'directory'
+                ? `Columns: name, category (${DIRECTORY_CATEGORY_LIST}), description, image_url, in_stock. Description and image can be blank.`
+                : 'Rows land on the curated photo shelf, where an image is worth having.'}
+            </p>
+          </section>
+
+          <section>
+            <Label>2. Download the template</Label>
             <div className="mt-2">
               <Button type="button" variant="outline" onClick={downloadTemplate}>
                 <Download className="h-4 w-4" /> Download Template
@@ -172,7 +241,7 @@ export function BulkUploadProducts({
             <ul className="mt-3 space-y-1 text-xs text-brand-muted list-disc list-inside">
               <li>
                 <code className="text-brand-ink">category</code> must be one of:{' '}
-                {PRODUCT_CATEGORIES.map((c) => c.value).join(', ')}
+                {ALL_CATEGORY_VALUES.join(', ')}
               </li>
               <li>
                 <code className="text-brand-ink">in_stock</code> must be true or false (blank
@@ -194,7 +263,7 @@ export function BulkUploadProducts({
 
           {/* 2 — Upload */}
           <section>
-            <Label htmlFor="bulk-file">2. Upload your file</Label>
+            <Label htmlFor="bulk-file">3. Upload your file</Label>
             <input
               ref={inputRef}
               id="bulk-file"
@@ -334,7 +403,9 @@ export function BulkUploadProducts({
             </Button>
             <Button type="button" onClick={saveAll} disabled={!canSave} className="flex-1">
               <Upload className="h-4 w-4" />
-              {saving ? `Saving ${rows.length} products…` : `Save all${rows.length ? ` (${rows.length})` : ''}`}
+              {saving
+                ? `Saving ${progress.toLocaleString()} / ${rows.length.toLocaleString()}…`
+                : `Save all${rows.length ? ` (${rows.length.toLocaleString()})` : ''}`}
             </Button>
           </div>
         </div>

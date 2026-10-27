@@ -53,7 +53,7 @@ export const en = {
     cards: [
       {
         title: 'General & Pharma Medicines',
-        body: 'Branded and generic medicines for everyday and prescription needs.',
+        body: 'Generic medicines by salt name — 4,000+ compositions, branded options on request.',
       },
       {
         title: 'Ayurvedic Care',
@@ -230,8 +230,8 @@ export const en = {
     browseLink: 'Browse',
     tiles: [
       {
-        title: 'General Medicine',
-        body: 'Daily essentials, fevers, antacids, and over-the-counter care.',
+        title: 'Medicines A–Z',
+        body: 'Search 4,000+ generic compositions we stock.',
       },
       {
         title: 'Pharma (Prescription)',
@@ -306,6 +306,8 @@ export const en = {
     askMessage: 'Hi, is {product} available? What is the price?',
     quickViewClose: 'Close product',
     ownBrand: 'Our own brand',
+    tabDirectory: 'Medicines A–Z',
+    tabFeatured: 'Featured shelf',
   },
 
   about: {
@@ -490,6 +492,23 @@ export const en = {
     slideHeading: 'Want to order medicines?',
     slideSub: 'Call {phone} or get a callback.',
     dismiss: 'Dismiss',
+  },
+
+  directory: {
+    searchPlaceholder: 'Search by salt name — e.g., Paracetamol, Metformin…',
+    all: 'All',
+    medicine: 'Medicines',
+    herbal: 'Herbal',
+    surgical: 'Surgical',
+    wellness: 'Wellness',
+    general: 'General',
+    count: '{n} items',
+    countFiltered: '{n} of {total}',
+    empty: 'No match. Ask us on WhatsApp →',
+    add: 'Add',
+    added: 'Added',
+    letterJump: 'Jump to letter',
+    askAria: 'Ask about {name} on WhatsApp',
   },
 
   faq: { eyebrow: 'Questions', heading: 'Things people ask us.' },

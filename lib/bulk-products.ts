@@ -5,8 +5,8 @@
 // admin approves is validated by exactly the same rules that run server-side.
 // Keep this file free of server-only imports.
 
-import { PRODUCT_CATEGORIES } from '@/lib/constants';
-import type { ProductCategory } from '@/lib/types';
+import { ALL_CATEGORY_VALUES } from '@/lib/constants';
+import type { ListingType, ProductCategory } from '@/lib/types';
 
 export const BULK_HEADERS = [
   'name',
@@ -17,7 +17,10 @@ export const BULK_HEADERS = [
   'is_own_brand',
 ] as const;
 
-const CATEGORY_VALUES = PRODUCT_CATEGORIES.map((c) => c.value) as ProductCategory[];
+// Both layers' categories are accepted on import, whichever layer is chosen:
+// a sheet is often prepared before the admin decides where it lands.
+const CATEGORY_VALUES = ALL_CATEGORY_VALUES as ProductCategory[];
+
 
 const TRUE_WORDS = new Set(['true', '1', 'yes', 'y']);
 const FALSE_WORDS = new Set(['false', '0', 'no', 'n']);
@@ -190,8 +193,14 @@ export function normalizeBulkRows(raw: Record<string, unknown>[]): BulkParseResu
   return { rows, errors };
 }
 
-/** Strip the preview-only field before sending rows to Supabase. */
-export function toProductPayload(row: BulkProductRow) {
+/**
+ * Strip the preview-only field before sending rows to Supabase.
+ *
+ * `listing_type` comes from the admin's "Import as" choice rather than the
+ * spreadsheet — it is a property of the import, not of the row — and is always
+ * written, so re-importing a sheet can move rows between the two layers.
+ */
+export function toProductPayload(row: BulkProductRow, listingType: ListingType) {
   return {
     name: row.name,
     category: row.category,
@@ -199,5 +208,11 @@ export function toProductPayload(row: BulkProductRow) {
     image_url: row.image_url,
     in_stock: row.in_stock,
     is_own_brand: row.is_own_brand,
+    listing_type: listingType,
   };
+}
+
+/** Narrow an untrusted value to a listing type, defaulting to the shelf. */
+export function coerceListingType(value: unknown): ListingType {
+  return value === 'directory' ? 'directory' : 'featured';
 }

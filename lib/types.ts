@@ -1,4 +1,20 @@
-export type ProductCategory = 'general' | 'pharma' | 'ayurvedic' | 'cosmetic';
+/**
+ * Featured-shelf categories, then the directory's own five. `category` is a
+ * text column as of migration 0020, so this union documents the values the UI
+ * offers rather than anything the database enforces.
+ */
+export type ProductCategory =
+  | 'general'
+  | 'pharma'
+  | 'ayurvedic'
+  | 'cosmetic'
+  | 'medicine'
+  | 'herbal'
+  | 'surgical'
+  | 'wellness';
+
+/** Which of the two product layers a row belongs to. See migration 0020. */
+export type ListingType = 'featured' | 'directory';
 /** The three built-in specialties. Any other value is free text the admin typed. */
 export type DoctorSpecialty = 'nadi' | 'physiotherapy' | 'homeopathy';
 export type AppointmentStatus = 'pending' | 'confirmed' | 'completed' | 'cancelled';
@@ -18,7 +34,22 @@ export interface Product {
   in_stock: boolean;
   /** Shows the "our own brand" badge on the card and in the quick-view. */
   is_own_brand: boolean;
+  listing_type: ListingType;
   created_at: string;
+}
+
+/**
+ * The only four columns the public directory needs.
+ *
+ * There are ~4,000 of these rows, so the page deliberately selects nothing
+ * else — no description, no image_url. The quick-view renders from this shape
+ * and simply has no image block to show.
+ */
+export interface DirectoryProduct {
+  id: string;
+  name: string;
+  category: string;
+  in_stock: boolean;
 }
 
 export interface Doctor {

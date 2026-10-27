@@ -65,7 +65,7 @@ const FEATURED_TEST_NAMES = [
 ];
 
 const PRODUCT_TILES = [
-  { image: IMG.categories.general, href: '/products?cat=general' },
+  { image: IMG.categories.general, href: '/products?tab=directory' },
   { image: IMG.categories.pharma, href: '/products?cat=pharma' },
   { image: IMG.categories.ayurvedic, href: '/products?cat=ayurvedic' },
   { image: IMG.categories.cosmetic, href: '/products?cat=cosmetic' },

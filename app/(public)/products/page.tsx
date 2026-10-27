@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { getShopSettings, getSchedule } from '@/lib/settings';
 import { getDictionary, getLocale } from '@/lib/i18n';
-import { ProductGrid } from '@/components/public/product-grid';
+import { ProductsTabs } from '@/components/public/products-tabs';
 import { EnquiryCartProvider } from '@/components/public/enquiry-cart-context';
 import { EnquiryCartPanel } from '@/components/public/enquiry-cart-panel';
 import { CallbackSlideIn } from '@/components/public/callback-slidein';
@@ -12,21 +12,21 @@ import {
 import { WhatsAppGlyph } from '@/components/public/whatsapp-glyph';
 import { whatsappLink } from '@/lib/utils';
 import { SHOP_WHATSAPP, PRESCRIPTION_WA_TEXT, PRESCRIPTION_WA_TEXT_TE } from '@/lib/constants';
-import type { Product } from '@/lib/types';
+import type { DirectoryProduct, ListingType, Product } from '@/lib/types';
 import { pageMetadata } from '@/lib/seo';
 
 export const metadata = pageMetadata({
   title:
     'Medicines & Personal Care in Vijayawada — Browse Our Shelves | The Pharma Generic House',
   description:
-    'Browse general medicines, prescription pharma, Ayurvedic preparations and personal care at our Governerpeta shop. Send your prescription on WhatsApp and we will confirm availability.',
+    'Search 4,000+ generic medicines by salt name — the composition, not the brand — plus Ayurvedic preparations and personal care at our Governerpeta shop in Vijayawada. Send your prescription on WhatsApp and we will confirm availability.',
   path: '/products',
 });
 
 export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams: { cat?: string; item?: string };
+  searchParams: { cat?: string; item?: string; tab?: string };
 }) {
   const locale = getLocale();
   const dict = getDictionary(locale);
@@ -34,13 +34,32 @@ export default async function ProductsPage({
   const supabase = createClient();
   const [settings, schedule] = await Promise.all([getShopSettings(), getSchedule()]);
 
-  const { data } = await supabase
-    .from('products')
-    .select('*')
-    .order('created_at', { ascending: false });
+  // Two queries, two shapes. The shelf needs whole rows for its photo cards;
+  // the directory is ~4,000 rows and takes only the four columns it renders,
+  // which is the difference between a small payload and a very large one.
+  const [featuredRes, directoryRes] = await Promise.all([
+    supabase
+      .from('products')
+      .select('*')
+      .eq('listing_type', 'featured')
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('products')
+      .select('id, name, category, in_stock')
+      .eq('listing_type', 'directory')
+      .order('name', { ascending: true }),
+  ]);
 
-  const products: Product[] = data ?? [];
+  const featured: Product[] = featuredRes.data ?? [];
+  const directory: DirectoryProduct[] = directoryRes.data ?? [];
   const initialCategory = searchParams.cat ?? 'all';
+
+  // A ?cat= link is a shelf link, so honour it by opening that tab; otherwise
+  // the directory leads, since it is what most people are looking for.
+  const initialTab: ListingType =
+    searchParams.tab === 'featured' || (!searchParams.tab && !!searchParams.cat)
+      ? 'featured'
+      : 'directory';
 
   return (
     <EnquiryCartProvider>
@@ -65,8 +84,10 @@ export default async function ProductsPage({
 
       <ScrollReveal as="section" className="container-public mt-6 sm:mt-10 pb-16">
         <ScrollRevealItem>
-          <ProductGrid
-            products={products}
+          <ProductsTabs
+            featured={featured}
+            directory={directory}
+            initialTab={initialTab}
             initialCategory={initialCategory}
             openItemId={searchParams?.item}
           />

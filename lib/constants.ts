@@ -79,6 +79,26 @@ export const PRODUCT_CATEGORIES = [
   { value: 'cosmetic', label: 'Cosmetics' },
 ] as const;
 
+/**
+ * Categories for the salt-name directory (migration 0020). `general` is shared
+ * with the featured shelf; the other four exist only here.
+ */
+export const DIRECTORY_CATEGORIES = [
+  { value: 'medicine', label: 'Medicines' },
+  { value: 'herbal', label: 'Herbal' },
+  { value: 'surgical', label: 'Surgical' },
+  { value: 'wellness', label: 'Wellness' },
+  { value: 'general', label: 'General' },
+] as const;
+
+/** Every category value a bulk import may use, across both layers. */
+export const ALL_CATEGORY_VALUES = Array.from(
+  new Set([
+    ...PRODUCT_CATEGORIES.map((c) => c.value),
+    ...DIRECTORY_CATEGORIES.map((c) => c.value),
+  ])
+) as string[];
+
 export const DOCTOR_SPECIALTIES = [
   { value: 'nadi', label: 'Nadi' },
   { value: 'physiotherapy', label: 'Physiotherapy' },

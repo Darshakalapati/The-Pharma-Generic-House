@@ -259,6 +259,28 @@ export interface Dictionary {
     askMessage: string;
     quickViewClose: string;
     ownBrand: string;
+    tabDirectory: string;
+    tabFeatured: string;
+  };
+
+  directory: {
+    searchPlaceholder: string;
+    all: string;
+    medicine: string;
+    herbal: string;
+    surgical: string;
+    wellness: string;
+    general: string;
+    /** Contains {n}. */
+    count: string;
+    /** Contains {n} and {total}. */
+    countFiltered: string;
+    empty: string;
+    add: string;
+    added: string;
+    letterJump: string;
+    /** Contains {name}. */
+    askAria: string;
   };
 
   about: {

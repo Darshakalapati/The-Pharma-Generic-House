@@ -1,13 +1,18 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { normalizeBulkRows, toProductPayload } from '@/lib/bulk-products';
+import { normalizeBulkRows, toProductPayload, coerceListingType } from '@/lib/bulk-products';
 
 export const dynamic = 'force-dynamic';
 
 /** Rows per upsert call. Small enough to isolate failures, big enough to be fast. */
-const CHUNK_SIZE = 100;
-const MAX_ROWS = 2000;
+const CHUNK_SIZE = 500;
+/**
+ * Per-REQUEST cap, not per-file. A 4,000-row directory import arrives as eight
+ * batches of 500 so the client can show progress and no single request runs
+ * long enough to hit a function timeout.
+ */
+const MAX_ROWS = 1000;
 
 /** Postgres: "no unique or exclusion constraint matching the ON CONFLICT specification". */
 const PG_NO_CONFLICT_TARGET = '42P10';
@@ -44,10 +49,12 @@ export async function POST(request: Request) {
   }
   if (rawRows.length > MAX_ROWS) {
     return NextResponse.json(
-      { error: `Too many rows (${rawRows.length}). Upload at most ${MAX_ROWS} at a time.` },
+      { error: `Too many rows in one batch (${rawRows.length}). Send at most ${MAX_ROWS}.` },
       { status: 413 }
     );
   }
+
+  const listingType = coerceListingType((body as { listingType?: unknown })?.listingType);
 
   // Re-validate server-side. The client already previewed these, but a client
   // preview is not a trust boundary.
@@ -70,7 +77,10 @@ export async function POST(request: Request) {
     const chunk = rows.slice(i, i + CHUNK_SIZE);
     const { error } = await admin
       .from('products')
-      .upsert(chunk.map(toProductPayload), { onConflict: 'name' });
+      .upsert(
+        chunk.map((r) => toProductPayload(r, listingType)),
+        { onConflict: 'name' }
+      );
 
     if (!error) {
       saved += chunk.length;
@@ -88,7 +98,7 @@ export async function POST(request: Request) {
     for (const row of chunk) {
       const { error: rowError } = await admin
         .from('products')
-        .upsert([toProductPayload(row)], { onConflict: 'name' });
+        .upsert([toProductPayload(row, listingType)], { onConflict: 'name' });
       if (rowError) {
         failures.push({ rowNumber: row.rowNumber, name: row.name, message: rowError.message });
       } else {
