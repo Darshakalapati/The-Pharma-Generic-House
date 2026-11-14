@@ -1,209 +1,83 @@
 # The Pharma Generic House
 
-Website + admin panel for **The Pharma Generic House**, a family-owned pharmacy in Vijayawada (pharmagenerichouse.com).
+**Website and self-serve admin panel for a family-owned pharmacy in Vijayawada, India.** It is live in production at **[pharmagenerichouse.com](https://www.pharmagenerichouse.com)**.
 
-Built with **Next.js 14** (App Router) · **TypeScript** · **Tailwind CSS** · **Supabase** (Postgres, Auth, Storage) · **shadcn/ui** primitives.
+Customers browse medicines, book doctor appointments and lab tests, and reach the shop on WhatsApp in one tap. The shop's staff run all of it from an admin panel, without touching code: products, doctors, tests, banners, reviews, FAQs, opening hours and announcements.
 
----
-
-## Features
-
-**Public site**
-- Home, Products, Doctors, Tests, About, Contact
-- Product browsing with category filter, search, and an enquiry cart (localStorage-persisted) supporting WhatsApp / Submit / Reserve-for-pickup flows
-- Doctor appointment booking (with day/slot validation)
-- Lab test booking (shop or home collection)
-- Contact form
-- Floating WhatsApp button on every page
-
-**Admin panel** (`/admin`, password-protected)
-- Dashboard with key stats and today's schedule
-- Manage appointments, test bookings, product enquiries, contact messages — with status changes, click-to-call, and pre-filled WhatsApp replies
-- CRUD for products, doctors, and tests with image upload to Supabase Storage
-- Settings panel for shop info (phone, WhatsApp, address, hours) and feature flags (Reservation for Pickup)
+`Next.js 14 (App Router)` · `TypeScript` · `Supabase (Postgres, Auth, Storage, RLS)` · `Tailwind CSS` · `Vercel` · `Resend`
 
 ---
 
-## Getting started
+## Highlights
 
-### 1. Prerequisites
+- **Medicine directory, A–Z.** About 4,000 medicines listed by generic (salt) name in five categories, searchable instantly and imported in chunks from the shop's Excel export.
+- **Bookings that reach the shop.** Doctor appointments with day and slot validation, lab-test bookings (in shop or home collection), callback requests and product enquiries. Each lands in the admin panel and sends the shop an email alert.
+- **Two languages.** A full Telugu/English toggle with Noto Telugu fonts.
+- **Made for phones.** A sticky Call/WhatsApp bar, a quick-action dock, a product quick-view drawer and site-wide search (`⌘K`).
+- **Found on Google.** Per-page metadata, Pharmacy JSON-LD structured data, a sitemap, robots.txt and generated Open Graph images.
+- **Secure by default.** Row-level security on every table: anyone can submit a form, and only signed-in admins can read or change data. `/admin` is guarded by middleware.
+- **Admin panel.** A dashboard of today's schedule and 16 managers covering appointments, test bookings, enquiries, callbacks, messages, products (with CSV/Excel bulk upload), doctors, tests, videos, reviews, promo banners, hero photos, family profiles, announcements, FAQs and settings.
 
-- Node.js 18.18+ and npm
-- A Supabase project ([create one for free](https://supabase.com))
+## Architecture
 
-### 2. Install
-
-```bash
-npm install
+```
+Browser ──► Next.js on Vercel ──► Supabase
+             │  server components        │  Postgres + row-level security
+             │  server actions (forms)   │  Auth (admin sign-in)
+             │  middleware (/admin)      │  Storage (product & doctor images)
+             └► Resend (email alerts)
 ```
 
-> **Note:** This project was scaffolded without `git init` because the macOS `git`
-> binary required the Xcode license agreement (which can't be accepted from a sandbox).
-> Initialize the repo yourself with:
->
-> ```bash
-> sudo xcodebuild -license accept   # one time, if you haven't already
-> git init
-> git add .
-> git commit -m "Initial commit: The Pharma Generic House"
-> ```
-
-### 3. Configure environment
-
-Copy `.env.local.example` to `.env.local` and fill in the three Supabase values from your project's API settings:
-
-```bash
-cp .env.local.example .env.local
-```
-
-```env
-NEXT_PUBLIC_SUPABASE_URL=https://<project>.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=...
-SUPABASE_SERVICE_ROLE_KEY=...
-```
-
-### 4. Run database migrations and seed
-
-In the Supabase dashboard **SQL Editor**, run the files in order:
-
-1. `supabase/migrations/0001_init.sql` — creates tables, enums, RLS policies, storage bucket
-2. `supabase/seed.sql` — seeds 20 products, 3 doctors, 6 tests, and the default settings row
-
-You can paste each file's contents directly into a new query and click **Run**.
-
-### 5. Create the first admin user
-
-In your Supabase dashboard:
-
-1. Go to **Authentication → Users → Add user**
-2. Create a user with email + password (e.g. your father's email)
-3. Confirm the email manually if needed (toggle "Auto Confirm User")
-
-That user can now sign in at `/admin/login`. Repeat to add more admins.
-
-> Any authenticated user has full admin access. To restrict, add a custom role check.
-
-### 6. Start the dev server
-
-```bash
-npm run dev
-```
-
-Open http://localhost:3000 — the public site lives at `/`, the admin panel at `/admin`.
-
----
-
-## Deploying to Vercel
-
-1. Push this repo to GitHub.
-2. In Vercel, **Add New → Project** and import the GitHub repo.
-3. In **Environment Variables**, add the three from `.env.local`:
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-   - `SUPABASE_SERVICE_ROLE_KEY`
-4. Click **Deploy**. Vercel will build and host the site.
-5. Add your custom domain (`pharmagenerichouse.com`) in the project's **Domains** tab.
-
-> The middleware uses Supabase auth cookies — Vercel's Edge runtime supports this out of the box.
-
----
-
-## Updating shop info (phone, WhatsApp, address, hours)
-
-These values are editable from the admin panel without redeploying:
-
-1. Sign in at `/admin`
-2. Go to **Settings**
-3. Update the fields under **Shop information** and click **Save shop info**
-
-Changes appear on the website within a few seconds (cached server-rendered pages refresh on the next visit).
-
-The values in `lib/constants.ts` are only fallbacks used when no row exists in the `settings` table.
-
----
-
-## Toggling Reservation for Pickup
-
-In **Settings**, toggle "Enable Reservation for Pickup" on or off. When ON, customers see a third button (alongside WhatsApp and Submit Enquiry) on the products page that places a reserved enquiry tagged with a note for the admin.
-
----
+- **Schema:** 20 SQL migrations in `supabase/migrations/`, applied in order.
+- **Content without deploys:** shop details, hours and feature flags live in a `settings` table, and `lib/constants.ts` holds fallbacks only.
 
 ## Project structure
 
 ```
 app/
-  (public)/                    public site routes
-    layout.tsx, page.tsx, products/, doctors/, tests/, about/, contact/
-  admin/
-    login/                     /admin/login (no auth)
-    (dashboard)/               authed layout — sidebar + topbar
-      layout.tsx
-      page.tsx                 /admin (dashboard)
-      appointments/
-      test-bookings/
-      enquiries/
-      messages/
-      products/
-      doctors/
-      tests/
-      settings/
-  layout.tsx                   root layout (fonts, toaster)
-  globals.css
-
+  (public)/        Home, Products, Doctors, Tests, About, Contact, Privacy, Terms
+  admin/           /admin/login and the signed-in dashboard (one folder per manager)
+  api/             search index and admin endpoints
+  sitemap.ts, robots.ts, opengraph-image.tsx
 components/
-  ui/                          shadcn-style primitives
-  public/                      public-site components
-  admin/                       admin components
-
-lib/
-  supabase/{client,server,admin}.ts
-  constants.ts, utils.ts, types.ts, settings.ts
-
-supabase/
-  migrations/0001_init.sql
-  seed.sql
-
-middleware.ts                  auth guard for /admin/*
+  public/          site components (medicine directory, booking dialogs, search, i18n)
+  admin/           admin forms and tables
+  ui/              shared primitives
+lib/               Supabase clients, settings, types, utilities
+supabase/          migrations/ and seed.sql
+middleware.ts      auth guard for /admin/*
 ```
 
----
+## Run it locally
 
-## Design tokens
-
-Brand palette (also in `tailwind.config.ts`):
-
-- Purple `#6B2C5F` · Teal `#2A9B8E`
-- Cream `#FBF7F2` · White surfaces
-- Ink text `#1F1A1F` · Muted `#6B6470`
-
-Typography: **Fraunces** (serif, headings) and **Inter** (body), via `next/font/google`.
-
----
-
-## Common tasks
+You need Node.js 18.18+ and a free [Supabase](https://supabase.com) project.
 
 ```bash
-npm run dev         # start dev server
-npm run build       # production build
-npm run start       # serve production build
-npm run lint        # eslint
-npm run type-check  # tsc --noEmit
+npm install
+cp .env.local.example .env.local   # fill in your Supabase URL and keys
 ```
 
+1. In the Supabase SQL editor, run every file in `supabase/migrations/` in order, then `supabase/seed.sql`.
+2. Under **Authentication → Users**, add a user. That user can sign in at `/admin/login`.
+3. Start the app:
+
+```bash
+npm run dev          # http://localhost:3000, with the admin panel at /admin
+npm run build        # production build
+npm run type-check   # tsc --noEmit
+npm run lint
+```
+
+`RESEND_API_KEY` and `NOTIFY_EMAIL` are optional. Without them, submissions still save and the server logs a warning instead of sending email.
+
+## Deploy
+
+The site is deployed on Vercel from this repository. Add the variables from `.env.local.example` under the project's environment variables, and every push to `main` deploys automatically.
+
+## Design
+
+Fraunces (headings) and Inter (body), with a plum `#6B2C5F`, teal `#2A9B8E` and cream `#FAF6F0` palette. It uses hairline borders and generous whitespace.
+
 ---
 
-## Notes
-
-- All public form submissions (enquiries, appointments, test bookings, contact messages) are inserts protected by RLS — anyone can submit, only admins can read/update.
-- Product/doctor images are stored in the public `public-images` bucket. Reads are public; writes require an authenticated admin session.
-- Phone numbers are validated as Indian (+91 / 10-digit mobile) on the client. If you ship internationally, update `isValidPhoneIN` in `lib/utils.ts`.
-- The home page hero composition is CSS-only (no stock photos). Replace `components/public/hero-art.tsx` if you'd like a different aesthetic.
-
----
-
-## Support
-
-For issues with the website, contact your developer.
-For shop questions, customers should use the WhatsApp button on every page.
-
-© 2026 The Pharma Generic House.
+Built and maintained by [Darshak Alapati](https://darshakalapati.com).
